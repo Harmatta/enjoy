@@ -1,11 +1,11 @@
 {
   "version": "4.0.0",
-  "last_updated": "2026-01-18T03:02:51.477Z",
-  "last_pr": "#5",
+  "last_updated": "2026-01-18T17:00:11.838Z",
+  "last_pr": "#14",
   "score": {
-    "total": 20,
-    "today": 0,
-    "streak_days": 0,
+    "total": 132,
+    "today": 112,
+    "streak_days": 1,
     "all_time_high": 0
   },
   "gamification": {
@@ -19,18 +19,19 @@
     "bounties_completed": 0
   },
   "levels": {
-    "current": 1,
+    "current": 2,
     "max_level": 100,
     "unlocked": [
-      1
+      1,
+      2
     ],
     "next_unlock": {
-      "level_id": 2,
-      "requires_score": 50,
-      "requires_prs": 5,
+      "level_id": 3,
+      "requires_score": 75,
+      "requires_prs": 8,
       "progress": {
-        "score": 20,
-        "prs": 2
+        "score": 132,
+        "prs": 3
       }
     },
     "milestones": {
@@ -63,19 +64,24 @@
   },
   "players": {
     "fabriziosalmi": {
-      "karma": 20,
-      "prs": 2,
+      "karma": 132,
+      "prs": 3,
       "streak": 1,
       "achievements": [
-        "first_blood"
+        "first_blood",
+        "og"
       ],
       "high_quality_count": 0,
       "referrals": 0,
       "bugs_reported": 0,
       "bounties_completed": 0,
       "mystery_boxes": 0,
-      "last_contribution": "2026-01-18T03:02:51.477Z",
-      "joined": "2026-01-18T02:43:18.817Z"
+      "last_contribution": "2026-01-18T17:00:11.838Z",
+      "joined": "2026-01-18T02:43:18.817Z",
+      "name": "fabriziosalmi",
+      "time_stats": {
+        "sunset": 1
+      }
     }
   },
   "reputation": {
@@ -139,15 +145,15 @@
   },
   "rules_triggered": {},
   "meta": {
-    "total_prs": 2,
+    "total_prs": 3,
     "total_players": 1,
     "game_started": "2026-01-18T00:00:00Z",
     "pages_enabled": false,
     "last_build": null
   },
   "time_system": {
-    "current_period": "night",
-    "last_update": null,
+    "current_period": "sunset",
+    "last_update": "2026-01-18T17:00:11.838Z",
     "stats": {
       "dawn": {
         "total_prs": 0,
@@ -166,8 +172,8 @@
         "total_karma": 0
       },
       "sunset": {
-        "total_prs": 0,
-        "total_karma": 0
+        "total_prs": 1,
+        "total_karma": 112
       },
       "night": {
         "total_prs": 0,
@@ -175,7 +181,7 @@
       }
     },
     "rare_events_triggered": [],
-    "most_active_period": null
+    "most_active_period": "sunset"
   },
   "engagement": {
     "karma_log": [
