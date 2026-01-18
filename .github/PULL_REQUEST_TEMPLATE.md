@@ -9,9 +9,9 @@
 ## Checklist
 
 - [ ] I read LORE.md and found the Guardian's name
-- [ ] My word is 5-20 characters
+- [ ] My word is 2-20 characters (5-10 is optimal!)
 - [ ] My word is creative (not test, hello, foo)
-- [ ] I added only ONE .txt file in contributions/
+- [ ] I added only ONE .txt file
 
 ---
 

@@ -22,9 +22,10 @@ Your PR will be automatically validated. If it passes, it will be auto-merged! �
 **What you can contribute:** Single words in `.txt` files
 
 **Requirements:**
-- ✅ File must be named `word.txt` (or any name ending in `.txt`)
+- ✅ File must be named `yourword.txt` (any name ending in `.txt`)
 - ✅ File must contain exactly ONE word
-- ✅ Word must be letters only (A-Z, max 20 characters)
+- ✅ Word must be 2-20 characters (letters only)
+- ✅ **5-10 characters = bonus points!**
 - ✅ No profanity
 - ✅ Word must not already exist on the board
 
@@ -59,16 +60,20 @@ git push origin add-aurora
 
 ### Level Progression
 
-As the community earns points, new levels unlock:
+The game has **100 levels** organized in phases. Here's the progression:
 
-| Level | Name | Unlocks At | What You Can Contribute |
-|-------|------|------------|------------------------|
-| 0 | The Void | 0pts ✓ | Text words |
-| 1 | HTML Awakening | 100pts | HTML elements |
-| 2 | Chromatic Surge | 500pts | CSS styles |
-| 3 | Sentience | 1500pts | JavaScript |
-| 4 | Pixel Dimension | 5000pts | Canvas drawings |
-| 5 | ??? | 10000pts | ??? |
+| Phase | Levels | What You Can Contribute |
+|-------|--------|------------------------|
+| **Foundation** | 1-20 | Words, emoji, ASCII art |
+| **Complexity** | 21-40 | Math, zones, voting |
+| **Metamorphosis** | 41-60 | JSON, YAML, CSV, SVG |
+| **Consciousness** | 61-80 | Rules AI, time travel |
+| **Final Ascent** | 81-94 | HTML/CSS/JS fragments |
+| **Transcendence** | 95-100 | GitHub Pages unlock, portal |
+
+**Unlock formula:** Every 50 karma + 5 PRs = Level up
+
+See [LEVELS_ROADMAP.md](LEVELS_ROADMAP.md) for complete details.
 
 ---
 
@@ -188,7 +193,7 @@ The community votes on new level proposals!
 If you discover a security vulnerability (XSS, code injection, etc.), please:
 
 1. **DO NOT** open a public issue
-2. Email security@enjoy.game (or open a private security advisory)
+2. [Open a private security advisory](https://github.com/fabriziosalmi/enjoy/security/advisories/new)
 3. Include details: reproduction steps, impact, suggested fix
 
 ### Security Best Practices
@@ -224,10 +229,10 @@ Violations may result in PRs being blocked or accounts being banned from the rep
 
 ## Getting Help
 
-- 📖 **Read the docs**: https://[USERNAME].github.io/enjoy/guide/
-- 💬 **Discussions**: https://github.com/[USERNAME]/enjoy/discussions
-- 🐛 **Issues**: https://github.com/[USERNAME]/enjoy/issues
-- 🎮 **Discord**: [Link if you create one]
+- 📖 **Read the docs**: [HUB.md](HUB.md) - Complete guide hub
+- 💬 **Discussions**: https://github.com/fabriziosalmi/enjoy/discussions
+- 🐛 **Issues**: https://github.com/fabriziosalmi/enjoy/issues
+- 🎮 **More info**: [GAMEPLAY.md](GAMEPLAY.md) - Full karma guide
 
 ---
 

@@ -18,9 +18,9 @@
 
 ### 2. Add a file
 ```
-contributions/YOUR_USERNAME/yourword.txt
+yourword.txt
 ```
-Write ONE word inside (be creative!)
+Write ONE word inside (be creative!) - that's it, just a `.txt` file in the root!
 
 ### 3. Open a Pull Request
 Fill the template. Answer the question.
@@ -58,6 +58,7 @@ Goal:   50 points to reach Level 2
 ## 🔗 Quick Links
 
 - 🎮 [Play Now](https://fabriziosalmi.github.io/enjoy/)
+- ⚡ [Quick Start Guide](QUICKSTART.md) - **Start here!**
 - 🎤 [Voice Mode](https://fabriziosalmi.github.io/enjoy/voice.html) - No Git needed!
 - 📜 [Rules](LORE.md)
 - 🤝 [How to Contribute](CONTRIBUTING.md)
@@ -86,7 +87,8 @@ Goal:   50 points to reach Level 2
 
 ## 💡 Tips
 
-- Words 5-10 characters = more points
+- Words **2-20 characters** are accepted
+- Words **5-10 characters** = bonus points!
 - Creative > boring
 - 1 word per PR
 - Invite friends = bonus for both

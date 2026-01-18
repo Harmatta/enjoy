@@ -1,4 +1,4 @@
-labels: []
+labels: ["idea", "community"]
 body:
   - type: markdown
     attributes:

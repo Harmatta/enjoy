@@ -70,7 +70,7 @@ Welcome to the most comprehensive GitHub-based game ever created.
 | Action | Karma | Link |
 |--------|-------|------|
 | 📝 Submit level PR | +15-50 | [Contribute](CONTRIBUTING.md) |
-| 🐛 Report bug | +5 | [Bug Report](../../issues/new?template=bug.yml) |
+| 🐛 Report bug | +5 | [Bug Report](../../issues/new?template=bug-report.yml) |
 | 💡 Share idea | +5 | [Ideas](../../discussions/new?category=ideas) |
 | 📚 Edit wiki | +3-20 | [Wiki](../../wiki) |
 

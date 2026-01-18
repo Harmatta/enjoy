@@ -55,7 +55,7 @@ jobs:
             console.log('Modified files:', modified);
             console.log('Removed files:', removed);
       
-      - name: � Validate PR Format
+      - name: Validate PR Format
         id: format
         uses: actions/github-script@v7
         with:
