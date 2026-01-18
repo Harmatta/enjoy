@@ -1,0 +1,36 @@
+# Level 47: Data Visualization
+level: 47
+name: "Data Visualization"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  CSV data rendered as charts.
+  type: bar, line, pie
+  Include chart type in first line.
+  #chart:bar
+  label,value
+  a,10
+  b,20
+
+rules:
+  file_type: ".csv"
+  max_files: 1
+  visualization:
+    types: ["bar", "line", "pie", "scatter"]
+    max_points: 20
+
+validation:
+  - type: "file_extension"
+    value: ".csv"
+  - type: "chart_directive"
+    pattern: "^#chart:(bar|line|pie|scatter)$"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "complex_chart"
+      min_points: 10
+      bonus: 15
+
+unlock_message: "Data becomes visible. Charts unlocked."

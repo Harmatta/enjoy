@@ -1,0 +1,32 @@
+# Level 6: Uppercase Only
+level: 6
+name: "Uppercase Only"
+phase: "Foundation"
+milestone: false
+
+description: |
+  SHOUT INTO THE VOID.
+  All words must be UPPERCASE.
+  No lowercase allowed.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  max_words: 3
+  case: "uppercase"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "case_check"
+    required: "uppercase"
+  - type: "pattern"
+    pattern: "^[A-Z\\s]+$"
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "all_caps_word"
+      bonus: 2
+
+unlock_message: "THE VOID ECHOES YOUR CRY."

@@ -1,0 +1,35 @@
+# Level 43: Markdown Fragments
+level: 43
+name: "Markdown Fragments"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Rich text enters the game.
+  **bold**, *italic*, `code`
+  # Headings allowed (max h3)
+
+rules:
+  file_type: ".md"
+  max_files: 1
+  max_lines: 10
+  allowed_elements:
+    - bold
+    - italic
+    - code
+    - headers_1_3
+    - links
+
+validation:
+  - type: "file_extension"
+    value: ".md"
+  - type: "markdown_safe"
+    no_html: true
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "styled_text"
+      bonus: 8
+
+unlock_message: "Format is expression. Markdown unlocked."

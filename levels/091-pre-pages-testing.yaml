@@ -1,0 +1,33 @@
+# Level 91: Pre-Pages Testing
+level: 91
+name: "Pre-Pages Testing"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Test contributions in sandbox.
+  PREVIEW contribution_id
+  See how it will render.
+  Final checks before deployment.
+
+rules:
+  file_type: ".preview"
+  max_files: 1
+  preview:
+    enabled: true
+    sandbox: true
+    timeout: 5000
+
+validation:
+  - type: "file_extension"
+    value: ".preview"
+  - type: "preview_syntax"
+    pattern: "^PREVIEW \\w+$"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "successful_preview"
+      bonus: 10
+
+unlock_message: "Preview enabled. Test before flight."

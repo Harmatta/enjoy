@@ -1,0 +1,38 @@
+# Level 35: Zones Unlock
+level: 35
+name: "Zones Unlock"
+phase: "Complexity"
+milestone: false
+
+description: |
+  The board divides into zones.
+  Each zone has different rules.
+  North: only uppercase
+  South: only lowercase
+  East: only emojis
+  West: only numbers
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  zones:
+    enabled: true
+    north: { y_range: [0, 25], rules: "uppercase" }
+    south: { y_range: [75, 100], rules: "lowercase" }
+    east: { x_range: [75, 100], rules: "emoji" }
+    west: { x_range: [0, 25], rules: "numbers" }
+    center: { rules: "any" }
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "zone_rules"
+    dynamic: true
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "zone_master"
+      bonus: 10
+
+unlock_message: "Territory emerges. Know your zone."

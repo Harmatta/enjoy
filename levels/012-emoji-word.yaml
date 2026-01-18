@@ -1,0 +1,30 @@
+# Level 12: Emoji + Word
+level: 12
+name: "Emoji + Word"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Combine emoji with words.
+  Format: emoji word (e.g., "🔥 fire")
+  Synergy creates power.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  format: "emoji word"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "emoji_word_combo"
+    emoji_count: 1
+    word_count: 1
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "matching_emoji"
+      bonus: 5
+
+unlock_message: "Symbol and word unite. 🤝"

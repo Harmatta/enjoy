@@ -1,0 +1,30 @@
+# Level 74: Quality Prediction
+level: 74
+name: "Quality Prediction"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  System predicts PR quality.
+  High quality = fast merge.
+  Low quality = extra review.
+  The game has preferences.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  quality_prediction:
+    enabled: true
+    factors: ["format", "creativity", "context_fit", "author_history"]
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "exceeds_prediction"
+      bonus: 25
+
+unlock_message: "Quality matters. The game knows."

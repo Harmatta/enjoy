@@ -1,0 +1,32 @@
+# Level 29: Animation Frames
+level: 29
+name: "Animation Frames"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Multiple files create animation sequence.
+  frame1.txt, frame2.txt, frame3.txt...
+  The board comes alive.
+
+rules:
+  file_type: ".txt"
+  max_files: 5
+  animation:
+    filename_pattern: "frame{n}.txt"
+    max_frames: 5
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "frame_sequence"
+    pattern: "frame\\d+\\.txt"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "smooth_animation"
+      frames: 5
+      bonus: 15
+
+unlock_message: "Motion from stillness. Animation unlocked."

@@ -1,0 +1,32 @@
+# Level 61: Conditional Rules
+level: 61
+name: "Conditional Rules"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Rules that activate conditionally.
+  RULE glow WHEN karma > 100
+  RULE shrink WHEN time = night
+  The game responds to context.
+
+rules:
+  file_type: ".rule"
+  max_files: 1
+  rule_constraints:
+    max_rules: 5
+    syntax: "RULE action WHEN condition"
+
+validation:
+  - type: "file_extension"
+    value: ".rule"
+  - type: "rule_syntax"
+    pattern: "^RULE \\w+ WHEN .+$"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "complex_condition"
+      bonus: 15
+
+unlock_message: "Rules awaken. Context matters."

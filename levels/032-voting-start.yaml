@@ -1,0 +1,35 @@
+# Level 32: Voting Start
+level: 32
+name: "Voting Start"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Democracy enters the game.
+  Players can upvote/downvote elements.
+  Reactions on merged PRs count as votes.
+  👍 = upvote, 👎 = downvote
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  voting:
+    enabled: true
+    upvote: "👍"
+    downvote: "👎"
+    effects:
+      positive: "highlight"
+      negative: "fade"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "popular"
+      min_upvotes: 5
+      bonus: 25
+
+unlock_message: "The collective judges. Vote wisely."

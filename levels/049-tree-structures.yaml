@@ -1,0 +1,35 @@
+# Level 49: Tree Structures
+level: 49
+name: "Tree Structures"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Hierarchical contributions.
+  Use indentation for depth.
+  root
+    child1
+    child2
+      grandchild
+
+rules:
+  file_type: ".tree"
+  max_files: 1
+  tree_constraints:
+    max_depth: 4
+    max_nodes: 15
+    indent: 2
+
+validation:
+  - type: "file_extension"
+    value: ".tree"
+  - type: "tree_structure"
+    max_depth: 4
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "balanced_tree"
+      bonus: 12
+
+unlock_message: "Hierarchy emerges. Trees unlocked."

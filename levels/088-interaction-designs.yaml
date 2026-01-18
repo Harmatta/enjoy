@@ -1,0 +1,36 @@
+# Level 88: Interaction Designs
+level: 88
+name: "Interaction Designs"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Design interactions.
+  @interaction hover-glow {
+    trigger: hover
+    effect: glow
+    duration: 300ms
+  }
+  UX takes form.
+
+rules:
+  file_type: ".interaction"
+  max_files: 1
+  interaction_constraints:
+    max_interactions: 5
+    allowed_triggers: ["hover", "click", "scroll", "focus", "load"]
+    allowed_effects: ["glow", "fade", "scale", "slide", "pulse"]
+
+validation:
+  - type: "file_extension"
+    value: ".interaction"
+  - type: "interaction_syntax"
+    keyword: "@interaction"
+
+karma:
+  base: 22
+  bonus_conditions:
+    - condition: "smooth_interaction"
+      bonus: 20
+
+unlock_message: "Interactions designed. Feel emerges."

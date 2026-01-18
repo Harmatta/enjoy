@@ -1,0 +1,30 @@
+# Level 72: Pattern Learning
+level: 72
+name: "Pattern Learning"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  System learns from contributions.
+  Popular patterns get recognized.
+  New patterns get classified.
+  The game grows smarter.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  pattern_learning:
+    enabled: true
+    min_occurrences: 3
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "new_pattern_discovered"
+      bonus: 30
+
+unlock_message: "Patterns emerge. The game learns."

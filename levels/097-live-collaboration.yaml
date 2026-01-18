@@ -1,0 +1,32 @@
+# Level 97: Live Collaboration
+level: 97
+name: "Live Collaboration"
+phase: "Transcendence"
+milestone: false
+
+description: |
+  Multiple players can edit live.
+  Real-time cursors.
+  Collaborative canvas.
+  The collective creates together.
+
+rules:
+  file_type: "any"
+  max_files: 3
+  collaboration:
+    enabled: true
+    real_time: true
+    max_concurrent: 10
+    conflict_resolution: "last_write"
+
+validation:
+  - type: "collaboration_safe"
+    max_rate: 10  # changes per minute
+
+karma:
+  base: 40
+  bonus_conditions:
+    - condition: "collab_session"
+      bonus: 40
+
+unlock_message: "Collaboration activated. Create together."

@@ -1,0 +1,38 @@
+# Level 27: Size Modifiers
+level: 27
+name: "Size Modifiers"
+phase: "Complexity"
+milestone: false
+
+description: |
+  File size affects text size on board.
+  1-10 bytes: tiny
+  11-50 bytes: small
+  51-100 bytes: medium
+  101-200 bytes: large
+  201+ bytes: HUGE
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  size_effects:
+    tiny: [1, 10]
+    small: [11, 50]
+    medium: [51, 100]
+    large: [101, 200]
+    huge: [201, 500]
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "file_size"
+    max: 500
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "exact_100"
+      size: 100
+      bonus: 15
+
+unlock_message: "Size matters. Sometimes."

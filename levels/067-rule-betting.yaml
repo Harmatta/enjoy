@@ -1,0 +1,36 @@
+# Level 67: Rule Betting
+level: 67
+name: "Rule Betting"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Bet on which rules will trigger.
+  BET 20 karma ON rule_id TRIGGERS
+  WIN: 2x karma
+  LOSE: lose stake
+  Prediction becomes profit.
+
+rules:
+  file_type: ".bet"
+  max_files: 1
+  betting:
+    enabled: true
+    min_bet: 5
+    max_bet: 100
+    multiplier: 2
+    window: 86400  # 24 hours
+
+validation:
+  - type: "file_extension"
+    value: ".bet"
+  - type: "bet_syntax"
+    pattern: "^BET \\d+ karma ON \\w+ TRIGGERS$"
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "winning_bet"
+      multiplier: 2
+
+unlock_message: "Place your bets. Prediction is power."

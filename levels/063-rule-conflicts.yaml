@@ -1,0 +1,32 @@
+# Level 63: Rule Conflicts
+level: 63
+name: "Rule Conflicts"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  System resolves conflicting rules.
+  When two rules contradict:
+  - Higher karma rule wins
+  - Or: newer rule wins
+  - Or: community votes
+
+rules:
+  file_type: ".rule"
+  max_files: 1
+  conflict_resolution:
+    strategies: ["karma", "timestamp", "vote"]
+    default: "karma"
+
+validation:
+  - type: "file_extension"
+    value: ".rule"
+  - type: "rule_syntax"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "resolved_conflict"
+      bonus: 15
+
+unlock_message: "Conflicts arise. Resolution follows."

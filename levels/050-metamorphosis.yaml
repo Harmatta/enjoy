@@ -1,0 +1,34 @@
+# Level 50: Metamorphosis ⭐ MILESTONE
+level: 50
+name: "Metamorphosis"
+phase: "Metamorphosis"
+milestone: true
+milestone_emoji: "⭐"
+
+description: |
+  ⭐ MAJOR MILESTONE ⭐
+  The board TRANSFORMS completely.
+  All formats combine.
+  Visual representation changes.
+  HALFWAY TO TRANSCENDENCE.
+
+rules:
+  file_type: [".txt", ".json", ".yaml", ".md", ".svg", ".csv"]
+  max_files: 3
+  metamorphosis:
+    board_transform: true
+    new_visual_mode: "organic"
+
+validation:
+  - type: "file_types"
+    allowed: [".txt", ".json", ".yaml", ".md", ".svg", ".csv"]
+
+karma:
+  base: 50
+  bonus_conditions:
+    - condition: "multi_format"
+      bonus: 25
+
+unlock_message: "⭐ METAMORPHOSIS COMPLETE. The board transforms. Halfway there."
+celebration: true
+visual_effect: "board_transform"

@@ -1,0 +1,33 @@
+# Level 80: Alternate Timelines
+level: 80
+name: "Alternate Timelines"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Parallel realities in same repo.
+  TIMELINE alt_rules
+  Switch between realities.
+  What if scenarios manifest.
+
+rules:
+  file_type: ".timeline"
+  max_files: 1
+  timelines:
+    enabled: true
+    max_active: 3
+    persistence: true
+
+validation:
+  - type: "file_extension"
+    value: ".timeline"
+  - type: "timeline_syntax"
+    pattern: "^TIMELINE \\w+$"
+
+karma:
+  base: 30
+  bonus_conditions:
+    - condition: "timeline_creator"
+      bonus: 40
+
+unlock_message: "Multiple realities exist. You choose."

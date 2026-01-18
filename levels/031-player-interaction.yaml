@@ -1,0 +1,31 @@
+# Level 31: Player Interaction
+level: 31
+name: "Player Interaction"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Reference another player's contribution.
+  Format: @player:contribution_id
+  Social bonds strengthen the collective.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  interaction:
+    format: "@{player}:{id}"
+    must_exist: true
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "player_reference"
+    validate_exists: true
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "mutual_reference"
+      bonus: 20
+
+unlock_message: "Souls intertwine."

@@ -1,0 +1,31 @@
+# Level 73: Anomaly Detection
+level: 73
+name: "Anomaly Detection"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  System flags unusual patterns.
+  Potential exploits detected.
+  Creative outliers highlighted.
+  The game protects itself.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  anomaly_detection:
+    enabled: true
+    sensitivity: "medium"
+    actions: ["flag", "review", "celebrate"]
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "creative_anomaly"
+      bonus: 50
+
+unlock_message: "Anomalies detected. Some are gifts."

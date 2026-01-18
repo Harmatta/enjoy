@@ -1,0 +1,36 @@
+# Level 34: Element Modification
+level: 34
+name: "Element Modification"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Modify existing elements (restricted).
+  Requires 75+ karma.
+  File: modify.txt with target ID and changes.
+  Original author can always modify their own.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  modification:
+    enabled: true
+    min_karma: 75
+    own_elements: true
+    filename: "modify.txt"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "filename"
+    value: "modify.txt"
+  - type: "karma_or_owner"
+    min_karma: 75
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "improvement"
+      bonus: 15
+
+unlock_message: "Evolution, not revolution."

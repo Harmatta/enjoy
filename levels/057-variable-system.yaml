@@ -1,0 +1,33 @@
+# Level 57: Variable System
+level: 57
+name: "Variable System"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Define and use variables.
+  $color = blue
+  $size = 20
+  DRAW circle COLOR $color SIZE $size
+
+rules:
+  file_type: ".var"
+  max_files: 1
+  variable_constraints:
+    max_variables: 10
+    define_syntax: "$name = value"
+    use_syntax: "$name"
+
+validation:
+  - type: "file_extension"
+    value: ".var"
+  - type: "variable_syntax"
+    define: "^\\$\\w+ = .+$"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "computed_variable"
+      bonus: 10
+
+unlock_message: "Variables store. State persists."

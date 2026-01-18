@@ -1,0 +1,33 @@
+# Level 5: Position Hint
+level: 5
+name: "Position Hint"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Control where your word appears.
+  Add x,y coordinates (0-100 range).
+  Format: word|x|y (e.g., "star|50|25")
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  format: "word|x|y"
+  coordinate_range: [0, 100]
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "format_pattern"
+    pattern: "^[a-zA-Z]+\\|\\d{1,3}\\|\\d{1,3}$"
+  - type: "coordinate_range"
+    min: 0
+    max: 100
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "center_position"
+      bonus: 5
+
+unlock_message: "Space bends to your will."

@@ -1,0 +1,33 @@
+# Level 78: Merge Requests
+level: 78
+name: "Merge Requests"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Forked branches can merge back.
+  MERGE branch_name INTO main
+  Best features survive.
+  Evolution through selection.
+
+rules:
+  file_type: ".merge"
+  max_files: 1
+  merging:
+    enabled: true
+    requires_vote: true
+    approval_threshold: 0.5
+
+validation:
+  - type: "file_extension"
+    value: ".merge"
+  - type: "merge_syntax"
+    pattern: "^MERGE \\w+ INTO \\w+$"
+
+karma:
+  base: 35
+  bonus_conditions:
+    - condition: "successful_merge"
+      bonus: 75
+
+unlock_message: "Branches reunite. The best survives."

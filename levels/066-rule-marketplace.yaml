@@ -1,0 +1,34 @@
+# Level 66: Rule Marketplace
+level: 66
+name: "Rule Marketplace"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Players trade rule slots.
+  SELL rule_id FOR 50 karma
+  BUY rule_id FROM player
+  Economy of rules emerges.
+
+rules:
+  file_type: ".market"
+  max_files: 1
+  marketplace:
+    enabled: true
+    min_price: 10
+    max_price: 500
+    fee: 0.1  # 10% transaction fee
+
+validation:
+  - type: "file_extension"
+    value: ".market"
+  - type: "market_syntax"
+    patterns: ["^SELL", "^BUY"]
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "successful_trade"
+      bonus: 25
+
+unlock_message: "The marketplace opens. Rules have value."

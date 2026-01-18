@@ -1,0 +1,33 @@
+# Level 55: Macro System
+level: 55
+name: "Macro System"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Define reusable macros.
+  @define STAR = ★
+  @define ARROW = →
+  Use: @STAR @ARROW @STAR
+
+rules:
+  file_type: ".macro"
+  max_files: 1
+  macro_constraints:
+    max_macros: 10
+    define_syntax: "@define NAME = VALUE"
+    use_syntax: "@NAME"
+
+validation:
+  - type: "file_extension"
+    value: ".macro"
+  - type: "macro_syntax"
+    define: "^@define \\w+ = .+$"
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "macro_used"
+      bonus: 10
+
+unlock_message: "Macros expand. Repetition eliminated."

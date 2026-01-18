@@ -1,0 +1,35 @@
+# Level 96: Pages Interactive
+level: 96
+name: "Pages Interactive"
+phase: "Transcendence"
+milestone: false
+
+description: |
+  JavaScript EXECUTES.
+  The site becomes interactive.
+  Click handlers activate.
+  Animations play.
+  The page responds.
+
+rules:
+  file_type: [".js", ".html", ".css"]
+  max_files: 3
+  interactivity:
+    enabled: true
+    js_execution: true
+    event_listeners: true
+    sandboxed: true
+
+validation:
+  - type: "file_types"
+    allowed: [".js", ".html", ".css"]
+  - type: "js_safe"
+    strict: true
+
+karma:
+  base: 50
+  bonus_conditions:
+    - condition: "interaction_created"
+      bonus: 50
+
+unlock_message: "Interactivity enabled. The page responds to touch."

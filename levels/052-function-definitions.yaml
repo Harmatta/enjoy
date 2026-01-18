@@ -1,0 +1,33 @@
+# Level 52: Function Definitions
+level: 52
+name: "Function Definitions"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Define pure functions (no execution yet).
+  fn double(x) = x * 2
+  fn greet(name) = "Hello " + name
+  Building blocks for later.
+
+rules:
+  file_type: ".fn"
+  max_files: 1
+  function_constraints:
+    max_functions: 5
+    pure_only: true
+    no_side_effects: true
+
+validation:
+  - type: "file_extension"
+    value: ".fn"
+  - type: "function_syntax"
+    pattern: "^fn \\w+\\([^)]*\\) = .+$"
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "reusable_function"
+      bonus: 12
+
+unlock_message: "Functions defined. Execution awaits."

@@ -1,0 +1,34 @@
+# Level 15: Pattern Detection
+level: 15
+name: "Pattern Detection"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Your commit message matters now.
+  Certain patterns in commit affect placement.
+  "top:" places at top, "center:" at center.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  commit_patterns:
+    "top:": position_top
+    "bottom:": position_bottom
+    "center:": position_center
+    "left:": position_left
+    "right:": position_right
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "commit_prefix"
+    valid: ["top:", "bottom:", "center:", "left:", "right:"]
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "center_placement"
+      bonus: 5
+
+unlock_message: "Metadata becomes power."

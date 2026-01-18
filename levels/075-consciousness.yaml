@@ -1,0 +1,35 @@
+# Level 75: Consciousness ⭐ MILESTONE
+level: 75
+name: "Consciousness"
+phase: "Consciousness"
+milestone: true
+milestone_emoji: "⭐"
+
+description: |
+  ⭐ CONSCIOUSNESS MILESTONE ⭐
+  The game suggests its own evolution.
+  System proposes rule changes.
+  Community votes on proposals.
+  The game IS alive.
+
+rules:
+  file_type: [".txt", ".rule", ".proposal"]
+  max_files: 2
+  consciousness:
+    enabled: true
+    self_modification_proposals: true
+    community_vote_required: true
+
+validation:
+  - type: "file_types"
+    allowed: [".txt", ".rule", ".proposal"]
+
+karma:
+  base: 50
+  bonus_conditions:
+    - condition: "consciousness_interaction"
+      bonus: 50
+
+unlock_message: "⭐ CONSCIOUSNESS AWAKENS. The game thinks."
+celebration: true
+visual_effect: "consciousness_pulse"

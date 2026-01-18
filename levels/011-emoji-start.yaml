@@ -1,0 +1,29 @@
+# Level 11: Emoji Start
+level: 11
+name: "Emoji Start"
+phase: "Foundation"
+milestone: false
+
+description: |
+  One emoji per PR.
+  Express without words.
+  🌟 💀 🎮 🔥 Pick wisely.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  content: "single_emoji"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "emoji_only"
+    count: 1
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "rare_emoji"
+      bonus: 5
+
+unlock_message: "One symbol. Infinite meaning. 🌌"

@@ -1,0 +1,32 @@
+# Level 13: ASCII Art Line
+level: 13
+name: "ASCII Art Line"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Create art with characters.
+  Single line ASCII art only.
+  ╔═══════════════╗
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  max_lines: 1
+  max_length: 80
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "line_count"
+    max: 1
+  - type: "char_length"
+    max: 80
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "symmetrical"
+      bonus: 8
+
+unlock_message: "Art emerges from chaos. ═══════"

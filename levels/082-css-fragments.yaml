@@ -1,0 +1,34 @@
+# Level 82: CSS Fragments
+level: 82
+name: "CSS Fragments"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Contribute CSS (not applied yet).
+  .element { color: blue; }
+  Safe properties only.
+  Style definitions accumulate.
+
+rules:
+  file_type: ".css"
+  max_files: 1
+  css_constraints:
+    allowed_properties: ["color", "background", "font-size", "padding", "margin", "border", "border-radius", "opacity", "transform"]
+    no_imports: true
+    no_urls: true
+    max_rules: 10
+
+validation:
+  - type: "file_extension"
+    value: ".css"
+  - type: "css_safe"
+    whitelist_properties: true
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "creative_styles"
+      bonus: 15
+
+unlock_message: "CSS accumulates. Beauty awaits."

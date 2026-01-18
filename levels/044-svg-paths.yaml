@@ -1,0 +1,35 @@
+# Level 44: SVG Paths
+level: 44
+name: "SVG Paths"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Vector graphics through paths.
+  Submit SVG path definitions only.
+  <path d="M10 10 L20 20 Z"/>
+  Simple shapes, infinite possibilities.
+
+rules:
+  file_type: ".svg"
+  max_files: 1
+  svg_constraints:
+    elements_allowed: ["path", "circle", "rect", "line"]
+    max_paths: 5
+    viewbox_max: 100
+
+validation:
+  - type: "file_extension"
+    value: ".svg"
+  - type: "svg_safe"
+    no_scripts: true
+  - type: "svg_complexity"
+    max_paths: 5
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "clean_path"
+      bonus: 12
+
+unlock_message: "Vectors cut through the void. SVG unlocked."

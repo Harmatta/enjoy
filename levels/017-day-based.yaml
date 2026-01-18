@@ -1,0 +1,41 @@
+# Level 17: Day-Based
+level: 17
+name: "Day-Based"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Each day has different rules.
+  Monday: only 4-letter words
+  Tuesday: only verbs
+  Wednesday: only nouns
+  Thursday: anything goes
+  Friday: celebration words
+  Saturday: nature words
+  Sunday: rest words
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  day_themes:
+    monday: "four_letters"
+    tuesday: "verbs"
+    wednesday: "nouns"
+    thursday: "free"
+    friday: "celebration"
+    saturday: "nature"
+    sunday: "calm"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "day_theme"
+    dynamic: true
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "matches_day_theme"
+      bonus: 8
+
+unlock_message: "The calendar shapes reality."

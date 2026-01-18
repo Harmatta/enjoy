@@ -1,0 +1,36 @@
+# Level 37: Zone Battles
+level: 37
+name: "Zone Battles"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Challenge zone owners.
+  File: battle.txt with target zone.
+  Higher karma contribution wins.
+  Victor takes the zone.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  battles:
+    enabled: true
+    filename: "battle.txt"
+    winner: "higher_karma"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "filename"
+    value: "battle.txt"
+  - type: "zone_occupied"
+
+karma:
+  base: 10
+  bonus_conditions:
+    - condition: "victory"
+      bonus: 30
+    - condition: "defeat"
+      bonus: 5
+
+unlock_message: "Battle for territory. May karma prevail."

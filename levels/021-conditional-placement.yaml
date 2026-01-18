@@ -1,0 +1,30 @@
+# Level 21: Conditional Placement
+level: 21
+name: "Conditional Placement"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Logic enters the game.
+  Use IF-THEN format:
+  "IF sunny THEN top"
+  "IF night THEN bottom"
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  conditional_format: "IF {condition} THEN {action}"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "conditional_syntax"
+    pattern: "^IF .+ THEN .+$"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "complex_condition"
+      bonus: 10
+
+unlock_message: "Logic awakens. IF you read this THEN you're ready."

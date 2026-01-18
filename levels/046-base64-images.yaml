@@ -1,0 +1,33 @@
+# Level 46: Base64 Images
+level: 46
+name: "Base64 Images"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Tiny images as base64.
+  Maximum 1KB decoded.
+  File: image.b64
+  Images manifest on the board.
+
+rules:
+  file_type: ".b64"
+  max_files: 1
+  base64_constraints:
+    max_decoded_size: 1024
+    allowed_formats: ["png", "gif", "jpeg"]
+
+validation:
+  - type: "file_extension"
+    value: ".b64"
+  - type: "base64_valid"
+  - type: "decoded_size"
+    max: 1024
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "animated_gif"
+      bonus: 15
+
+unlock_message: "Pixels encoded. Images unlocked."

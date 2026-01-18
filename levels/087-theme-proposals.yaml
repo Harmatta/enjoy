@@ -1,0 +1,35 @@
+# Level 87: Theme Proposals
+level: 87
+name: "Theme Proposals"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Propose visual themes.
+  @theme dark {
+    --bg: #000;
+    --text: #fff;
+    --accent: #6366f1;
+  }
+  Community selects themes.
+
+rules:
+  file_type: ".theme"
+  max_files: 1
+  theme_constraints:
+    max_variables: 20
+    format: "css_variables"
+
+validation:
+  - type: "file_extension"
+    value: ".theme"
+  - type: "theme_syntax"
+    keyword: "@theme"
+
+karma:
+  base: 22
+  bonus_conditions:
+    - condition: "adopted_theme"
+      bonus: 75
+
+unlock_message: "Themes proposed. Aesthetics emerge."

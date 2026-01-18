@@ -1,0 +1,32 @@
+# Level 22: Math Operations
+level: 22
+name: "Math Operations"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Filename is a math equation.
+  Result affects board position.
+  "2+3.txt" → position 5
+  "10-7.txt" → position 3
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  filename_format: "equation.txt"
+  operators: ["+", "-", "*"]
+  result_range: [1, 100]
+
+validation:
+  - type: "filename_math"
+    operators: ["+", "-", "*"]
+  - type: "result_valid"
+    range: [1, 100]
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "prime_result"
+      bonus: 15
+
+unlock_message: "Numbers shape reality. Calculate wisely."

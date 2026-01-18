@@ -1,0 +1,32 @@
+# Level 42: YAML Snippets
+level: 42
+name: "YAML Snippets"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  YAML joins the formats.
+  Human-readable configuration.
+  text: hello
+  color: blue
+  animated: true
+
+rules:
+  file_type: ".yaml"
+  max_files: 1
+  yaml_schema:
+    required: ["text"]
+    optional: ["color", "animated", "duration"]
+
+validation:
+  - type: "file_extension"
+    value: ".yaml"
+  - type: "yaml_valid"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "animated_element"
+      bonus: 10
+
+unlock_message: "The answer to life. YAML unlocked."

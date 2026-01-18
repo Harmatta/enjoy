@@ -1,0 +1,32 @@
+# Level 84: Asset Collection
+level: 84
+name: "Asset Collection"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Gather fonts, images, icons.
+  Base64 encoded assets.
+  Community curates resources.
+  The palette expands.
+
+rules:
+  file_type: [".b64", ".json"]
+  max_files: 1
+  asset_constraints:
+    max_size: 5120  # 5KB
+    allowed_types: ["image/png", "image/svg+xml", "font/woff2"]
+
+validation:
+  - type: "file_types"
+    allowed: [".b64", ".json"]
+  - type: "asset_size"
+    max: 5120
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "useful_asset"
+      bonus: 15
+
+unlock_message: "Assets gather. Resources grow."

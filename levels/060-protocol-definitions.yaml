@@ -1,0 +1,34 @@
+# Level 60: Protocol Definitions
+level: 60
+name: "Protocol Definitions"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Define communication protocols.
+  protocol greeting {
+    send: "hello"
+    expect: "world"
+  }
+  Elements can communicate now.
+
+rules:
+  file_type: ".protocol"
+  max_files: 1
+  protocol_constraints:
+    max_protocols: 3
+    max_messages: 5
+
+validation:
+  - type: "file_extension"
+    value: ".protocol"
+  - type: "protocol_syntax"
+    keywords: ["protocol", "send", "expect", "respond"]
+
+karma:
+  base: 22
+  bonus_conditions:
+    - condition: "bidirectional"
+      bonus: 15
+
+unlock_message: "Protocols establish. Communication begins."

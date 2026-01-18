@@ -1,0 +1,32 @@
+# Level 54: Recursive Patterns
+level: 54
+name: "Recursive Patterns"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Contributions can reference themselves.
+  Pattern: repeat this 3 times
+  Creates self-similar structures.
+  Fractals emerge.
+
+rules:
+  file_type: ".rec"
+  max_files: 1
+  recursion:
+    max_depth: 4
+    keywords: ["repeat", "recurse", "self"]
+
+validation:
+  - type: "file_extension"
+    value: ".rec"
+  - type: "recursion_safe"
+    max_depth: 4
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "fractal_pattern"
+      bonus: 20
+
+unlock_message: "Self-reference unlocked. Infinity beckons."

@@ -1,0 +1,36 @@
+# Level 33: Element Removal
+level: 33
+name: "Element Removal"
+phase: "Complexity"
+milestone: false
+
+description: |
+  High-karma players can propose removals.
+  Requires 50+ karma to propose.
+  Community votes on removal.
+  File: remove.txt with target ID.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  removal:
+    enabled: true
+    min_karma: 50
+    vote_threshold: 3
+    filename: "remove.txt"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "filename"
+    value: "remove.txt"
+  - type: "karma_check"
+    min: 50
+
+karma:
+  base: 5
+  bonus_conditions:
+    - condition: "successful_removal"
+      bonus: 15
+
+unlock_message: "Sometimes destruction creates space for creation."

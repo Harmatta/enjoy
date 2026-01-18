@@ -1,0 +1,31 @@
+# Level 20: Chain Reaction
+level: 20
+name: "Chain Reaction"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Your PR triggers effects on previous elements.
+  Reference a player: @username
+  Your contribution modifies their last element.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  chain_effects:
+    enabled: true
+    reference_format: "@username"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "player_reference"
+    optional: true
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "valid_reference"
+      bonus: 10
+
+unlock_message: "Connections form. The web grows."

@@ -1,0 +1,31 @@
+# Level 64: Rule Evolution
+level: 64
+name: "Rule Evolution"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Rules mutate based on usage.
+  Popular rules get stronger.
+  Unused rules weaken and fade.
+  Natural selection in code.
+
+rules:
+  file_type: ".rule"
+  max_files: 1
+  evolution:
+    enabled: true
+    strengthen_on_use: true
+    weaken_threshold: 7  # days unused
+
+validation:
+  - type: "file_extension"
+    value: ".rule"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "evolved_rule"
+      bonus: 20
+
+unlock_message: "Rules evolve. The fittest survive."

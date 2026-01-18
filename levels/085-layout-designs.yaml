@@ -1,0 +1,34 @@
+# Level 85: Layout Designs
+level: 85
+name: "Layout Designs"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Propose page layouts.
+  ASCII representation of layout.
+  [header]
+  [sidebar][content]
+  [footer]
+  Community votes on designs.
+
+rules:
+  file_type: ".layout"
+  max_files: 1
+  layout_constraints:
+    max_sections: 10
+    format: "ascii_grid"
+
+validation:
+  - type: "file_extension"
+    value: ".layout"
+  - type: "layout_syntax"
+    brackets: true
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "adopted_layout"
+      bonus: 50
+
+unlock_message: "Layouts proposed. Structure takes shape."

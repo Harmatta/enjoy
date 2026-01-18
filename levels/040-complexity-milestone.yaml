@@ -1,0 +1,35 @@
+# Level 40: Complexity Milestone ⭐
+level: 40
+name: "Complexity Milestone"
+phase: "Complexity"
+milestone: true
+milestone_emoji: "⭐"
+
+description: |
+  ⭐ MILESTONE LEVEL ⭐
+  Multiple rule types now active simultaneously.
+  Zones + Voting + Combos + Time effects.
+  The game deepens.
+
+rules:
+  file_type: [".txt", ".json"]
+  max_files: 2
+  combined_rules:
+    - zones
+    - voting
+    - combos
+    - time_effects
+
+validation:
+  - type: "file_types"
+    allowed: [".txt", ".json"]
+  - type: "multi_rule_compliance"
+
+karma:
+  base: 30
+  bonus_conditions:
+    - condition: "all_rules_satisfied"
+      bonus: 30
+
+unlock_message: "⭐ COMPLEXITY MASTERED. The game evolves."
+celebration: true

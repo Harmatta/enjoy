@@ -1,0 +1,35 @@
+# Level 45: CSV Data
+level: 45
+name: "CSV Data"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Data as contribution.
+  Simple CSV format.
+  x,y,value
+  10,20,hello
+  30,40,world
+
+rules:
+  file_type: ".csv"
+  max_files: 1
+  csv_constraints:
+    max_rows: 10
+    max_columns: 5
+    headers_required: true
+
+validation:
+  - type: "file_extension"
+    value: ".csv"
+  - type: "csv_valid"
+  - type: "csv_size"
+    max_rows: 10
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "complete_data"
+      bonus: 10
+
+unlock_message: "Data flows. CSV unlocked."

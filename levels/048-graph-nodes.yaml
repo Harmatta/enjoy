@@ -1,0 +1,33 @@
+# Level 48: Graph Nodes
+level: 48
+name: "Graph Nodes"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Contribute nodes and connections.
+  Format: node1 -> node2
+  Build the collective graph.
+  Connections form network on board.
+
+rules:
+  file_type: ".graph"
+  max_files: 1
+  graph_constraints:
+    max_nodes: 5
+    max_edges: 10
+    format: "node -> node"
+
+validation:
+  - type: "file_extension"
+    value: ".graph"
+  - type: "graph_syntax"
+    pattern: "^\\w+ -> \\w+$"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "connected_graph"
+      bonus: 15
+
+unlock_message: "Nodes connect. The network grows."

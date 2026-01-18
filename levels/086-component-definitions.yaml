@@ -1,0 +1,35 @@
+# Level 86: Component Definitions
+level: 86
+name: "Component Definitions"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Define reusable components.
+  @component Button {
+    html: <button>{{text}}</button>
+    css: .btn { ... }
+  }
+  Modular building blocks.
+
+rules:
+  file_type: ".component"
+  max_files: 1
+  component_constraints:
+    max_components: 3
+    requires: ["html"]
+    optional: ["css", "js"]
+
+validation:
+  - type: "file_extension"
+    value: ".component"
+  - type: "component_syntax"
+    keyword: "@component"
+
+karma:
+  base: 25
+  bonus_conditions:
+    - condition: "reused_component"
+      bonus: 30
+
+unlock_message: "Components defined. Reuse enabled."

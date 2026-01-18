@@ -1,0 +1,35 @@
+# Level 38: Zone Merging
+level: 38
+name: "Zone Merging"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Adjacent zones can merge with consensus.
+  Both owners must agree.
+  File: merge.txt with zone names.
+  Creates super-zone with combined rules.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  merging:
+    enabled: true
+    filename: "merge.txt"
+    requires: "both_owners"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "filename"
+    value: "merge.txt"
+  - type: "adjacent_zones"
+  - type: "owner_consent"
+
+karma:
+  base: 25
+  bonus_conditions:
+    - condition: "successful_merge"
+      bonus: 25
+
+unlock_message: "Unity from division. Zones combine."

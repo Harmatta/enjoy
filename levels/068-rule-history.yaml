@@ -1,0 +1,31 @@
+# Level 68: Rule History
+level: 68
+name: "Rule History"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Analyze rule effectiveness.
+  ANALYZE rule_id
+  Shows: trigger count, karma generated, evolution path.
+  Data drives decisions.
+
+rules:
+  file_type: ".analyze"
+  max_files: 1
+  analysis:
+    metrics: ["triggers", "karma", "evolution", "conflicts"]
+
+validation:
+  - type: "file_extension"
+    value: ".analyze"
+  - type: "analyze_syntax"
+    pattern: "^ANALYZE \\w+$"
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "insight_generated"
+      bonus: 15
+
+unlock_message: "History illuminates. Learn from the past."

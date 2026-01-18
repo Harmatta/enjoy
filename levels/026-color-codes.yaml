@@ -1,0 +1,30 @@
+# Level 26: Color Codes
+level: 26
+name: "Color Codes"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Hex colors in filename affect rendering.
+  ff0000.txt → red text
+  00ff00.txt → green text
+  0000ff.txt → blue text
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  filename_format: "hexcolor.txt"
+  hex_length: 6
+
+validation:
+  - type: "filename_hex"
+    length: 6
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "black_or_white"
+      colors: ["000000", "ffffff"]
+      bonus: 10
+
+unlock_message: "16 million colors at your command."

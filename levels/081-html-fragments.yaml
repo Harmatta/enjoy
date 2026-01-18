@@ -1,0 +1,34 @@
+# Level 81: HTML Fragments
+level: 81
+name: "HTML Fragments"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Contribute HTML (not rendered yet).
+  <div class="element">content</div>
+  Safe subset only. No scripts.
+  Building blocks for Pages.
+
+rules:
+  file_type: ".html"
+  max_files: 1
+  html_constraints:
+    allowed_tags: ["div", "span", "p", "a", "img", "ul", "li", "h1", "h2", "h3"]
+    no_scripts: true
+    no_styles_inline: true
+    max_depth: 3
+
+validation:
+  - type: "file_extension"
+    value: ".html"
+  - type: "html_safe"
+    whitelist: ["div", "span", "p", "a", "img", "ul", "li", "h1", "h2", "h3"]
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "semantic_html"
+      bonus: 15
+
+unlock_message: "HTML enters. Structure awaits rendering."

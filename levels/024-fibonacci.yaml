@@ -1,0 +1,31 @@
+# Level 24: Fibonacci
+level: 24
+name: "Fibonacci"
+phase: "Complexity"
+milestone: false
+
+description: |
+  File size must be a Fibonacci number.
+  1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144...
+  Nature's sequence in bytes.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  size_constraint: "fibonacci"
+  max_size: 610
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "file_size_fibonacci"
+    max: 610
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "golden_ratio"
+      size: 89
+      bonus: 21
+
+unlock_message: "The golden spiral unfolds."

@@ -1,0 +1,35 @@
+# Level 93: Security Audit
+level: 93
+name: "Security Audit"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Community audits all contributions.
+  AUDIT contribution_id
+  Flag unsafe content.
+  Only safe content goes to Pages.
+
+rules:
+  file_type: ".audit"
+  max_files: 1
+  audit:
+    enabled: true
+    checks: ["xss", "injection", "external_links", "unsafe_css"]
+    requires_karma: 100
+
+validation:
+  - type: "file_extension"
+    value: ".audit"
+  - type: "audit_syntax"
+    pattern: "^AUDIT \\w+$"
+  - type: "karma_check"
+    min: 100
+
+karma:
+  base: 30
+  bonus_conditions:
+    - condition: "found_vulnerability"
+      bonus: 100
+
+unlock_message: "Audit complete. Security verified."

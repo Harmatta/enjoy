@@ -1,0 +1,33 @@
+# Level 94: Final Preparation
+level: 94
+name: "Final Preparation"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Vote on what makes it to Pages.
+  APPROVE contribution_id
+  REJECT contribution_id
+  Community curates the final site.
+
+rules:
+  file_type: ".vote"
+  max_files: 1
+  voting:
+    enabled: true
+    threshold: 0.66
+    min_votes: 5
+
+validation:
+  - type: "file_extension"
+    value: ".vote"
+  - type: "vote_syntax"
+    patterns: ["^APPROVE", "^REJECT"]
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "contribution_approved"
+      bonus: 50
+
+unlock_message: "Final votes cast. The selection complete."

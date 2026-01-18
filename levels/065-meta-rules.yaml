@@ -1,0 +1,35 @@
+# Level 65: Meta Rules
+level: 65
+name: "Meta Rules"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Rules about rules.
+  META: max 3 rules per player
+  META: rules expire after 30 days
+  META: rules need 5 karma to create
+  The game governs itself.
+
+rules:
+  file_type: ".meta"
+  max_files: 1
+  meta_constraints:
+    requires_karma: 100
+    max_meta_rules: 3
+
+validation:
+  - type: "file_extension"
+    value: ".meta"
+  - type: "meta_syntax"
+    pattern: "^META: .+$"
+  - type: "karma_check"
+    min: 100
+
+karma:
+  base: 30
+  bonus_conditions:
+    - condition: "balanced_meta"
+      bonus: 20
+
+unlock_message: "Meta-rules emerge. The game watches itself."

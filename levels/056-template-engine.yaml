@@ -1,0 +1,33 @@
+# Level 56: Template Engine
+level: 56
+name: "Template Engine"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Contributions use template syntax.
+  Hello {{name}}!
+  Today is {{day}}.
+  Variables filled at render time.
+
+rules:
+  file_type: ".tpl"
+  max_files: 1
+  template_constraints:
+    max_variables: 10
+    syntax: "{{variable}}"
+    allowed_vars: ["name", "day", "time", "level", "karma"]
+
+validation:
+  - type: "file_extension"
+    value: ".tpl"
+  - type: "template_syntax"
+    pattern: "\\{\\{\\w+\\}\\}"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "dynamic_content"
+      bonus: 12
+
+unlock_message: "Templates render. Dynamic content flows."

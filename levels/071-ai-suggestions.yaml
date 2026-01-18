@@ -1,0 +1,30 @@
+# Level 71: AI Suggestions
+level: 71
+name: "AI Suggestions"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  System suggests next contribution.
+  Based on board state, gaps, patterns.
+  SUGGEST contribution
+  The game guides willing souls.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  ai_suggestions:
+    enabled: true
+    context_aware: true
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "followed_suggestion"
+      bonus: 15
+
+unlock_message: "The game whispers. Listen carefully."

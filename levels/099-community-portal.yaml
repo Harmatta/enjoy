@@ -1,0 +1,34 @@
+# Level 99: Community Portal
+level: 99
+name: "Community Portal"
+phase: "Transcendence"
+milestone: false
+
+description: |
+  Full community features enabled.
+  Profiles. Leaderboards. Chat.
+  Achievements showcase.
+  The community has a home.
+
+rules:
+  file_type: "any"
+  max_files: 5
+  portal:
+    features:
+      - profiles
+      - leaderboards
+      - achievements
+      - history
+      - chat
+
+validation:
+  - type: "community_guidelines"
+    enforced: true
+
+karma:
+  base: 50
+  bonus_conditions:
+    - condition: "portal_contribution"
+      bonus: 50
+
+unlock_message: "Community portal opens. Welcome home."

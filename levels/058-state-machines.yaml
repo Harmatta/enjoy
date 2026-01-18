@@ -1,0 +1,33 @@
+# Level 58: State Machines
+level: 58
+name: "State Machines"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Contribute state machine definitions.
+  state idle -> running ON start
+  state running -> stopped ON stop
+  Elements can have states now.
+
+rules:
+  file_type: ".state"
+  max_files: 1
+  state_machine:
+    max_states: 5
+    max_transitions: 10
+    syntax: "state FROM -> TO ON EVENT"
+
+validation:
+  - type: "file_extension"
+    value: ".state"
+  - type: "state_syntax"
+    pattern: "^state \\w+ -> \\w+ ON \\w+$"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "complete_machine"
+      bonus: 15
+
+unlock_message: "States transition. Behavior emerges."

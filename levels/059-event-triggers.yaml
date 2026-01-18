@@ -1,0 +1,34 @@
+# Level 59: Event Triggers
+level: 59
+name: "Event Triggers"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Define triggers (not execute yet).
+  ON click -> flash
+  ON hover -> glow
+  ON time:noon -> transform
+  Events prepare for consciousness.
+
+rules:
+  file_type: ".trigger"
+  max_files: 1
+  trigger_constraints:
+    max_triggers: 10
+    syntax: "ON event -> action"
+    allowed_events: ["click", "hover", "time", "level", "karma"]
+
+validation:
+  - type: "file_extension"
+    value: ".trigger"
+  - type: "trigger_syntax"
+    pattern: "^ON \\w+(:\\w+)? -> \\w+$"
+
+karma:
+  base: 18
+  bonus_conditions:
+    - condition: "chained_triggers"
+      bonus: 12
+
+unlock_message: "Triggers defined. Reactions await activation."

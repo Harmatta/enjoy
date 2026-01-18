@@ -1,0 +1,36 @@
+# Level 90: Sound Definitions
+level: 90
+name: "Sound Definitions"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Define audio cues (no audio yet).
+  @sound click {
+    type: sine
+    frequency: 440
+    duration: 100
+  }
+  Web Audio API definitions.
+
+rules:
+  file_type: ".sound"
+  max_files: 1
+  sound_constraints:
+    max_sounds: 5
+    types: ["sine", "square", "triangle", "sawtooth"]
+    max_duration: 2000
+
+validation:
+  - type: "file_extension"
+    value: ".sound"
+  - type: "sound_syntax"
+    keyword: "@sound"
+
+karma:
+  base: 20
+  bonus_conditions:
+    - condition: "harmonic_sound"
+      bonus: 15
+
+unlock_message: "Sounds defined. Audio awaits."

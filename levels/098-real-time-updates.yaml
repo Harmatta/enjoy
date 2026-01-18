@@ -1,0 +1,31 @@
+# Level 98: Real-time Updates
+level: 98
+name: "Real-time Updates"
+phase: "Transcendence"
+milestone: false
+
+description: |
+  WebSocket-like updates via polling.
+  Page updates automatically.
+  New contributions appear live.
+  The board breathes in real-time.
+
+rules:
+  file_type: "any"
+  max_files: 3
+  real_time:
+    enabled: true
+    poll_interval: 5000
+    push_notifications: true
+
+validation:
+  - type: "rate_limit"
+    max_updates: 60  # per minute
+
+karma:
+  base: 40
+  bonus_conditions:
+    - condition: "live_update"
+      bonus: 30
+
+unlock_message: "Real-time enabled. The board breathes."

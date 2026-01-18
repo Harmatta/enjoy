@@ -1,0 +1,32 @@
+# Level 41: JSON Config
+level: 41
+name: "JSON Config"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Configuration as contribution.
+  Submit .json files with element configs.
+  { "text": "word", "color": "#fff", "size": 16 }
+
+rules:
+  file_type: ".json"
+  max_files: 1
+  json_schema:
+    required: ["text"]
+    optional: ["color", "size", "position"]
+
+validation:
+  - type: "file_extension"
+    value: ".json"
+  - type: "json_valid"
+  - type: "json_schema"
+    required: ["text"]
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "complete_config"
+      bonus: 10
+
+unlock_message: "Structure defines chaos. JSON unlocked."

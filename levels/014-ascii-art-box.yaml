@@ -1,0 +1,34 @@
+# Level 14: ASCII Art Box
+level: 14
+name: "ASCII Art Box"
+phase: "Foundation"
+milestone: false
+
+description: |
+  Multi-line ASCII art unlocked!
+  Maximum 5 lines.
+  ╔════╗
+  ║    ║
+  ╚════╝
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  max_lines: 5
+  max_width: 40
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "line_count"
+    max: 5
+  - type: "line_width"
+    max: 40
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "box_pattern"
+      bonus: 10
+
+unlock_message: "Dimension expands. Art grows."

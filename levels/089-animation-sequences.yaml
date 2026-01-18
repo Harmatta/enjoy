@@ -1,0 +1,36 @@
+# Level 89: Animation Sequences
+level: 89
+name: "Animation Sequences"
+phase: "Final Ascent"
+milestone: false
+
+description: |
+  Define animations.
+  @animation pulse {
+    0%: { opacity: 1 }
+    50%: { opacity: 0.5 }
+    100%: { opacity: 1 }
+  }
+  Motion defined.
+
+rules:
+  file_type: ".anim"
+  max_files: 1
+  animation_constraints:
+    max_keyframes: 10
+    max_duration: 5000
+    allowed_properties: ["opacity", "transform", "color", "background"]
+
+validation:
+  - type: "file_extension"
+    value: ".anim"
+  - type: "animation_syntax"
+    keyword: "@animation"
+
+karma:
+  base: 22
+  bonus_conditions:
+    - condition: "smooth_animation"
+      bonus: 20
+
+unlock_message: "Animations defined. Motion awaits."

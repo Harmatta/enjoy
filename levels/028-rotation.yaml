@@ -1,0 +1,30 @@
+# Level 28: Rotation
+level: 28
+name: "Rotation"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Commit timestamp affects element rotation.
+  Minutes determine degrees: 0-59 → 0-354°
+  Time literally rotates your contribution.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  rotation:
+    source: "commit_minute"
+    formula: "minute * 6"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+
+karma:
+  base: 12
+  bonus_conditions:
+    - condition: "upside_down"
+      rotation: 180
+      bonus: 18
+
+unlock_message: "Time spins reality."

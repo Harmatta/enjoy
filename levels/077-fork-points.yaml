@@ -1,0 +1,35 @@
+# Level 77: Fork Points
+level: 77
+name: "Fork Points"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  The game can fork into parallel branches.
+  Different rules, different realities.
+  FORK branch_name WITH rule_set
+  Multiple timelines coexist.
+
+rules:
+  file_type: ".fork"
+  max_files: 1
+  forking:
+    enabled: true
+    max_forks: 3
+    min_karma: 300
+
+validation:
+  - type: "file_extension"
+    value: ".fork"
+  - type: "fork_syntax"
+    pattern: "^FORK \\w+ WITH .+$"
+  - type: "karma_check"
+    min: 300
+
+karma:
+  base: 40
+  bonus_conditions:
+    - condition: "active_fork"
+      bonus: 50
+
+unlock_message: "Reality splits. Choose your timeline."

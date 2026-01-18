@@ -1,0 +1,35 @@
+# Level 36: Zone Ownership
+level: 36
+name: "Zone Ownership"
+phase: "Complexity"
+milestone: false
+
+description: |
+  Claim a zone temporarily.
+  File: claim.txt with zone name.
+  Ownership lasts 24 hours.
+  Owner gets 1.5x karma from zone.
+
+rules:
+  file_type: ".txt"
+  max_files: 1
+  ownership:
+    enabled: true
+    duration: 86400
+    multiplier: 1.5
+    filename: "claim.txt"
+
+validation:
+  - type: "file_extension"
+    value: ".txt"
+  - type: "filename"
+    value: "claim.txt"
+  - type: "zone_available"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "defend_zone"
+      bonus: 20
+
+unlock_message: "This land is your land... for now."

@@ -1,0 +1,32 @@
+# Level 53: Lambda Expressions
+level: 53
+name: "Lambda Expressions"
+phase: "Metamorphosis"
+milestone: false
+
+description: |
+  Single-line lambda functions.
+  (x) => x + 1
+  (a, b) => a * b
+  Compact, powerful.
+
+rules:
+  file_type: ".lambda"
+  max_files: 1
+  lambda_constraints:
+    max_params: 3
+    single_expression: true
+
+validation:
+  - type: "file_extension"
+    value: ".lambda"
+  - type: "lambda_syntax"
+    pattern: "^\\([^)]*\\) => .+$"
+
+karma:
+  base: 15
+  bonus_conditions:
+    - condition: "higher_order"
+      bonus: 15
+
+unlock_message: "Lambda calculus enters. Brevity is power."

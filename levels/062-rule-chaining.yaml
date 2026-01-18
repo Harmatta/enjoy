@@ -1,0 +1,35 @@
+# Level 62: Rule Chaining
+level: 62
+name: "Rule Chaining"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Rules can trigger other rules.
+  RULE flash TRIGGERS glow
+  RULE glow TRIGGERS pulse
+  Chain reactions begin.
+
+rules:
+  file_type: ".rule"
+  max_files: 1
+  chaining:
+    enabled: true
+    max_chain: 3
+    syntax: "RULE action TRIGGERS other_rule"
+
+validation:
+  - type: "file_extension"
+    value: ".rule"
+  - type: "chain_syntax"
+    pattern: "^RULE \\w+ TRIGGERS \\w+$"
+  - type: "no_infinite_loop"
+
+karma:
+  base: 22
+  bonus_conditions:
+    - condition: "long_chain"
+      min_length: 3
+      bonus: 18
+
+unlock_message: "Chains form. Cascades begin."

@@ -1,0 +1,33 @@
+# Level 79: Time Travel
+level: 79
+name: "Time Travel"
+phase: "Consciousness"
+milestone: false
+
+description: |
+  Reference past states.
+  RECALL state:level_50
+  COMPARE now WITH past
+  History becomes accessible.
+
+rules:
+  file_type: ".time"
+  max_files: 1
+  time_travel:
+    enabled: true
+    max_lookback: 50  # levels
+    read_only: true
+
+validation:
+  - type: "file_extension"
+    value: ".time"
+  - type: "time_syntax"
+    patterns: ["^RECALL", "^COMPARE"]
+
+karma:
+  base: 25
+  bonus_conditions:
+    - condition: "historical_insight"
+      bonus: 30
+
+unlock_message: "Time bends. The past speaks."
