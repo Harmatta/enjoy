@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-01-18T10:00:00Z",
+  "health_score": 100,
+  "health_status": "💚 Excellent",
+  "health_color": "brightgreen",
+  "metrics": {
+    "total_karma": 20,
+    "total_players": 1,
+    "total_prs": 2,
+    "current_level": 1,
+    "achievements_unlocked": 1,
+    "bounties_active": 4,
+    "bounties_completed": 0,
+    "time_period": "morning",
+    "level_count": 100
+  },
+  "issues": []
+}

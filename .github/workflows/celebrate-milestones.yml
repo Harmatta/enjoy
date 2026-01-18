@@ -1,0 +1,278 @@
+# 🎉 CELEBRATION TRIGGERS
+# Generates SVG artifacts and celebration posts on milestones
+# Triggers: Level Up, New Achievements, Streak Milestones, Player Milestones
+
+name: 🎉 Celebrate Milestones
+
+on:
+  push:
+    branches: [main]
+    paths: [state.json]
+  workflow_dispatch:
+
+jobs:
+  check-milestones:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    outputs:
+      level_up: ${{ steps.check.outputs.level_up }}
+      new_achievement: ${{ steps.check.outputs.new_achievement }}
+      streak_milestone: ${{ steps.check.outputs.streak_milestone }}
+      player_milestone: ${{ steps.check.outputs.player_milestone }}
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          
+      - name: 🔍 Check for Milestones
+        id: check
+        run: |
+          # Get current and previous state
+          CURRENT=$(cat state.json)
+          git show HEAD~1:state.json > previous-state.json 2>/dev/null || echo '{}' > previous-state.json
+          PREVIOUS=$(cat previous-state.json)
+          
+          # Current values
+          CURRENT_LEVEL=$(echo "$CURRENT" | jq '.levels.current')
+          CURRENT_PLAYERS=$(echo "$CURRENT" | jq '.meta.total_players')
+          CURRENT_ACHIEVEMENTS=$(echo "$CURRENT" | jq '.achievements.unlocked_global | length')
+          
+          # Previous values
+          PREV_LEVEL=$(echo "$PREVIOUS" | jq '.levels.current // 0')
+          PREV_PLAYERS=$(echo "$PREVIOUS" | jq '.meta.total_players // 0')
+          PREV_ACHIEVEMENTS=$(echo "$PREVIOUS" | jq '.achievements.unlocked_global | length // 0')
+          
+          # Check max streak
+          MAX_STREAK=$(echo "$CURRENT" | jq '[.players[].streak] | max // 0')
+          
+          # Detect milestones
+          LEVEL_UP="false"
+          NEW_ACHIEVEMENT="false"
+          STREAK_MILESTONE="false"
+          PLAYER_MILESTONE="false"
+          
+          if [ "$CURRENT_LEVEL" -gt "$PREV_LEVEL" ]; then
+            LEVEL_UP="true"
+            echo "🎮 LEVEL UP detected: $PREV_LEVEL → $CURRENT_LEVEL"
+          fi
+          
+          if [ "$CURRENT_ACHIEVEMENTS" -gt "$PREV_ACHIEVEMENTS" ]; then
+            NEW_ACHIEVEMENT="true"
+            echo "🏆 NEW ACHIEVEMENT detected!"
+          fi
+          
+          # Streak milestones: 3, 7, 14, 30, 60, 100
+          for milestone in 3 7 14 30 60 100; do
+            if [ "$MAX_STREAK" -ge "$milestone" ]; then
+              STREAK_MILESTONE="$milestone"
+            fi
+          done
+          
+          # Player milestones: 10, 25, 50, 100, 250, 500, 1000
+          for milestone in 10 25 50 100 250 500 1000; do
+            if [ "$CURRENT_PLAYERS" -ge "$milestone" ] && [ "$PREV_PLAYERS" -lt "$milestone" ]; then
+              PLAYER_MILESTONE="$milestone"
+              echo "👥 PLAYER MILESTONE: $milestone players!"
+            fi
+          done
+          
+          echo "level_up=$LEVEL_UP" >> $GITHUB_OUTPUT
+          echo "new_achievement=$NEW_ACHIEVEMENT" >> $GITHUB_OUTPUT
+          echo "streak_milestone=$STREAK_MILESTONE" >> $GITHUB_OUTPUT
+          echo "player_milestone=$PLAYER_MILESTONE" >> $GITHUB_OUTPUT
+          
+  celebrate-level-up:
+    needs: check-milestones
+    if: needs.check-milestones.outputs.level_up == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🎮 Generate Level Up Artifact
+        run: |
+          STATE=$(cat state.json)
+          LEVEL=$(echo "$STATE" | jq '.levels.current')
+          LEVEL_NAME=$(cat levels/$(printf "%03d" $LEVEL)-*.yaml | head -5 | grep "name:" | cut -d'"' -f2)
+          
+          mkdir -p celebrations
+          
+          # Generate celebration SVG
+          cat > celebrations/level-${LEVEL}-celebration.svg << 'SVGEOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+            <defs>
+              <linearGradient id="celebGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#667eea"/>
+                <stop offset="100%" style="stop-color:#764ba2"/>
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <rect width="400" height="200" fill="#0d1117" rx="20"/>
+            <rect x="5" y="5" width="390" height="190" rx="18" fill="none" stroke="url(#celebGrad)" stroke-width="3"/>
+            <text x="200" y="60" text-anchor="middle" font-family="Arial Black" font-size="40" fill="url(#celebGrad)" filter="url(#glow)">🎮 LEVEL LEVEL_NUM!</text>
+            <text x="200" y="100" text-anchor="middle" font-family="Arial" font-size="20" fill="#ffd93d">LEVEL_NAME_HERE</text>
+            <text x="200" y="140" text-anchor="middle" font-family="Arial" font-size="14" fill="#8b949e">The collective grows stronger!</text>
+            <text x="200" y="175" text-anchor="middle" font-family="Arial" font-size="12" fill="#58a6ff">🚀 github.com/fabriziosalmi/enjoy</text>
+          </svg>
+          SVGEOF
+          
+          # Replace placeholders
+          sed -i "s/LEVEL_NUM/$LEVEL/g" celebrations/level-${LEVEL}-celebration.svg
+          sed -i "s/LEVEL_NAME_HERE/$LEVEL_NAME/g" celebrations/level-${LEVEL}-celebration.svg
+          
+          # Log celebration
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) | LEVEL_UP | Level $LEVEL: $LEVEL_NAME" >> celebrations/celebration-log.txt
+          
+      - name: 💾 Commit Celebration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add celebrations/
+          git commit -m "🎮 LEVEL UP! We reached Level $(cat state.json | jq '.levels.current')! 🎉" || true
+          git push || true
+          
+  celebrate-achievement:
+    needs: check-milestones
+    if: needs.check-milestones.outputs.new_achievement == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🏆 Generate Achievement Artifact  
+        run: |
+          STATE=$(cat state.json)
+          LATEST_ACHIEVEMENT=$(echo "$STATE" | jq -r '.achievements.unlocked_global[-1]')
+          TOTAL_ACHIEVEMENTS=$(echo "$STATE" | jq '.achievements.unlocked_global | length')
+          
+          mkdir -p celebrations
+          
+          cat > celebrations/achievement-${LATEST_ACHIEVEMENT}.svg << 'SVGEOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 150" width="350" height="150">
+            <defs>
+              <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ffd700"/>
+                <stop offset="100%" style="stop-color:#ff9500"/>
+              </linearGradient>
+            </defs>
+            <rect width="350" height="150" fill="#0d1117" rx="15"/>
+            <rect x="3" y="3" width="344" height="144" rx="13" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+            <text x="175" y="50" text-anchor="middle" font-family="Arial Black" font-size="28" fill="url(#goldGrad)">🏆 ACHIEVEMENT!</text>
+            <text x="175" y="85" text-anchor="middle" font-family="Arial" font-size="18" fill="#fff">ACHIEVEMENT_NAME</text>
+            <text x="175" y="115" text-anchor="middle" font-family="Arial" font-size="12" fill="#8b949e">Total: TOTAL_NUM achievements unlocked</text>
+            <text x="175" y="140" text-anchor="middle" font-family="Arial" font-size="10" fill="#58a6ff">enjoy.fabriziosalmi.github.io</text>
+          </svg>
+          SVGEOF
+          
+          sed -i "s/ACHIEVEMENT_NAME/$LATEST_ACHIEVEMENT/g" celebrations/achievement-${LATEST_ACHIEVEMENT}.svg
+          sed -i "s/TOTAL_NUM/$TOTAL_ACHIEVEMENTS/g" celebrations/achievement-${LATEST_ACHIEVEMENT}.svg
+          
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) | ACHIEVEMENT | $LATEST_ACHIEVEMENT" >> celebrations/celebration-log.txt
+          
+      - name: 💾 Commit Achievement
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add celebrations/
+          git commit -m "🏆 Achievement Unlocked: $(cat state.json | jq -r '.achievements.unlocked_global[-1]')! 🎉" || true
+          git push || true
+
+  celebrate-players:
+    needs: check-milestones
+    if: needs.check-milestones.outputs.player_milestone != 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 👥 Generate Player Milestone
+        run: |
+          MILESTONE="${{ needs.check-milestones.outputs.player_milestone }}"
+          
+          mkdir -p celebrations
+          
+          cat > celebrations/players-${MILESTONE}-milestone.svg << 'SVGEOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 180" width="400" height="180">
+            <defs>
+              <linearGradient id="communityGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00d9ff"/>
+                <stop offset="100%" style="stop-color:#00ff88"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="180" fill="#0d1117" rx="20"/>
+            <rect x="4" y="4" width="392" height="172" rx="18" fill="none" stroke="url(#communityGrad)" stroke-width="3"/>
+            <text x="200" y="55" text-anchor="middle" font-family="Arial Black" font-size="35" fill="url(#communityGrad)">👥 MILESTONE_NUM SOULS!</text>
+            <text x="200" y="95" text-anchor="middle" font-family="Arial" font-size="18" fill="#fff">The collective expands!</text>
+            <text x="200" y="125" text-anchor="middle" font-family="Arial" font-size="14" fill="#ffd93d">🎉 Community Milestone Reached!</text>
+            <text x="200" y="160" text-anchor="middle" font-family="Arial" font-size="12" fill="#58a6ff">Join us → github.com/fabriziosalmi/enjoy</text>
+          </svg>
+          SVGEOF
+          
+          sed -i "s/MILESTONE_NUM/$MILESTONE/g" celebrations/players-${MILESTONE}-milestone.svg
+          
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) | PLAYER_MILESTONE | $MILESTONE players!" >> celebrations/celebration-log.txt
+          
+      - name: 💾 Commit Player Milestone
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add celebrations/
+          MILESTONE="${{ needs.check-milestones.outputs.player_milestone }}"
+          git commit -m "👥 MILESTONE! We hit ${MILESTONE} players! 🎉" || true
+          git push || true
+
+  generate-hearts:
+    needs: check-milestones
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 💜 Generate Heart Counter
+        run: |
+          STATE=$(cat state.json)
+          KARMA=$(echo "$STATE" | jq '.score.total')
+          
+          mkdir -p celebrations/hearts
+          
+          # Generate heart for each 10 karma (cap at 100 hearts for sanity)
+          HEARTS=$(( KARMA / 10 ))
+          [ "$HEARTS" -gt 100 ] && HEARTS=100
+          
+          # Create hearts gallery SVG
+          cat > celebrations/hearts/karma-hearts.svg << SVGEOF
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100" width="500" height="100">
+            <rect width="500" height="100" fill="#0d1117" rx="10"/>
+            <text x="250" y="30" text-anchor="middle" font-family="Arial Black" font-size="14" fill="#ff6b6b">💜 KARMA HEARTS: $KARMA 💜</text>
+            <text x="250" y="70" text-anchor="middle" font-family="Arial" font-size="40">$(printf '💜%.0s' $(seq 1 $HEARTS))</text>
+          </svg>
+          SVGEOF
+          
+          echo "Generated $HEARTS hearts for $KARMA karma"
+          
+      - name: 💾 Commit Hearts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add celebrations/hearts/
+          git commit -m "💜 Update karma hearts" || true
+          git push || true

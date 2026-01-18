@@ -7,6 +7,15 @@
   <img alt="enjoy - the repository that breathes" src="assets/header-current.svg" width="100%">
 </picture>
 
+<!-- 🏥 LIVE STATUS BADGES - Auto-updated by workflows -->
+<p align="center">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/fabriziosalmi/enjoy/main/badges/health.json&style=flat-square" alt="Health">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/fabriziosalmi/enjoy/main/badges/karma.json&style=flat-square" alt="Karma">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/fabriziosalmi/enjoy/main/badges/players.json&style=flat-square" alt="Players">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/fabriziosalmi/enjoy/main/badges/level.json&style=flat-square" alt="Level">
+  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/fabriziosalmi/enjoy/main/badges/tests.json&style=flat-square" alt="Tests">
+</p>
+
 <p align="center">
   <img src="https://img.shields.io/badge/🤖_Built_with-Claude_&_Gemini-blueviolet?style=for-the-badge" alt="AI Crafted">
   <img src="https://img.shields.io/badge/🎮_100_Levels-To_Beat-orange?style=for-the-badge" alt="100 Levels">

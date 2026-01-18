@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <defs>
+    <linearGradient id="welcomeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="50%" style="stop-color:#764ba2"/>
+      <stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+    <filter id="welcomeGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="400" height="120" rx="15" fill="#0d1117"/>
+  <rect x="2" y="2" width="396" height="116" rx="14" fill="none" stroke="url(#welcomeGrad)" stroke-width="2"/>
+  
+  <!-- Avatar placeholder circle -->
+  <circle cx="60" cy="60" r="40" fill="url(#welcomeGrad)" filter="url(#welcomeGlow)"/>
+  <circle cx="60" cy="60" r="36" fill="#0d1117"/>
+  <text x="60" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="30">👤</text>
+  
+  <!-- Welcome text -->
+  <text x="120" y="45" font-family="Arial Black, sans-serif" font-size="22" fill="url(#welcomeGrad)" font-weight="bold" filter="url(#welcomeGlow)">WELCOME, SOUL!</text>
+  <text x="120" y="70" font-family="Arial, sans-serif" font-size="14" fill="#8b949e">You are player #</text>
+  <text x="220" y="70" font-family="Arial Black, sans-serif" font-size="14" fill="#ffd93d">1</text>
+  <text x="120" y="95" font-family="Arial, sans-serif" font-size="12" fill="#58a6ff">🌟 FOUNDER status achieved!</text>
+  
+  <!-- Animated stars -->
+  <g>
+    <polygon points="360,30 363,38 372,38 365,44 368,52 360,47 352,52 355,44 348,38 357,38" fill="#ffd93d">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 360 40" to="360 360 40" dur="10s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+  
+  <!-- Hearts floating -->
+  <text x="330" y="90" font-size="16">
+    <animate attributeName="y" values="90;80;90" dur="2s" repeatCount="indefinite"/>
+    💜
+  </text>
+  <text x="350" y="85" font-size="12">
+    <animate attributeName="y" values="85;75;85" dur="1.8s" repeatCount="indefinite" begin="0.3s"/>
+    💖
+  </text>
+  <text x="370" y="95" font-size="14">
+    <animate attributeName="y" values="95;85;95" dur="2.2s" repeatCount="indefinite" begin="0.6s"/>
+    💜
+  </text>
+</svg>

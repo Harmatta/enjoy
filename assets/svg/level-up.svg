@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="levelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <filter id="levelGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="url(#levelGrad)" filter="url(#levelGlow)"/>
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#fff" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Animated ring -->
+  <circle cx="100" cy="100" r="75" fill="none" stroke="#ffd93d" stroke-width="4" stroke-dasharray="15 10" opacity="0.8">
+    <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="20s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Level up arrow -->
+  <g transform="translate(100, 70)">
+    <polygon points="0,-30 20,0 10,0 10,30 -10,30 -10,0 -20,0" fill="#ffd93d" opacity="0.9">
+      <animate attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="0.5s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+  
+  <!-- Text -->
+  <text x="100" y="140" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="24" fill="#fff" font-weight="bold">LEVEL UP!</text>
+  <text x="100" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffd93d">🎮 New Powers Unlocked</text>
+  
+  <!-- Sparkles -->
+  <circle cx="40" cy="50" r="3" fill="#fff">
+    <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="160" cy="60" r="2" fill="#ffd93d">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" begin="0.3s"/>
+  </circle>
+  <circle cx="150" cy="150" r="2.5" fill="#fff">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="0.8s" repeatCount="indefinite" begin="0.6s"/>
+  </circle>
+  <circle cx="50" cy="140" r="2" fill="#ffd93d">
+    <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

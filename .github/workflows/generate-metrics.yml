@@ -1,0 +1,227 @@
+# 📊 COMMUNITY METRICS GENERATOR
+# Calculates hype metrics and community stats for maximum engagement
+# Generates metrics.json with real-time stats
+
+name: 📊 Generate Metrics
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Every 30 minutes for fresh data
+  push:
+    branches: [main]
+    paths: [state.json]
+  workflow_dispatch:
+
+jobs:
+  generate-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for growth calculations
+          
+      - name: 📈 Calculate Community Metrics
+        run: |
+          STATE=$(cat state.json)
+          NOW=$(date +%s)
+          
+          # Basic stats
+          TOTAL_KARMA=$(echo "$STATE" | jq '.score.total')
+          TOTAL_PLAYERS=$(echo "$STATE" | jq '.meta.total_players')
+          TOTAL_PRS=$(echo "$STATE" | jq '.meta.total_prs')
+          CURRENT_LEVEL=$(echo "$STATE" | jq '.levels.current')
+          ACHIEVEMENTS=$(echo "$STATE" | jq '.achievements.unlocked_global | length')
+          
+          # Calculate game age in days
+          GAME_START=$(echo "$STATE" | jq -r '.meta.game_started')
+          START_EPOCH=$(date -d "$GAME_START" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$GAME_START" +%s 2>/dev/null || echo $NOW)
+          GAME_AGE_DAYS=$(( (NOW - START_EPOCH) / 86400 ))
+          [ "$GAME_AGE_DAYS" -lt 1 ] && GAME_AGE_DAYS=1
+          
+          # Growth metrics
+          KARMA_PER_DAY=$(echo "scale=2; $TOTAL_KARMA / $GAME_AGE_DAYS" | bc)
+          PRS_PER_DAY=$(echo "scale=2; $TOTAL_PRS / $GAME_AGE_DAYS" | bc)
+          PLAYERS_PER_DAY=$(echo "scale=2; $TOTAL_PLAYERS / $GAME_AGE_DAYS" | bc)
+          
+          # Karma per PR (quality indicator)
+          [ "$TOTAL_PRS" -gt 0 ] && KARMA_PER_PR=$(echo "scale=2; $TOTAL_KARMA / $TOTAL_PRS" | bc) || KARMA_PER_PR=0
+          
+          # Level progress
+          NEXT_LEVEL=$(echo "$STATE" | jq '.levels.next_unlock.level_id')
+          SCORE_PROGRESS=$(echo "$STATE" | jq '.levels.next_unlock.progress.score')
+          SCORE_REQUIRED=$(echo "$STATE" | jq '.levels.next_unlock.requires_score')
+          PRS_PROGRESS=$(echo "$STATE" | jq '.levels.next_unlock.progress.prs')
+          PRS_REQUIRED=$(echo "$STATE" | jq '.levels.next_unlock.requires_prs')
+          
+          [ "$SCORE_REQUIRED" -gt 0 ] && SCORE_PCT=$(echo "scale=0; $SCORE_PROGRESS * 100 / $SCORE_REQUIRED" | bc) || SCORE_PCT=0
+          [ "$PRS_REQUIRED" -gt 0 ] && PRS_PCT=$(echo "scale=0; $PRS_PROGRESS * 100 / $PRS_REQUIRED" | bc) || PRS_PCT=0
+          
+          LEVEL_PROGRESS=$(( (SCORE_PCT + PRS_PCT) / 2 ))
+          
+          # Time system stats
+          MOST_ACTIVE=$(echo "$STATE" | jq -r '.time_system.most_active_period // "none"')
+          CURRENT_PERIOD=$(echo "$STATE" | jq -r '.time_system.current_period')
+          
+          # Bounty stats
+          BOUNTIES_ACTIVE=$(echo "$STATE" | jq '.bounties.active | length')
+          BOUNTIES_COMPLETED=$(echo "$STATE" | jq '.bounties.completed | length')
+          BOUNTY_KARMA_AVAILABLE=$(echo "$STATE" | jq '[.bounties.active[].karma] | add // 0')
+          
+          # Streak stats
+          MAX_STREAK=$(echo "$STATE" | jq '[.players[].streak] | max // 0')
+          AVG_KARMA=$(echo "$STATE" | jq 'if (.players | length) > 0 then ([.players[].karma] | add) / (.players | length) else 0 end | floor')
+          
+          # Top performer
+          TOP_PLAYER=$(echo "$STATE" | jq -r '[.players | to_entries[] | {name: .key, karma: .value.karma}] | sort_by(-.karma) | .[0].name // "none"')
+          TOP_KARMA=$(echo "$STATE" | jq '[.players[].karma] | max // 0')
+          
+          # Achievement velocity
+          [ "$GAME_AGE_DAYS" -gt 0 ] && ACHIEVE_RATE=$(echo "scale=2; $ACHIEVEMENTS / $GAME_AGE_DAYS" | bc) || ACHIEVE_RATE=0
+          
+          # Calculate fun metrics
+          HEARTS_EARNED=$TOTAL_KARMA  # Each karma = 1 heart
+          [ "$TOTAL_PLAYERS" -gt 0 ] && LOVE_INDEX=$(echo "scale=0; $TOTAL_KARMA / $TOTAL_PLAYERS" | bc) || LOVE_INDEX=0
+          
+          # Milestone check
+          NEXT_MILESTONE=""
+          MILESTONE_PROGRESS=0
+          if [ "$TOTAL_PLAYERS" -lt 10 ]; then
+            NEXT_MILESTONE="10 players"
+            MILESTONE_PROGRESS=$(echo "scale=0; $TOTAL_PLAYERS * 100 / 10" | bc)
+          elif [ "$TOTAL_PLAYERS" -lt 50 ]; then
+            NEXT_MILESTONE="50 players (FOUNDER badge ends!)"
+            MILESTONE_PROGRESS=$(echo "scale=0; $TOTAL_PLAYERS * 100 / 50" | bc)
+          elif [ "$TOTAL_PLAYERS" -lt 100 ]; then
+            NEXT_MILESTONE="100 players"
+            MILESTONE_PROGRESS=$(echo "scale=0; $TOTAL_PLAYERS * 100 / 100" | bc)
+          fi
+          
+          # Emoji indicators
+          [ "$KARMA_PER_DAY" \> "10" ] && GROWTH_EMOJI="🚀" || GROWTH_EMOJI="📈"
+          [ "$TOTAL_PLAYERS" -gt 10 ] && COMMUNITY_EMOJI="🔥" || COMMUNITY_EMOJI="🌱"
+          [ "$LEVEL_PROGRESS" -gt 80 ] && LEVEL_EMOJI="⚡" || LEVEL_EMOJI="📊"
+          
+          # Generate metrics.json
+          cat > metrics.json << EOF
+          {
+            "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "game_age_days": $GAME_AGE_DAYS,
+            
+            "totals": {
+              "karma": $TOTAL_KARMA,
+              "players": $TOTAL_PLAYERS,
+              "prs": $TOTAL_PRS,
+              "level": $CURRENT_LEVEL,
+              "achievements": $ACHIEVEMENTS,
+              "hearts_earned": $HEARTS_EARNED
+            },
+            
+            "growth": {
+              "karma_per_day": $KARMA_PER_DAY,
+              "prs_per_day": $PRS_PER_DAY,
+              "players_per_day": $PLAYERS_PER_DAY,
+              "karma_per_pr": $KARMA_PER_PR,
+              "achievement_rate": $ACHIEVE_RATE,
+              "growth_emoji": "$GROWTH_EMOJI"
+            },
+            
+            "progress": {
+              "current_level": $CURRENT_LEVEL,
+              "next_level": $NEXT_LEVEL,
+              "level_progress_pct": $LEVEL_PROGRESS,
+              "score_progress": "$SCORE_PROGRESS / $SCORE_REQUIRED",
+              "prs_progress": "$PRS_PROGRESS / $PRS_REQUIRED",
+              "level_emoji": "$LEVEL_EMOJI"
+            },
+            
+            "community": {
+              "love_index": $LOVE_INDEX,
+              "avg_karma_per_player": $AVG_KARMA,
+              "max_streak": $MAX_STREAK,
+              "top_player": "$TOP_PLAYER",
+              "top_karma": $TOP_KARMA,
+              "community_emoji": "$COMMUNITY_EMOJI"
+            },
+            
+            "bounties": {
+              "active": $BOUNTIES_ACTIVE,
+              "completed": $BOUNTIES_COMPLETED,
+              "karma_available": $BOUNTY_KARMA_AVAILABLE
+            },
+            
+            "time": {
+              "current_period": "$CURRENT_PERIOD",
+              "most_active_period": "$MOST_ACTIVE"
+            },
+            
+            "milestone": {
+              "next": "$NEXT_MILESTONE",
+              "progress": $MILESTONE_PROGRESS
+            },
+            
+            "hype_stats": {
+              "total_love_points": $HEARTS_EARNED,
+              "founder_spots_remaining": $(( 50 - TOTAL_PLAYERS < 0 ? 0 : 50 - TOTAL_PLAYERS )),
+              "karma_until_amplification": $(( 100 - TOTAL_KARMA < 0 ? 0 : 100 - TOTAL_KARMA )),
+              "days_alive": $GAME_AGE_DAYS
+            }
+          }
+          EOF
+          
+          echo "📊 Metrics generated!"
+          cat metrics.json | jq .
+          
+      - name: 🎯 Generate Hype Message
+        run: |
+          METRICS=$(cat metrics.json)
+          
+          KARMA=$(echo "$METRICS" | jq '.totals.karma')
+          PLAYERS=$(echo "$METRICS" | jq '.totals.players')
+          LEVEL=$(echo "$METRICS" | jq '.totals.level')
+          FOUNDER_SPOTS=$(echo "$METRICS" | jq '.hype_stats.founder_spots_remaining')
+          GROWTH=$(echo "$METRICS" | jq -r '.growth.karma_per_day')
+          
+          # Generate hype message based on stats
+          if [ "$FOUNDER_SPOTS" -gt 0 ]; then
+            HYPE_MSG="🔥 Only $FOUNDER_SPOTS FOUNDER spots left! $PLAYERS souls have joined. Karma flowing at ${GROWTH}/day 🚀"
+          else
+            HYPE_MSG="🏆 FOUNDERS complete! $PLAYERS players generating $KARMA karma at Level $LEVEL!"
+          fi
+          
+          echo "hype_message=$HYPE_MSG" >> metrics-hype.txt
+          
+      - name: 💾 Commit Metrics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add metrics.json metrics-hype.txt
+          git diff --staged --quiet || git commit -m "📊 Update community metrics"
+          git push || true
+          
+      - name: 📢 Summary
+        run: |
+          METRICS=$(cat metrics.json)
+          
+          echo "## 📊 Community Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 🎮 Totals" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Karma | $(echo "$METRICS" | jq '.totals.karma') |" >> $GITHUB_STEP_SUMMARY
+          echo "| Players | $(echo "$METRICS" | jq '.totals.players') |" >> $GITHUB_STEP_SUMMARY
+          echo "| PRs | $(echo "$METRICS" | jq '.totals.prs') |" >> $GITHUB_STEP_SUMMARY
+          echo "| Level | $(echo "$METRICS" | jq '.totals.level') |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📈 Growth" >> $GITHUB_STEP_SUMMARY
+          echo "- **Karma/Day:** $(echo "$METRICS" | jq -r '.growth.karma_per_day')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Karma/PR:** $(echo "$METRICS" | jq -r '.growth.karma_per_pr')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 🏆 Founder Status" >> $GITHUB_STEP_SUMMARY
+          echo "**$(echo "$METRICS" | jq '.hype_stats.founder_spots_remaining')** spots remaining!" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,186 @@
+# 🏥 HEALTH CHECK WORKFLOW
+# Validates game state integrity, runs test suite, generates health report
+# Runs every 6 hours and on every push to main
+
+name: 🏥 Health Check
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  push:
+    branches: [main]
+    paths:
+      - 'state.json'
+      - 'levels/*.yaml'
+      - 'engine/src/*.ts'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: 📦 Install dependencies
+        run: |
+          cd engine && npm install
+          npm install -g typescript ts-node
+          npm install yaml
+          
+      - name: 🧪 Run Test Suite
+        id: tests
+        continue-on-error: true
+        run: |
+          cd tests
+          npx ts-node test-suite.ts 2>&1 | tee test-output.txt
+          
+      - name: 📊 Generate Health Report
+        id: health
+        run: |
+          STATE=$(cat state.json)
+          
+          # Extract metrics
+          TOTAL_KARMA=$(echo "$STATE" | jq '.score.total')
+          TOTAL_PLAYERS=$(echo "$STATE" | jq '.meta.total_players')
+          TOTAL_PRS=$(echo "$STATE" | jq '.meta.total_prs')
+          CURRENT_LEVEL=$(echo "$STATE" | jq '.levels.current')
+          GLOBAL_KARMA=$(echo "$STATE" | jq '.karma.global')
+          ACHIEVEMENTS=$(echo "$STATE" | jq '.achievements.unlocked_global | length')
+          BOUNTIES_ACTIVE=$(echo "$STATE" | jq '.bounties.active | length')
+          BOUNTIES_COMPLETED=$(echo "$STATE" | jq '.bounties.completed | length')
+          TIME_PERIOD=$(echo "$STATE" | jq -r '.time_system.current_period')
+          
+          # Calculate health score (0-100)
+          HEALTH_SCORE=100
+          
+          # Check state.json exists and is valid JSON
+          if [ ! -f state.json ]; then
+            HEALTH_SCORE=$((HEALTH_SCORE - 50))
+            echo "❌ state.json missing" >> health-issues.txt
+          fi
+          
+          # Check levels exist
+          LEVEL_COUNT=$(ls -1 levels/*.yaml 2>/dev/null | wc -l)
+          if [ "$LEVEL_COUNT" -ne 100 ]; then
+            HEALTH_SCORE=$((HEALTH_SCORE - 20))
+            echo "⚠️ Expected 100 levels, found $LEVEL_COUNT" >> health-issues.txt
+          fi
+          
+          # Check engine compiled
+          if [ ! -d engine/dist ]; then
+            HEALTH_SCORE=$((HEALTH_SCORE - 10))
+            echo "⚠️ Engine not compiled" >> health-issues.txt
+          fi
+          
+          # Check for test failures
+          if [ -f test-report.json ]; then
+            FAILED_TESTS=$(cat test-report.json | jq '.failed')
+            if [ "$FAILED_TESTS" -gt 0 ]; then
+              HEALTH_SCORE=$((HEALTH_SCORE - FAILED_TESTS * 5))
+              echo "⚠️ $FAILED_TESTS tests failed" >> health-issues.txt
+            fi
+          fi
+          
+          # Determine health status
+          if [ "$HEALTH_SCORE" -ge 90 ]; then
+            HEALTH_STATUS="💚 Excellent"
+            HEALTH_COLOR="brightgreen"
+          elif [ "$HEALTH_SCORE" -ge 70 ]; then
+            HEALTH_STATUS="💛 Good"
+            HEALTH_COLOR="green"
+          elif [ "$HEALTH_SCORE" -ge 50 ]; then
+            HEALTH_STATUS="🟠 Fair"
+            HEALTH_COLOR="yellow"
+          else
+            HEALTH_STATUS="❤️ Critical"
+            HEALTH_COLOR="red"
+          fi
+          
+          # Generate health report JSON
+          cat > health-report.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "health_score": $HEALTH_SCORE,
+            "health_status": "$HEALTH_STATUS",
+            "health_color": "$HEALTH_COLOR",
+            "metrics": {
+              "total_karma": $TOTAL_KARMA,
+              "total_players": $TOTAL_PLAYERS,
+              "total_prs": $TOTAL_PRS,
+              "current_level": $CURRENT_LEVEL,
+              "achievements_unlocked": $ACHIEVEMENTS,
+              "bounties_active": $BOUNTIES_ACTIVE,
+              "bounties_completed": $BOUNTIES_COMPLETED,
+              "time_period": "$TIME_PERIOD",
+              "level_count": $LEVEL_COUNT
+            },
+            "issues": $(cat health-issues.txt 2>/dev/null | jq -R -s -c 'split("\n") | map(select(length > 0))' || echo '[]')
+          }
+          EOF
+          
+          echo "health_score=$HEALTH_SCORE" >> $GITHUB_OUTPUT
+          echo "health_status=$HEALTH_STATUS" >> $GITHUB_OUTPUT
+          echo "health_color=$HEALTH_COLOR" >> $GITHUB_OUTPUT
+          
+      - name: 🏷️ Update Health Badge Data
+        run: |
+          # Create badges directory
+          mkdir -p badges
+          
+          # Health badge
+          SCORE=$(cat health-report.json | jq -r '.health_score')
+          COLOR=$(cat health-report.json | jq -r '.health_color')
+          echo "{\"schemaVersion\":1,\"label\":\"health\",\"message\":\"${SCORE}%\",\"color\":\"${COLOR}\"}" > badges/health.json
+          
+          # Karma badge
+          KARMA=$(cat health-report.json | jq -r '.metrics.total_karma')
+          echo "{\"schemaVersion\":1,\"label\":\"karma\",\"message\":\"${KARMA}\",\"color\":\"purple\"}" > badges/karma.json
+          
+          # Players badge
+          PLAYERS=$(cat health-report.json | jq -r '.metrics.total_players')
+          echo "{\"schemaVersion\":1,\"label\":\"players\",\"message\":\"${PLAYERS}\",\"color\":\"blue\"}" > badges/players.json
+          
+          # Level badge
+          LEVEL=$(cat health-report.json | jq -r '.metrics.current_level')
+          echo "{\"schemaVersion\":1,\"label\":\"level\",\"message\":\"${LEVEL}/100\",\"color\":\"orange\"}" > badges/level.json
+          
+          # Tests badge
+          if [ -f test-report.json ]; then
+            PASSED=$(cat test-report.json | jq -r '.passed')
+            TOTAL=$(cat test-report.json | jq -r '.total_tests')
+            FAILED=$(cat test-report.json | jq -r '.failed')
+            if [ "$FAILED" -eq 0 ]; then
+              TEST_COLOR="brightgreen"
+            else
+              TEST_COLOR="red"
+            fi
+            echo "{\"schemaVersion\":1,\"label\":\"tests\",\"message\":\"${PASSED}/${TOTAL}\",\"color\":\"${TEST_COLOR}\"}" > badges/tests.json
+          fi
+          
+      - name: 💾 Commit Health Report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add health-report.json badges/ test-report.json 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "🏥 Update health report [score: ${{ steps.health.outputs.health_score }}%]"
+          git push || true
+          
+      - name: 📢 Report Status
+        run: |
+          echo "## 🏥 Health Check Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ steps.health.outputs.health_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Score:** ${{ steps.health.outputs.health_score }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat health-report.json | jq -r '.metrics | to_entries[] | "- **\(.key):** \(.value)"' >> $GITHUB_STEP_SUMMARY
