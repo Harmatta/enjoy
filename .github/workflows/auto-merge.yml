@@ -197,7 +197,7 @@ jobs:
       - name: Commit changes
         run: |
           git add state.json README.md
-          git commit -m "📊 Update state from PR #${{ github.event.pull_request.number }}" || echo "No changes"
+          git commit -m "📊 Update state from PR #${{ github.event.pull_request.number }} [skip ci]" || echo "No changes"
       
       - name: Push changes
         run: |

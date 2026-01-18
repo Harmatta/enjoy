@@ -225,5 +225,5 @@ Total:  [${progressBar(overallProgress)}] ${overallProgress}%
           git config user.name "enjoy-bot"
           git config user.email "bot@enjoy.game"
           git add README.md
-          git diff --staged --quiet || git commit -m "📊 Update live stats dashboard"
+          git diff --staged --quiet || git commit -m "📊 Update live stats dashboard [skip ci]"
           git push || echo "Nothing to push"

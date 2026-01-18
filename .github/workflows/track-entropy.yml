@@ -213,5 +213,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add entropy/ badges/entropy.json
-          git diff --staged --quiet || git commit -m "🧬 Entropy measured: $(cat entropy/report.json | jq '.order_score')% order"
+          git diff --staged --quiet || git commit -m "🧬 Entropy measured: $(cat entropy/report.json | jq '.order_score')% order [skip ci]"
           git push || true

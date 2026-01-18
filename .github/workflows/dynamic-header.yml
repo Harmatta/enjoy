@@ -108,7 +108,7 @@ jobs:
           PERIOD="${{ steps.time.outputs.period }}"
           EMOJI="${{ steps.time.outputs.emoji }}"
           
-          git commit -m "$EMOJI time shift: $PERIOD mode activated" \
+          git commit -m "$EMOJI time shift: $PERIOD mode activated [skip ci]" \
             -m "The repository breathes with the rhythm of time." \
             -m "Current time zone: CET (GMT+1)"
             

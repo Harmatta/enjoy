@@ -169,5 +169,5 @@ jobs:
       - name: Commit changes
         run: |
           git add state.json README.md archives/ backups/ 2>/dev/null || true
-          git commit -m "🔧 Daily maintenance - $(date +%Y-%m-%d)" || echo "No changes"
+          git commit -m "🔧 Daily maintenance - $(date +%Y-%m-%d) [skip ci]" || echo "No changes"
           git push || echo "Nothing to push"

@@ -138,7 +138,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add celebrations/
-          git commit -m "🎮 LEVEL UP! We reached Level $(cat state.json | jq '.levels.current')! 🎉" || true
+          git commit -m "🎮 LEVEL UP! We reached Level $(cat state.json | jq '.levels.current')! 🎉 [skip ci]" || true
           git push || true
           
   celebrate-achievement:
@@ -187,7 +187,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add celebrations/
-          git commit -m "🏆 Achievement Unlocked: $(cat state.json | jq -r '.achievements.unlocked_global[-1]')! 🎉" || true
+          git commit -m "🏆 Achievement Unlocked: $(cat state.json | jq -r '.achievements.unlocked_global[-1]')! 🎉 [skip ci]" || true
           git push || true
 
   celebrate-players:
@@ -234,7 +234,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add celebrations/
           MILESTONE="${{ needs.check-milestones.outputs.player_milestone }}"
-          git commit -m "👥 MILESTONE! We hit ${MILESTONE} players! 🎉" || true
+          git commit -m "👥 MILESTONE! We hit ${MILESTONE} players! 🎉 [skip ci]" || true
           git push || true
 
   generate-hearts:
@@ -274,5 +274,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add celebrations/hearts/
-          git commit -m "💜 Update karma hearts" || true
+          git commit -m "💜 Update karma hearts [skip ci]" || true
           git push || true
