@@ -89,6 +89,70 @@ jobs:
             }
           "
       
+      - name: Archive & Scale Check
+        run: |
+          node -e "
+            const fs = require('fs');
+            const state = JSON.parse(fs.readFileSync('state.json', 'utf8'));
+            
+            const LIMITS = {
+              maxStateKB: 500,           // Archive when state.json > 500KB
+              maxKarmaLogEntries: 1000,  // Keep last 1000 karma events
+              maxInactiveDays: 60,       // Archive players inactive > 60 days
+              archiveDir: 'archives'
+            };
+            
+            const stateSize = Buffer.byteLength(JSON.stringify(state)) / 1024;
+            console.log('📊 State size:', stateSize.toFixed(1), 'KB');
+            console.log('👥 Total players:', Object.keys(state.players || {}).length);
+            
+            let archived = { players: 0, karmaLogs: 0 };
+            const now = new Date();
+            
+            // 1. Prune old karma_log entries
+            if (state.engagement?.karma_log?.length > LIMITS.maxKarmaLogEntries) {
+              const overflow = state.engagement.karma_log.length - LIMITS.maxKarmaLogEntries;
+              const toArchive = state.engagement.karma_log.splice(0, overflow);
+              archived.karmaLogs = toArchive.length;
+              
+              // Save to archive
+              fs.mkdirSync(LIMITS.archiveDir, { recursive: true });
+              const archiveFile = LIMITS.archiveDir + '/karma_log_' + now.toISOString().split('T')[0] + '.json';
+              const existing = fs.existsSync(archiveFile) ? JSON.parse(fs.readFileSync(archiveFile)) : [];
+              fs.writeFileSync(archiveFile, JSON.stringify([...existing, ...toArchive], null, 2));
+            }
+            
+            // 2. Archive inactive players (keep their data, just move out of active state)
+            if (state.players) {
+              const inactivePlayers = {};
+              for (const [name, data] of Object.entries(state.players)) {
+                const lastActive = new Date(data.last_pr_at || data.joined || '2020-01-01');
+                const daysSinceActive = (now - lastActive) / (1000 * 60 * 60 * 24);
+                
+                if (daysSinceActive > LIMITS.maxInactiveDays && Object.keys(state.players).length > 100) {
+                  inactivePlayers[name] = { ...data, archived_at: now.toISOString() };
+                  delete state.players[name];
+                  archived.players++;
+                }
+              }
+              
+              // Save archived players
+              if (Object.keys(inactivePlayers).length > 0) {
+                fs.mkdirSync(LIMITS.archiveDir, { recursive: true });
+                const archiveFile = LIMITS.archiveDir + '/inactive_players.json';
+                const existing = fs.existsSync(archiveFile) ? JSON.parse(fs.readFileSync(archiveFile)) : {};
+                fs.writeFileSync(archiveFile, JSON.stringify({ ...existing, ...inactivePlayers }, null, 2));
+              }
+            }
+            
+            // 3. Save cleaned state
+            fs.writeFileSync('state.json', JSON.stringify(state, null, 2));
+            
+            console.log('🗃️  Archived karma logs:', archived.karmaLogs);
+            console.log('🗃️  Archived inactive players:', archived.players);
+            console.log('✅ Scale check complete');
+          "
+      
       - name: Configure git
         run: |
           git config user.name "enjoy-bot"
@@ -96,6 +160,6 @@ jobs:
       
       - name: Commit changes
         run: |
-          git add state.json README.md
+          git add state.json README.md archives/ 2>/dev/null || true
           git commit -m "🔧 Daily maintenance - $(date +%Y-%m-%d)" || echo "No changes"
           git push || echo "Nothing to push"
