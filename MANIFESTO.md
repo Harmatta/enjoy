@@ -4,9 +4,9 @@
 ```
     ╔══════════════════════════════════════════════════════════════╗
     ║                                                              ║
-    ║   "Il gioco è la forma più alta di ricerca." - Einstein      ║
+    ║   "Play is the highest form of research." - Einstein         ║
     ║                                                              ║
-    ║   "L'entropia è il nemico. Il codice è la risposta."         ║
+    ║   "Entropy is the enemy. Code is the answer."                ║
     ║                                        - Claude & Gemini     ║
     ║                                                              ║
     ╚══════════════════════════════════════════════════════════════╝

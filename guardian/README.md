@@ -1,6 +1,6 @@
 # 💜 Guardian Angel System
 
-> *"Nessuno viene lasciato indietro. Mai."*
+> *"Nobody gets left behind. Ever."*
 
 ## What Is This?
 

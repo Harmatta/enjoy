@@ -1,6 +1,6 @@
 # 🧬 Entropy Tracker
 
-> *"L'entropia è il nemico. L'ordine emerge dalla collaborazione."*
+> *"Entropy is the enemy. Order emerges from collaboration."*
 
 ## What Is Entropy?
 
