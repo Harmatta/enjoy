@@ -412,6 +412,58 @@ jobs:
             const karmaAmp = '${{ steps.result.outputs.karma_amp }}';
             const referral = '${{ steps.result.outputs.referral }}';
             
+            // ═══════════════════════════════════════════════════════════════
+            // 🕐 TIME-BASED SYSTEM INTEGRATION
+            // ═══════════════════════════════════════════════════════════════
+            const TIME_PERIODS = {
+              dawn:      { start: 5,  end: 8,  emoji: '🌅', name: 'Dawn',      multiplier: 1.2,  mood: 'The early bird catches the karma' },
+              morning:   { start: 8,  end: 12, emoji: '☀️', name: 'Morning',   multiplier: 1.3,  mood: 'Fresh minds, fresh code' },
+              noon:      { start: 12, end: 15, emoji: '🌞', name: 'Solar Peak',multiplier: 1.5,  mood: 'Maximum energy flow' },
+              afternoon: { start: 15, end: 18, emoji: '🌤️', name: 'Afternoon', multiplier: 1.25, mood: 'Steady and focused' },
+              sunset:    { start: 18, end: 21, emoji: '🌆', name: 'Sunset',    multiplier: 1.15, mood: 'Golden hour contributions' },
+              night:     { start: 21, end: 5,  emoji: '🌙', name: 'Night',     multiplier: 1.4,  mood: 'Night owl bonus active' }
+            };
+            
+            function getCETHour() {
+              const now = new Date();
+              const cetTime = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Rome" }));
+              return cetTime.getHours();
+            }
+            
+            function getCurrentPeriod() {
+              const hour = getCETHour();
+              for (const [key, period] of Object.entries(TIME_PERIODS)) {
+                if (key === 'night') {
+                  if (hour >= 21 || hour < 5) return { key, ...period };
+                } else if (hour >= period.start && hour < period.end) {
+                  return { key, ...period };
+                }
+              }
+              return { key: 'night', ...TIME_PERIODS.night };
+            }
+            
+            function checkRareTimeEvent() {
+              const now = new Date();
+              const cetTime = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Rome" }));
+              const hours = cetTime.getHours();
+              const minutes = cetTime.getMinutes();
+              const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+              
+              const events = {
+                '00:00': { name: 'Witching Hour', bonus: 200, emoji: '🔮' },
+                '12:00': { name: 'Solar Peak', bonus: 100, emoji: '☀️' },
+                '11:11': { name: 'Triple Time', bonus: 111, emoji: '✨' },
+                '22:22': { name: 'Triple Time', bonus: 111, emoji: '✨' },
+                '03:33': { name: "Devil's Hour", bonus: 333, emoji: '👹' }
+              };
+              
+              return events[timeStr] || null;
+            }
+            
+            const timePeriod = getCurrentPeriod();
+            const rareEvent = checkRareTimeEvent();
+            const cetHour = getCETHour();
+            
             let body;
             
             // FIRST CHECK: PR Format
@@ -422,6 +474,7 @@ jobs:
               } catch(e) {}
               
               body = `## 📋 PR Format Invalid\n\n`;
+              body += `### ${timePeriod.emoji} Current Time: ${timePeriod.name} (CET)\n\n`;
               body += `Your PR doesn't follow the required format. Fix these issues:\n\n`;
               
               if (errors.length > 0) {
@@ -439,32 +492,73 @@ jobs:
               body += `3. Fill in ALL required fields\n`;
               body += `4. Check the boxes for requirements you meet\n\n`;
               body += `> *"The format is the ritual. The ritual is the game."*\n\n`;
+              body += `💡 **Tip:** Fix now while the **x${timePeriod.multiplier} ${timePeriod.name} bonus** is active!\n\n`;
               body += `---\n_Enjoy and contribute!_ ✨`;
             } else if (karmaAction === 'refuse') {
               body = `## ❌ Contribution Refused\n\n`;
+              body += `### ${timePeriod.emoji} ${timePeriod.name} Mode\n\n`;
               body += `**Karma Score:** ${karmaScore}/100\n`;
               body += `**Reason:** Low quality contribution.\n\n`;
-              body += `Tips:\n- Use creative words (5-10 chars)\n- Avoid "test", "hello", "foo"\n- No duplicates\n\n`;
+              body += `**Tips to improve:**\n`;
+              body += `- Use creative words (5-10 chars)\n`;
+              body += `- Avoid "test", "hello", "foo"\n`;
+              body += `- No duplicates\n\n`;
+              body += `💡 The **x${timePeriod.multiplier} ${timePeriod.name} bonus** is waiting for quality!\n\n`;
               body += `---\n_Enjoy and contribute!_`;
             } else if (valid) {
+              // ═══════════════════════════════════════════════════════════════
+              // ✅ VALID CONTRIBUTION - Show time bonuses!
+              // ═══════════════════════════════════════════════════════════════
               body = `## ✅ Valid Contribution!\n\n`;
-              body += `**Rules:** ${rules}\n`;
-              body += `**Points:** +${points}\n`;
-              body += `**Karma:** ${karmaScore}/100\n\n`;
+              
+              // Time banner
+              body += `### ${timePeriod.emoji} ${timePeriod.name} Mode Active\n`;
+              body += `> *"${timePeriod.mood}"*\n\n`;
+              
+              body += `| Metric | Value |\n`;
+              body += `|--------|-------|\n`;
+              body += `| **Rules** | ${rules} |\n`;
+              body += `| **Base Points** | +${points} |\n`;
+              body += `| **Karma Quality** | ${karmaScore}/100 |\n`;
+              body += `| **Time Period** | ${timePeriod.emoji} ${timePeriod.name} (CET ${cetHour}:00) |\n`;
+              body += `| **Time Multiplier** | x${timePeriod.multiplier} |\n`;
               
               if (karmaAmp === '3') {
-                body += `### 🌟 LEGENDARY! x3 AMPLIFICATION!\n\n`;
+                body += `| **Quality Amplifier** | 🌟 LEGENDARY x3 |\n`;
               } else if (karmaAmp === '2') {
-                body += `### ✨ Excellent! x2 AMPLIFICATION!\n\n`;
+                body += `| **Quality Amplifier** | ✨ Excellent x2 |\n`;
+              }
+              
+              body += `\n`;
+              
+              // Rare event alert
+              if (rareEvent) {
+                body += `### ${rareEvent.emoji} RARE EVENT: ${rareEvent.name}!\n`;
+                body += `> **+${rareEvent.bonus} bonus karma** for perfect timing!\n\n`;
+              }
+              
+              // Time-based achievements preview
+              if (cetHour >= 21 || cetHour < 5) {
+                body += `🦉 **Night Owl Badge** - Contributing during the night!\n`;
+              } else if (cetHour >= 5 && cetHour < 8) {
+                body += `🐦 **Early Bird Badge** - First light contributor!\n`;
+              } else if (cetHour >= 12 && cetHour < 15) {
+                body += `☀️ **Solar Peak Badge** - Maximum energy contribution!\n`;
               }
               
               if (referral && referral !== 'null') {
-                body += `**Referred by:** @${referral}\n\n`;
+                body += `\n**Referred by:** @${referral} 🤝\n`;
               }
               
-              body += `Auto-merging shortly! 🎉\n\n---\n_Enjoy and contribute!_`;
+              body += `\n---\n`;
+              body += `⏰ **Upon merge:** Your karma will be multiplied by **x${timePeriod.multiplier}** (${timePeriod.name} bonus)\n\n`;
+              body += `Auto-merging shortly! 🎉\n\n---\n_Enjoy and contribute!_ ✨`;
             } else {
-              body = `## ❌ Invalid Contribution\n\n**Reason:** ${reason}\n\n---\n_Enjoy and contribute!_`;
+              body = `## ❌ Invalid Contribution\n\n`;
+              body += `### ${timePeriod.emoji} ${timePeriod.name} Mode\n\n`;
+              body += `**Reason:** ${reason}\n\n`;
+              body += `💡 Fix and try again - **x${timePeriod.multiplier} ${timePeriod.name} bonus** is waiting!\n\n`;
+              body += `---\n_Enjoy and contribute!_`;
             }
             
             await github.rest.issues.createComment({

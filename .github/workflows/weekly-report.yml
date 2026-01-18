@@ -73,7 +73,44 @@ jobs:
             report += `- **Active Players:** ${Object.keys(weeklyKarma).length}\n`;
             report += `- **Average per Player:** ${Object.keys(weeklyKarma).length ? Math.round(totalWeeklyKarma / Object.keys(weeklyKarma).length) : 0}\n`;
             
-            report += `\n---\n*Keep playing! Every action counts.*\n`;
+            // ═══════════════════════════════════════════════════════════
+            // 🕐 TIME-BASED STATISTICS
+            // ═══════════════════════════════════════════════════════════
+            if (state.time_system && state.time_system.stats) {
+              report += `\n## ⏰ Time-Based Activity\n\n`;
+              report += `| Period | PRs | Total Karma |\n`;
+              report += `|--------|-----|-------------|\n`;
+              
+              const timeStats = state.time_system.stats;
+              const periods = ['dawn', 'morning', 'noon', 'afternoon', 'sunset', 'night'];
+              const emojis = { dawn: '🌅', morning: '☀️', noon: '🌞', afternoon: '🌤️', sunset: '🌆', night: '🌙' };
+              
+              let mostActive = { period: '', karma: 0 };
+              
+              for (const period of periods) {
+                if (timeStats[period]) {
+                  const stats = timeStats[period];
+                  report += `| ${emojis[period]} ${period.charAt(0).toUpperCase() + period.slice(1)} | ${stats.total_prs || 0} | ${stats.total_karma || 0} |\n`;
+                  if ((stats.total_karma || 0) > mostActive.karma) {
+                    mostActive = { period, karma: stats.total_karma };
+                  }
+                }
+              }
+              
+              if (mostActive.period) {
+                report += `\n**🏆 Most Active Period:** ${emojis[mostActive.period]} ${mostActive.period.charAt(0).toUpperCase() + mostActive.period.slice(1)} (${mostActive.karma} karma)\n`;
+              }
+              
+              // Rare events
+              if (state.time_system.rare_events_triggered && state.time_system.rare_events_triggered.length > 0) {
+                report += `\n### 🎯 Rare Time Events Triggered\n\n`;
+                for (const event of state.time_system.rare_events_triggered.slice(-5)) {
+                  report += `- ${event}\n`;
+                }
+              }
+            }
+            
+            report += `\n---\n*Keep playing! Every action counts. [Check time bonuses](https://fabriziosalmi.github.io/enjoy/time.html)*\n`;
             
             console.log(report);
             

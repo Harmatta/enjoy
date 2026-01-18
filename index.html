@@ -78,6 +78,30 @@
             backdrop-filter: blur(10px);
         }
         
+        /* Time Indicator */
+        .time-indicator {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 200;
+            background: rgba(0,0,0,0.6);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            transition: all 0.5s ease;
+        }
+        
+        .time-indicator:hover { border-color: var(--accent); }
+        .time-emoji { font-size: 1rem; }
+        .time-period { color: var(--text); text-transform: uppercase; }
+        .time-multiplier { color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        
         .mode-btn {
             padding: 0.4rem 0.8rem;
             background: transparent;
@@ -453,6 +477,12 @@
 <body class="basic">
     <div class="cursor" id="cursor"></div>
     <div class="cursor-dot" id="cursorDot"></div>
+    
+    <a href="time.html" class="time-indicator" id="timeIndicator" title="Click for time bonuses">
+        <span class="time-emoji" id="timeEmoji">🌙</span>
+        <span class="time-period" id="timePeriod">Night</span>
+        <span class="time-multiplier" id="timeMult">x1.4</span>
+    </a>
     
     <div class="mode-toggle">
         <button class="mode-btn active" data-mode="basic">Basic</button>
@@ -993,6 +1023,64 @@
         }
         setInterval(updateDailyChallenge, 1000);
         updateDailyChallenge();
+        
+        // ═══════════════════════════════════════════════════════════════
+        // 🕐 TIME-BASED SYSTEM
+        // ═══════════════════════════════════════════════════════════════
+        const TIME_PERIODS = {
+            dawn:      { start: 5,  end: 8,  emoji: '🌅', name: 'Dawn',       multiplier: 1.2 },
+            morning:   { start: 8,  end: 12, emoji: '☀️', name: 'Morning',    multiplier: 1.3 },
+            noon:      { start: 12, end: 15, emoji: '🌞', name: 'Solar Peak', multiplier: 1.5 },
+            afternoon: { start: 15, end: 18, emoji: '🌤️', name: 'Afternoon',  multiplier: 1.25 },
+            sunset:    { start: 18, end: 21, emoji: '🌆', name: 'Sunset',     multiplier: 1.15 },
+            night:     { start: 21, end: 5,  emoji: '🌙', name: 'Night',      multiplier: 1.4 }
+        };
+        
+        function getCETTime() {
+            const now = new Date();
+            return new Date(now.toLocaleString("en-US", { timeZone: "Europe/Rome" }));
+        }
+        
+        function getCurrentTimePeriod() {
+            const hour = getCETTime().getHours();
+            for (const [key, period] of Object.entries(TIME_PERIODS)) {
+                if (key === 'night') {
+                    if (hour >= 21 || hour < 5) return { key, ...period };
+                } else if (hour >= period.start && hour < period.end) {
+                    return { key, ...period };
+                }
+            }
+            return { key: 'night', ...TIME_PERIODS.night };
+        }
+        
+        function updateTimeIndicator() {
+            const period = getCurrentTimePeriod();
+            const cetTime = getCETTime();
+            const hours = cetTime.getHours();
+            const minutes = cetTime.getMinutes();
+            
+            document.getElementById('timeEmoji').textContent = period.emoji;
+            document.getElementById('timePeriod').textContent = period.name;
+            document.getElementById('timeMult').textContent = `x${period.multiplier}`;
+            
+            // Check for rare time events
+            const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            const rareEvents = {
+                '00:00': { name: 'Witching Hour', bonus: '+200' },
+                '12:00': { name: 'Solar Peak', bonus: '+100' },
+                '11:11': { name: 'Triple Time', bonus: '+111' },
+                '22:22': { name: 'Triple Time', bonus: '+111' },
+                '03:33': { name: "Devil's Hour", bonus: '+333' }
+            };
+            
+            if (rareEvents[timeStr]) {
+                const event = rareEvents[timeStr];
+                logEvent('system', `🎯 RARE EVENT: ${event.name} (${event.bonus} karma bonus)`);
+            }
+        }
+        
+        setInterval(updateTimeIndicator, 60000); // Update every minute
+        updateTimeIndicator();
         
         // Data Loading
         async function loadState() {

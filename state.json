@@ -139,6 +139,20 @@
     "pages_enabled": false,
     "last_build": null
   },
+  "time_system": {
+    "current_period": "night",
+    "last_update": null,
+    "stats": {
+      "dawn": { "total_prs": 0, "total_karma": 0 },
+      "morning": { "total_prs": 0, "total_karma": 0 },
+      "noon": { "total_prs": 0, "total_karma": 0 },
+      "afternoon": { "total_prs": 0, "total_karma": 0 },
+      "sunset": { "total_prs": 0, "total_karma": 0 },
+      "night": { "total_prs": 0, "total_karma": 0 }
+    },
+    "rare_events_triggered": [],
+    "most_active_period": null
+  },
   "engagement": {
     "karma_log": [],
     "by_user": {},

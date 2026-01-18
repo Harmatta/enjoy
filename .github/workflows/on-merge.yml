@@ -45,6 +45,70 @@ jobs:
             import { readFileSync, writeFileSync } from 'fs';
             
             // ═══════════════════════════════════════════════════════════
+            // TIME-BASED SYSTEM (CET/GMT+1)
+            // ═══════════════════════════════════════════════════════════
+            const TIME_PERIODS = {
+              dawn: { hours: [5,6,7], emoji: '🌅', name: 'Dawn', mult: 1.2 },
+              morning: { hours: [8,9,10,11], emoji: '☀️', name: 'Morning', mult: 1.3 },
+              noon: { hours: [12,13,14], emoji: '🌞', name: 'Noon', mult: 1.5 },
+              afternoon: { hours: [15,16,17], emoji: '🌤️', name: 'Afternoon', mult: 1.25 },
+              sunset: { hours: [18,19,20], emoji: '🌅', name: 'Sunset', mult: 1.15 },
+              night: { hours: [21,22,23,0,1,2,3,4], emoji: '🌙', name: 'Night', mult: 1.4 }
+            };
+            
+            function getCETTime() {
+              const now = new Date();
+              const cetHour = (now.getUTCHours() + 1) % 24;
+              const cetMinute = now.getUTCMinutes();
+              return { hour: cetHour, minute: cetMinute };
+            }
+            
+            function getCurrentPeriod() {
+              const { hour } = getCETTime();
+              for (const [id, cfg] of Object.entries(TIME_PERIODS)) {
+                if (cfg.hours.includes(hour)) return { id, ...cfg };
+              }
+              return { id: 'night', ...TIME_PERIODS.night };
+            }
+            
+            function checkRareTimeEvents() {
+              const { hour, minute } = getCETTime();
+              const events = [];
+              
+              // Midnight exact
+              if (hour === 0 && minute === 0) {
+                events.push({ id: 'witching_hour', name: 'Witching Hour', bonus: 200, emoji: '🕛' });
+              }
+              // Noon exact
+              if (hour === 12 && minute === 0) {
+                events.push({ id: 'solar_peak', name: 'Solar Peak', bonus: 100, emoji: '☀️' });
+              }
+              // 11:11 or 22:22
+              if ((hour === 11 && minute === 11) || (hour === 22 && minute === 22)) {
+                events.push({ id: 'triple_time', name: 'Time Aligned', bonus: 111, emoji: '⏰' });
+              }
+              // 3:33 AM (spooky)
+              if (hour === 3 && minute === 33) {
+                events.push({ id: 'devils_hour', name: \"Devil's Hour\", bonus: 333, emoji: '👹' });
+              }
+              
+              return events;
+            }
+            
+            function getTimeGreeting(username, period) {
+              const greetings = {
+                dawn: ['🌅 Early bird ' + username + '! Dawn rewards the dedicated.', '🌅 ' + username + ' rises with the sun.'],
+                morning: ['☀️ Good morning ' + username + '! Fresh code for a fresh day.', '☀️ ' + username + ' brings morning energy.'],
+                noon: ['🌞 ' + username + ' strikes at peak power!', '🌞 Solar alignment achieved, ' + username + '.'],
+                afternoon: ['🌤️ Golden afternoon, ' + username + '.', '🌤️ ' + username + ' catches the golden hour.'],
+                sunset: ['🌅 ' + username + ' harvests the sunset light.', '🌅 Sunset contributor ' + username + '.'],
+                night: ['🌙 Night owl ' + username + '!', '🌙 ' + username + ' codes while others sleep.']
+              };
+              const g = greetings[period.id] || greetings.night;
+              return g[Math.floor(Math.random() * g.length)];
+            }
+            
+            // ═══════════════════════════════════════════════════════════
             // DAILY CHALLENGES
             // ═══════════════════════════════════════════════════════════
             const DAILY_CHALLENGES = [
@@ -107,11 +171,13 @@ jobs:
             }
             
             // ═══════════════════════════════════════════════════════════
-            // ACHIEVEMENTS
+            // ACHIEVEMENTS (includes time-based)
             // ═══════════════════════════════════════════════════════════
             function checkAchievements(player, state, context) {
               const earned = player.achievements || [];
               const newAch = [];
+              const period = context.period;
+              const timeStats = player.time_stats || {};
               
               const checks = [
                 { id: 'first_blood', karma: 10, check: () => player.prs >= 1 },
@@ -129,10 +195,21 @@ jobs:
                 { id: 'viral', karma: 500, check: () => (player.referrals || 0) >= 20 },
                 { id: 'wordsmith', karma: 30, check: () => context.baseKarma >= 80 },
                 { id: 'og', karma: 100, check: () => Object.keys(state.players).indexOf(player.name) < 10 },
-                { id: 'night_owl', karma: 15, check: () => { const h = new Date().getUTCHours(); return h >= 2 && h < 5; }},
-                { id: 'early_bird', karma: 15, check: () => { const h = new Date().getUTCHours(); return h >= 5 && h < 7; }},
                 { id: 'speed_demon', karma: 25, check: () => context.mergeTimeSeconds < 60 },
-                { id: 'centurion', karma: 200, check: () => Object.keys(state.players).length === 100 }
+                { id: 'centurion', karma: 200, check: () => Object.keys(state.players).length === 100 },
+                // TIME-BASED ACHIEVEMENTS
+                { id: 'night_owl', karma: 25, check: () => period.id === 'night' && (timeStats.night || 0) >= 5 },
+                { id: 'early_bird', karma: 25, check: () => period.id === 'dawn' && (timeStats.dawn || 0) >= 3 },
+                { id: 'noon_master', karma: 50, check: () => period.id === 'noon' && (timeStats.noon || 0) >= 10 },
+                { id: 'golden_contributor', karma: 30, check: () => period.id === 'afternoon' && (timeStats.afternoon || 0) >= 5 },
+                { id: 'sunset_harvester', karma: 30, check: () => period.id === 'sunset' && (timeStats.sunset || 0) >= 5 },
+                { id: 'morning_person', karma: 30, check: () => period.id === 'morning' && (timeStats.morning || 0) >= 10 },
+                { id: 'around_the_clock', karma: 200, check: () => {
+                  return ['dawn','morning','noon','afternoon','sunset','night'].every(p => (timeStats[p] || 0) >= 1);
+                }},
+                { id: 'midnight_coder', karma: 100, check: () => context.rareEvents.some(e => e.id === 'witching_hour') },
+                { id: 'solar_aligned', karma: 75, check: () => context.rareEvents.some(e => e.id === 'solar_peak') },
+                { id: 'time_master', karma: 150, check: () => context.rareEvents.some(e => e.id === 'triple_time') }
               ];
               
               for (const ach of checks) {
@@ -181,6 +258,23 @@ jobs:
             const player = state.players[author];
             player.name = author; // For achievement checks
             
+            // ═══════════════════════════════════════════════════════════
+            // TIME SYSTEM - Calculate period and bonuses
+            // ═══════════════════════════════════════════════════════════
+            const period = getCurrentPeriod();
+            const timeMultiplier = period.mult;
+            const rareEvents = checkRareTimeEvents();
+            const timeGreeting = getTimeGreeting(author, period);
+            
+            // Track time stats for achievements
+            player.time_stats = player.time_stats || {};
+            player.time_stats[period.id] = (player.time_stats[period.id] || 0) + 1;
+            
+            console.log(period.emoji + ' Time Period: ' + period.name + ' (x' + timeMultiplier + ' bonus)');
+            if (rareEvents.length > 0) {
+              rareEvents.forEach(e => console.log(e.emoji + ' RARE EVENT: ' + e.name + ' (+' + e.bonus + ' karma!)'));
+            }
+            
             // Update streak
             const newStreak = updateStreak(player);
             const streakMultiplier = getStreakMultiplier(newStreak);
@@ -199,8 +293,14 @@ jobs:
               }
             }
             
-            // Calculate karma with multipliers
-            let totalKarma = Math.round(baseKarma * streakMultiplier * challengeMultiplier);
+            // Calculate karma with ALL multipliers (base * streak * challenge * time)
+            let totalKarma = Math.round(baseKarma * streakMultiplier * challengeMultiplier * timeMultiplier);
+            
+            // Add rare time event bonuses
+            for (const event of rareEvents) {
+              totalKarma += event.bonus;
+              console.log(event.emoji + ' Rare Event Bonus: +' + event.bonus + ' karma');
+            }
             
             // Mystery Box check (every 5 contributions)
             const totalContribs = (player.prs || 0) + 1;
@@ -216,8 +316,8 @@ jobs:
             player.karma += totalKarma;
             state.meta.total_prs++;
             
-            // Check achievements
-            const context = { baseKarma, mergeTimeSeconds };
+            // Check achievements (with time context)
+            const context = { baseKarma, mergeTimeSeconds, period, rareEvents };
             const newAchievements = checkAchievements(player, state, context);
             for (const ach of newAchievements) {
               player.achievements = player.achievements || [];
@@ -232,6 +332,45 @@ jobs:
             state.last_pr = '#' + prNumber;
             state.score.total += totalKarma;
             state.score.today += totalKarma;
+            
+            // Update TIME SYSTEM stats
+            if (!state.time_system) {
+              state.time_system = {
+                current_period: period.id,
+                last_update: new Date().toISOString(),
+                stats: {},
+                rare_events_triggered: [],
+                most_active_period: null
+              };
+            }
+            state.time_system.current_period = period.id;
+            state.time_system.last_update = new Date().toISOString();
+            if (!state.time_system.stats[period.id]) {
+              state.time_system.stats[period.id] = { total_prs: 0, total_karma: 0 };
+            }
+            state.time_system.stats[period.id].total_prs++;
+            state.time_system.stats[period.id].total_karma += totalKarma;
+            
+            // Track rare events
+            for (const event of rareEvents) {
+              state.time_system.rare_events_triggered.push({
+                id: event.id,
+                name: event.name,
+                player: author,
+                timestamp: new Date().toISOString()
+              });
+            }
+            
+            // Determine most active period
+            let maxPrs = 0;
+            let mostActive = null;
+            for (const [pid, pstats] of Object.entries(state.time_system.stats)) {
+              if (pstats.total_prs > maxPrs) {
+                maxPrs = pstats.total_prs;
+                mostActive = pid;
+              }
+            }
+            state.time_system.most_active_period = mostActive;
             
             // Track streak in global score
             if (newStreak > (state.score.streak_days || 0)) {
@@ -271,17 +410,22 @@ jobs:
             console.log('═══════════════════════════════════════════════════════');
             console.log('📊 CONTRIBUTION SUMMARY');
             console.log('═══════════════════════════════════════════════════════');
+            console.log(timeGreeting);
+            console.log('───────────────────────────────────────────────────────');
             console.log('Player:', author);
             console.log('Word:', word || '(not detected)');
             console.log('Base karma:', baseKarma);
+            console.log(period.emoji + ' Time:', period.name, '(x' + timeMultiplier + ')');
             console.log('Streak:', newStreak, 'days (x' + streakMultiplier + ')');
             console.log('Challenge:', challengeCompleted ? '✅ Complete (x' + challengeMultiplier + ')' : '—');
+            console.log('Rare Events:', rareEvents.length > 0 ? rareEvents.map(e => e.emoji + e.name).join(', ') : '—');
             console.log('Mystery Box:', mysteryReward ? mysteryReward.emoji + ' +' + mysteryReward.value : '—');
             console.log('New Achievements:', newAchievements.length || '—');
             console.log('───────────────────────────────────────────────────────');
             console.log('TOTAL KARMA:', totalKarma);
             console.log('Player karma:', player.karma);
             console.log('Player streak:', player.streak);
+            console.log('Time stats:', JSON.stringify(player.time_stats));
             console.log('Game score:', state.score.total, '| Level:', state.levels.current);
             console.log('═══════════════════════════════════════════════════════');
             
