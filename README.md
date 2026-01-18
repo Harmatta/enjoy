@@ -20,6 +20,12 @@ Vote on rules: shape the game itself.
 
 **The game has no end. But it has a climax at level 100.**
 
+### 📜 Before You Begin
+
+> *"Only those who read the sacred texts may enter."*
+
+**[Read the Lore →](LORE.md)** to understand the mythology and unlock your first contribution.
+
 ---
 
 ## 🌟 Current Status

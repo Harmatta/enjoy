@@ -48,6 +48,47 @@ jobs:
             console.log('Modified files:', modified);
             console.log('Removed files:', removed);
       
+      - name: 🔐 Verify Proof of Humanity
+        id: humanity
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prBody = process.env.PR_BODY || '';
+            const prAuthor = process.env.PR_AUTHOR || '';
+            
+            // Skip for bots and dependabot
+            if (prAuthor.includes('bot') || prAuthor === 'dependabot[bot]') {
+              core.setOutput('is_human', 'true');
+              core.setOutput('skip_reason', 'bot_allowed');
+              console.log('🤖 Bot detected, skipping humanity check');
+              return;
+            }
+            
+            // The Sacred Word - hidden in LORE.md
+            // This changes periodically for extra security
+            const SACRED_ANSWERS = ['karmiel', 'KARMIEL', 'Karmiel'];
+            
+            // Look for the Guardian answer in PR body
+            const guardianMatch = prBody.match(/What is the name of the First Guardian\?\*?\*?\s*(.+?)(?:\n|---|$)/i);
+            
+            let answer = '';
+            if (guardianMatch && guardianMatch[1]) {
+              answer = guardianMatch[1].trim();
+            }
+            
+            const isHuman = SACRED_ANSWERS.some(s => answer.includes(s));
+            
+            core.setOutput('is_human', isHuman ? 'true' : 'false');
+            core.setOutput('answer_given', answer);
+            
+            if (isHuman) {
+              console.log('✅ Proof of Humanity verified! Welcome, seeker.');
+            } else {
+              console.log('❌ Proof of Humanity FAILED');
+              console.log('Answer given:', answer || '(empty)');
+              console.log('Hint: Read LORE.md to find the First Guardian...');
+            }
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -164,7 +205,8 @@ jobs:
               { name: 'invalid', color: 'd93f0b', description: 'Invalid contribution' },
               { name: 'karma-x2', color: 'fbca04', description: 'x2 amplification' },
               { name: 'karma-x3', color: 'b60205', description: 'x3 amplification' },
-              { name: 'refused', color: '000000', description: 'Refused by karma' }
+              { name: 'refused', color: '000000', description: 'Refused by karma' },
+              { name: 'proof-failed', color: '5319e7', description: 'Proof of Humanity failed' }
             ];
             
             for (const label of labelsToCreate) {
@@ -185,7 +227,7 @@ jobs:
               });
               
               for (const label of labels) {
-                if (['auto-merge', 'invalid', 'karma-x2', 'karma-x3', 'refused'].includes(label.name)) {
+                if (['auto-merge', 'invalid', 'karma-x2', 'karma-x3', 'refused', 'proof-failed'].includes(label.name)) {
                   await github.rest.issues.removeLabel({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -196,9 +238,12 @@ jobs:
               }
             } catch (e) {}
             
+            const isHuman = '${{ steps.humanity.outputs.is_human }}' === 'true';
             const newLabels = [];
             
-            if (karmaAction === 'refuse') {
+            if (!isHuman) {
+              newLabels.push('proof-failed');
+            } else if (karmaAction === 'refuse') {
               newLabels.push('refused', 'invalid');
             } else if (valid) {
               newLabels.push('auto-merge');
@@ -221,6 +266,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const isHuman = '${{ steps.humanity.outputs.is_human }}' === 'true';
             const valid = '${{ steps.result.outputs.valid }}' === 'true';
             const reason = `${{ steps.result.outputs.reason }}`;
             const rules = '${{ steps.result.outputs.rules }}';
@@ -232,7 +278,17 @@ jobs:
             
             let body;
             
-            if (karmaAction === 'refuse') {
+            // FIRST CHECK: Proof of Humanity
+            if (!isHuman) {
+              body = `## 🔐 Proof of Humanity Failed\n\n`;
+              body += `You must prove you've read the sacred texts!\n\n`;
+              body += `### How to pass:\n`;
+              body += `1. Read [LORE.md](../blob/main/LORE.md) carefully\n`;
+              body += `2. Find the name of the **First Guardian**\n`;
+              body += `3. Edit your PR description and add the answer\n\n`;
+              body += `> *"Only those who seek shall find the path."*\n\n`;
+              body += `---\n_Enjoy and contribute!_ ✨`;
+            } else if (karmaAction === 'refuse') {
               body = `## ❌ Contribution Refused\n\n`;
               body += `**Karma Score:** ${karmaScore}/100\n`;
               body += `**Reason:** Low quality contribution.\n\n`;
@@ -265,3 +321,10 @@ jobs:
               issue_number: context.issue.number,
               body: body
             });
+      
+      - name: Fail if not human
+        if: steps.humanity.outputs.is_human != 'true'
+        run: |
+          echo "🔐 Proof of Humanity check failed!"
+          echo "Please read LORE.md and answer the Guardian question."
+          exit 1
