@@ -29,8 +29,9 @@
             box-sizing: border-box;
         }
         
-        html {
-            font-size: 16px;
+        html, body {
+            height: 100%;
+            overflow: hidden;
         }
         
         body {
@@ -38,16 +39,15 @@
             font-weight: 300;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
             letter-spacing: 0.01em;
+            display: flex;
+            flex-direction: column;
         }
         
         /* ═══════════════════════════════════════════════════════════════
-           ORGANIC LAYERS - Subtle, breathing effects
+           ORGANIC LAYERS
            ═══════════════════════════════════════════════════════════════ */
         
-        /* Film grain overlay */
         .grain {
             position: fixed;
             top: -50%;
@@ -55,7 +55,7 @@
             width: 200%;
             height: 200%;
             pointer-events: none;
-            opacity: 0.035;
+            opacity: 0.03;
             z-index: 1000;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
             animation: grain 0.5s steps(1) infinite;
@@ -74,79 +74,73 @@
             90% { transform: translate(1%, 1%); }
         }
         
-        /* Breathing glow */
         .breath {
             position: fixed;
             top: 50%;
             left: 50%;
-            width: 100vmax;
-            height: 100vmax;
+            width: 120vmax;
+            height: 120vmax;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+            background: radial-gradient(circle, var(--glow) 0%, transparent 60%);
             animation: breathe 8s ease-in-out infinite;
             z-index: -1;
         }
         
         @keyframes breathe {
-            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+            0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.05); }
         }
         
-        /* Vignette */
         .vignette {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 0%, transparent 60%, rgba(0,0,0,0.4) 100%);
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
             z-index: 999;
         }
         
         /* ═══════════════════════════════════════════════════════════════
-           LAYOUT
+           MAIN LAYOUT - No scroll, fills viewport
            ═══════════════════════════════════════════════════════════════ */
         
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             padding: 2rem;
             position: relative;
             z-index: 1;
+            max-height: 100vh;
+            max-height: 100dvh;
         }
         
         /* ═══════════════════════════════════════════════════════════════
-           HEADER - Minimal, organic
+           HEADER
            ═══════════════════════════════════════════════════════════════ */
         
         header {
             text-align: center;
-            padding: 15vh 0 10vh;
-            position: relative;
+            flex-shrink: 0;
         }
         
         h1 {
-            font-size: clamp(3rem, 12vw, 7rem);
+            font-size: clamp(2.5rem, 10vw, 6rem);
             font-weight: 300;
             letter-spacing: -0.03em;
             color: var(--text);
-            margin-bottom: 1.5rem;
-            animation: subtle-float 6s ease-in-out infinite;
-        }
-        
-        @keyframes subtle-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+            line-height: 1;
         }
         
         .tagline {
-            font-size: 1.1rem;
+            font-size: clamp(0.7rem, 2vw, 1rem);
             color: var(--text-muted);
             font-weight: 300;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.3em;
             text-transform: lowercase;
+            margin-top: 0.5rem;
         }
         
         /* ═══════════════════════════════════════════════════════════════
@@ -156,10 +150,12 @@
         .organism {
             position: relative;
             width: 100%;
-            height: 60vh;
-            min-height: 400px;
-            margin: 4rem 0;
-            border-radius: 2rem;
+            max-width: 800px;
+            flex: 1;
+            min-height: 200px;
+            max-height: 45vh;
+            margin: 1.5rem 0;
+            border-radius: 1.5rem;
             overflow: hidden;
             background: var(--surface);
             border: 1px solid var(--border);
@@ -167,22 +163,20 @@
         
         #canvas {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
         }
         
         /* ═══════════════════════════════════════════════════════════════
-           DATA - Minimal stats
+           DATA
            ═══════════════════════════════════════════════════════════════ */
         
         .data {
             display: flex;
             justify-content: center;
-            gap: 4rem;
-            margin: 4rem 0;
-            flex-wrap: wrap;
+            gap: clamp(2rem, 8vw, 5rem);
+            flex-shrink: 0;
         }
         
         .datum {
@@ -190,37 +184,38 @@
         }
         
         .datum-value {
-            font-size: 2.5rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             font-family: 'JetBrains Mono', monospace;
             font-weight: 300;
             color: var(--text);
-            transition: all 0.5s ease;
         }
         
         .datum-label {
-            font-size: 0.7rem;
+            font-size: clamp(0.5rem, 1.5vw, 0.7rem);
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.3em;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
         }
         
         /* ═══════════════════════════════════════════════════════════════
-           PROGRESS - Subtle bar
+           PROGRESS
            ═══════════════════════════════════════════════════════════════ */
         
         .progress {
-            max-width: 400px;
-            margin: 0 auto 4rem;
+            width: 100%;
+            max-width: 300px;
+            margin: 1.5rem 0;
             text-align: center;
+            flex-shrink: 0;
         }
         
         .progress-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.3em;
-            margin-bottom: 1rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
         }
         
         .progress-track {
@@ -234,35 +229,34 @@
             height: 100%;
             background: var(--accent);
             transition: width 1s ease;
-            box-shadow: 0 0 20px var(--glow);
+            box-shadow: 0 0 15px var(--glow);
         }
         
         /* ═══════════════════════════════════════════════════════════════
-           CTA - Single, elegant
+           CTA - Big, no hover movement
            ═══════════════════════════════════════════════════════════════ */
         
         .cta {
-            text-align: center;
-            margin: 6rem 0;
+            flex-shrink: 0;
+            margin: 1rem 0;
         }
         
         .cta a {
             display: inline-block;
-            padding: 1rem 3rem;
+            padding: 1.2rem 4rem;
             color: var(--text);
             text-decoration: none;
-            font-size: 0.85rem;
-            letter-spacing: 0.2em;
+            font-size: 1rem;
+            letter-spacing: 0.25em;
             text-transform: uppercase;
             border: 1px solid var(--border);
             border-radius: 100px;
-            transition: all 0.4s ease;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
         
         .cta a:hover {
             border-color: var(--accent);
-            box-shadow: 0 0 30px var(--glow);
-            transform: translateY(-2px);
+            box-shadow: 0 0 40px var(--glow);
         }
         
         /* ═══════════════════════════════════════════════════════════════
@@ -270,11 +264,12 @@
            ═══════════════════════════════════════════════════════════════ */
         
         footer {
+            flex-shrink: 0;
             text-align: center;
-            padding: 4rem 0;
             color: var(--text-muted);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            margin-top: 0.5rem;
         }
         
         footer a {
@@ -293,12 +288,12 @@
         
         .live {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
+            bottom: 1.5rem;
+            right: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.65rem;
+            gap: 0.4rem;
+            font-size: 0.55rem;
             color: var(--text-muted);
             letter-spacing: 0.2em;
             text-transform: uppercase;
@@ -306,16 +301,16 @@
         }
         
         .live-dot {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             background: var(--accent);
             border-radius: 50%;
             animation: pulse-dot 2s ease-in-out infinite;
         }
         
         @keyframes pulse-dot {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
         }
         
         /* ═══════════════════════════════════════════════════════════════
@@ -324,14 +319,14 @@
         
         .notification {
             position: fixed;
-            top: 2rem;
+            top: 1.5rem;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            padding: 1rem 2rem;
-            background: var(--surface);
+            padding: 0.8rem 1.5rem;
+            background: rgba(5,5,8,0.9);
             border: 1px solid var(--border);
             border-radius: 100px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             letter-spacing: 0.1em;
             color: var(--text);
             opacity: 0;
@@ -343,6 +338,100 @@
         .notification.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE - Mobile & Landscape
+           ═══════════════════════════════════════════════════════════════ */
+        
+        /* Mobile portrait */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .organism {
+                border-radius: 1rem;
+                margin: 1rem 0;
+            }
+            
+            .cta a {
+                padding: 1rem 3rem;
+                font-size: 0.85rem;
+            }
+            
+            .data {
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Landscape mode */
+        @media (max-height: 500px) {
+            .container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-items: center;
+                padding: 1rem 2rem;
+            }
+            
+            header {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 0.6rem;
+            }
+            
+            .organism {
+                width: 50%;
+                max-height: 60vh;
+                margin: 0;
+            }
+            
+            .data {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .datum-value {
+                font-size: 1.2rem;
+            }
+            
+            .progress {
+                display: none;
+            }
+            
+            .cta {
+                position: absolute;
+                bottom: 1rem;
+                right: 2rem;
+            }
+            
+            .cta a {
+                padding: 0.8rem 2rem;
+                font-size: 0.75rem;
+            }
+            
+            footer {
+                display: none;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-height: 600px) and (orientation: portrait) {
+            .organism {
+                max-height: 35vh;
+            }
+            
+            .progress {
+                margin: 0.8rem 0;
+            }
         }
     </style>
 </head>
