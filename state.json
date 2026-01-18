@@ -1,9 +1,9 @@
 {
   "version": "3.0.0",
-  "last_updated": "2026-01-18T00:00:00Z",
-  "last_pr": null,
+  "last_updated": "2026-01-18T02:43:18.817Z",
+  "last_pr": "#4",
   "score": {
-    "total": 0,
+    "total": 10,
     "today": 0,
     "streak_days": 0,
     "all_time_high": 0
@@ -11,19 +11,21 @@
   "levels": {
     "current": 1,
     "max_level": 100,
-    "unlocked": [1],
+    "unlocked": [
+      1
+    ],
     "next_unlock": {
       "level_id": 2,
       "requires_score": 50,
       "requires_prs": 5,
       "progress": {
-        "score": 0,
-        "prs": 0
+        "score": 10,
+        "prs": 1
       }
     },
     "milestones": {
       "10": "First Complexity",
-      "25": "Pattern Recognition", 
+      "25": "Pattern Recognition",
       "50": "Metamorphosis",
       "75": "Consciousness",
       "95": "GitHub Pages Unlock",
@@ -34,7 +36,7 @@
     "global": 0,
     "threshold_good": 100,
     "threshold_excellent": 500,
-    "multiplier_active": 1.0,
+    "multiplier_active": 1,
     "recent_quality": []
   },
   "board": {
@@ -49,7 +51,13 @@
     "canvas": [],
     "total": 0
   },
-  "players": {},
+  "players": {
+    "fabriziosalmi": {
+      "karma": 10,
+      "prs": 1,
+      "joined": "2026-01-18T02:43:18.817Z"
+    }
+  },
   "reputation": {
     "top_coders": [],
     "voting_power": {}
@@ -66,15 +74,17 @@
     "players": {}
   },
   "rules": {
-    "active": ["001-first-word"],
+    "active": [
+      "001-first-word"
+    ],
     "proposed": [],
     "voting": [],
     "archived": []
   },
   "rules_triggered": {},
   "meta": {
-    "total_prs": 0,
-    "total_players": 0,
+    "total_prs": 1,
+    "total_players": 1,
     "game_started": "2026-01-18T00:00:00Z",
     "pages_enabled": false,
     "last_build": null
