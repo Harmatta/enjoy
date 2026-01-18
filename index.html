@@ -164,6 +164,22 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             box-shadow: 0 0 30px rgba(99, 102, 241, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Subtle random light pulse on data cards */
+        .datum::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                circle at var(--glow-x, 50%) var(--glow-y, 50%),
+                rgba(99, 102, 241, var(--glow-opacity, 0)) 0%,
+                transparent 60%
+            );
+            pointer-events: none;
+            transition: opacity 0.8s ease;
         }
         
         .datum-value {
@@ -171,6 +187,9 @@
             font-family: 'JetBrains Mono', monospace;
             font-weight: 300;
             color: var(--text);
+            position: relative;
+            text-shadow: 0 0 20px rgba(99, 102, 241, var(--text-glow, 0));
+            transition: text-shadow 0.5s ease;
         }
         
         .datum-label {
@@ -179,6 +198,7 @@
             text-transform: uppercase;
             letter-spacing: 0.2em;
             margin-top: 0.3rem;
+            position: relative;
         }
         
         /* ═══════════════════════════════════════════════════════════════
@@ -933,6 +953,45 @@
         
         // Poll every 5 seconds
         setInterval(loadData, 5000);
+        
+        // ═══════════════════════════════════════════════════════════════
+        // SUBTLE LIGHT FX ON DATA CARDS
+        // ═══════════════════════════════════════════════════════════════
+        
+        const datums = document.querySelectorAll('.datum');
+        
+        function randomLightPulse() {
+            // Pick a random card
+            const datum = datums[Math.floor(Math.random() * datums.length)];
+            const value = datum.querySelector('.datum-value');
+            
+            // Random position for the glow
+            const x = 20 + Math.random() * 60;
+            const y = 20 + Math.random() * 60;
+            
+            // Set glow position and intensity
+            datum.style.setProperty('--glow-x', x + '%');
+            datum.style.setProperty('--glow-y', y + '%');
+            datum.style.setProperty('--glow-opacity', '0.15');
+            value.style.setProperty('--text-glow', '0.4');
+            
+            // Fade out
+            setTimeout(() => {
+                datum.style.setProperty('--glow-opacity', '0');
+                value.style.setProperty('--text-glow', '0');
+            }, 800 + Math.random() * 400);
+        }
+        
+        // Random pulses every 2-5 seconds
+        function scheduleNextPulse() {
+            const delay = 2000 + Math.random() * 3000;
+            setTimeout(() => {
+                randomLightPulse();
+                scheduleNextPulse();
+            }, delay);
+        }
+        
+        scheduleNextPulse();
     </script>
 </body>
 </html>
