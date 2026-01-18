@@ -6,7 +6,7 @@ name: 🎨 Generate Art
 
 on:
   schedule:
-    - cron: '0 */4 * * *'  # Ogni 4 ore = 6 opere al giorno
+    - cron: '0 */4 * * *'  # Every 4 hours = 6 artworks per day
   push:
     branches: [main]
     paths: [state.json]

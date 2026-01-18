@@ -86,7 +86,7 @@ export const TIME_EVENTS = {
     description: 'Merge at exactly 12:00 CET',
     bonus: 100,
     achievement: 'solar_aligned',
-    condition: (hour, minute) => hour === 12 && minute === 0
+    condition: (hour: number, minute: number) => hour === 12 && minute === 0
   },
   golden_hour: {
     name: 'Golden Hour',
@@ -112,16 +112,16 @@ export const TIME_EVENTS = {
     description: 'Contribute at exactly 00:00 CET',
     bonus: 200,
     achievement: 'midnight_coder',
-    condition: (hour, minute) => hour === 0 && minute === 0
+    condition: (hour: number, minute: number) => hour === 0 && minute === 0
   },
   triple_time: {
     name: 'Triple Time',
     description: 'Contribute at 11:11 or 22:22',
     bonus: 111,
     achievement: 'time_aligned',
-    condition: (hour, minute) => (hour === 11 && minute === 11) || (hour === 22 && minute === 22)
+    condition: (hour: number, minute: number) => (hour === 11 && minute === 11) || (hour === 22 && minute === 22)
   }
-};
+} as const;
 
 // Daily time challenges
 export const TIME_CHALLENGES = {
@@ -195,22 +195,24 @@ export function getTimeKarmaMultiplier() {
 export function checkTimeEvents() {
   const { hour, minute } = getCETHour();
   const period = getCurrentPeriod();
-  const events = [];
+  const events: Array<{ source: string; id?: string; name?: string; bonus?: number }> = [];
   
   // Add period event
-  if (TIME_EVENTS[period.specialEvent]) {
+  const specialEvent = period.specialEvent as keyof typeof TIME_EVENTS;
+  if (TIME_EVENTS[specialEvent]) {
     events.push({
-      ...TIME_EVENTS[period.specialEvent],
+      ...TIME_EVENTS[specialEvent],
       source: 'period'
     });
   }
   
   // Check rare events
   for (const [eventId, event] of Object.entries(TIME_EVENTS)) {
-    if (event.condition && event.condition(hour, minute)) {
+    const evt = event as { condition?: (h: number, m: number) => boolean; name: string; bonus: number };
+    if (evt.condition && evt.condition(hour, minute)) {
       events.push({
         id: eventId,
-        ...event,
+        ...evt,
         source: 'rare'
       });
     }
@@ -222,7 +224,7 @@ export function checkTimeEvents() {
 /**
  * Generate time-aware message for PR/issue response
  */
-export function getTimeGreeting(username) {
+export function getTimeGreeting(username: string) {
   const period = getCurrentPeriod();
   const greetings = {
     dawn: [
@@ -257,7 +259,7 @@ export function getTimeGreeting(username) {
     ]
   };
   
-  const periodGreetings = greetings[period.id];
+  const periodGreetings = greetings[period.id as keyof typeof greetings];
   return periodGreetings[Math.floor(Math.random() * periodGreetings.length)];
 }
 
@@ -277,7 +279,7 @@ export function getTimeBadge() {
 /**
  * Format time bonus message
  */
-export function formatTimeBonus(baseKarma) {
+export function formatTimeBonus(baseKarma: number) {
   const period = getCurrentPeriod();
   const multiplier = period.karmaMultiplier;
   const bonus = Math.round(baseKarma * (multiplier - 1));

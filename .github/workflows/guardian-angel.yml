@@ -6,7 +6,7 @@ name: 💜 Guardian Angel
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # Ogni giorno alle 9:00 UTC
+    - cron: '0 9 * * *'  # Every day at 9:00 UTC
   workflow_dispatch:
 
 jobs:
