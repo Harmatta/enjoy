@@ -193,12 +193,28 @@
         }
         
         .datum-label {
-            font-size: clamp(0.45rem, 1.2vw, 0.6rem);
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            margin-top: 0.3rem;
+            margin-top: 0.5rem;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .datum-label svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: var(--text-muted);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.6;
+            transition: opacity 0.3s ease, stroke 0.3s ease;
+        }
+        
+        .datum:hover .datum-label svg {
+            opacity: 1;
+            stroke: var(--accent);
         }
         
         /* ═══════════════════════════════════════════════════════════════
@@ -246,11 +262,12 @@
         }
         
         .cta a {
-            display: inline-block;
-            padding: 1.2rem 4rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 1.2rem 3rem;
             color: var(--text);
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             border: 1px solid var(--border);
@@ -264,6 +281,17 @@
         .cta a:hover {
             border-color: var(--accent);
             box-shadow: 0 0 40px var(--glow);
+        }
+        
+        .cta-icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.6rem;
+            transition: transform 0.4s ease;
+        }
+        
+        .cta a:hover .cta-icon {
+            transform: rotate(90deg);
         }
         
         /* Beckoning state */
@@ -707,17 +735,23 @@
         
         <!-- Data -->
         <div class="data">
-            <div class="datum">
+            <div class="datum" title="level">
                 <div class="datum-value" id="level">1</div>
-                <div class="datum-label">level</div>
+                <div class="datum-label">
+                    <svg viewBox="0 0 24 24"><path d="M2 17l10-5 10 5M2 12l10-5 10 5"/></svg>
+                </div>
             </div>
-            <div class="datum">
+            <div class="datum" title="score">
                 <div class="datum-value" id="score">0</div>
-                <div class="datum-label">score</div>
+                <div class="datum-label">
+                    <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
             </div>
-            <div class="datum">
+            <div class="datum" title="souls">
                 <div class="datum-value" id="souls">0</div>
-                <div class="datum-label">souls</div>
+                <div class="datum-label">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                </div>
             </div>
         </div>
         
@@ -731,7 +765,14 @@
         
         <!-- CTA -->
         <div class="cta">
-            <a href="https://github.com/fabriziosalmi/enjoy">contribute</a>
+            <a href="https://github.com/fabriziosalmi/enjoy">
+                <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                <span>join</span>
+            </a>
         </div>
         
         <footer>
