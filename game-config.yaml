@@ -1,0 +1,167 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# ENJOY GAME CONFIGURATION
+# ══════════════════════════════════════════════════════════════════════════════
+# All magic numbers and thresholds in one place.
+# Change these to tune the game balance.
+# ══════════════════════════════════════════════════════════════════════════════
+
+game:
+  name: "Enjoy and contribute!"
+  version: "1.0.0"
+  max_level: 100
+  github_pages_unlock_level: 95
+
+# ══════════════════════════════════════════════════════════════════════════════
+# KARMA SYSTEM
+# ══════════════════════════════════════════════════════════════════════════════
+karma:
+  # Amplification thresholds
+  amplification:
+    x1_threshold: 0      # Score 0-49 = x1
+    x2_threshold: 50     # Score 50-79 = x2  
+    x3_threshold: 80     # Score 80+ = x3
+  
+  # Quality scoring
+  scoring:
+    base_score: 50
+    
+    # Word length bonuses/penalties
+    word_length:
+      optimal_min: 5
+      optimal_max: 10
+      optimal_bonus: 10
+      too_short_penalty: -15      # < 3 chars
+      too_long_penalty: -10       # > 15 chars
+    
+    # Content quality
+    boring_word_penalty: -20
+    well_formed_bonus: 10
+    suspicious_pattern_penalty: -15
+    duplicate_penalty: -30
+    
+    # Commit quality
+    descriptive_commit_bonus: 5
+    experienced_contributor_bonus: 5
+    
+  # Boring/spam words list
+  boring_words:
+    - test
+    - hello
+    - world
+    - foo
+    - bar
+    - spam
+    - qwerty
+    - asdf
+    - aaa
+    - abc
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LEVEL PROGRESSION
+# ══════════════════════════════════════════════════════════════════════════════
+levels:
+  # Level up requirements formula
+  progression:
+    base_score_required: 50
+    score_multiplier: 1.5        # Each level needs 1.5x more score
+    base_prs_required: 5
+    prs_increment: 2             # Each level needs +2 more PRs
+  
+  # Special level unlocks
+  milestones:
+    level_10: "Multi-word contributions"
+    level_25: "Custom rules voting"
+    level_50: "Community moderation"
+    level_75: "Theme customization"
+    level_95: "GitHub Pages activation"
+    level_100: "Final revelation"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# DECAY SYSTEM
+# ══════════════════════════════════════════════════════════════════════════════
+decay:
+  enabled: true
+  
+  # Karma decay
+  karma_decay:
+    start_after_days: 7          # Start decaying after 7 days inactive
+    daily_percentage: 2          # Lose 2% karma per day
+    minimum_karma: 0             # Can't go below 0
+  
+  # Level decay  
+  level_decay:
+    start_after_days: 14         # Start losing levels after 14 days
+    levels_per_period: 1         # Lose 1 level
+    period_days: 7               # Every 7 days of inactivity
+    minimum_level: 1             # Can't go below level 1
+
+# ══════════════════════════════════════════════════════════════════════════════
+# REFERRAL SYSTEM
+# ══════════════════════════════════════════════════════════════════════════════
+referrals:
+  enabled: true
+  
+  # Karma propagation
+  propagation:
+    direct_bonus_percentage: 50   # Referrer gets 50% of referee's karma
+    chain_depth_max: 3            # Max chain depth for propagation
+    chain_decay_percentage: 50    # Each level in chain gets 50% less
+  
+  # Achievements
+  achievements:
+    first_referral: 10            # Bonus for first successful referral
+    recruiter_5: 25               # Bonus for 5 referrals
+    recruiter_10: 50              # Bonus for 10 referrals
+    chain_master: 100             # Bonus for 3+ deep chain
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PR FORMAT VALIDATION  
+# ══════════════════════════════════════════════════════════════════════════════
+validation:
+  format:
+    # Word constraints
+    word_min_length: 3
+    word_max_length: 30
+    
+    # Checklist requirements
+    min_checked_boxes: 3
+    
+    # Sacred word (Proof of Humanity)
+    sacred_answers:
+      - karmiel
+      - KARMIEL
+      - Karmiel
+  
+  # File constraints
+  files:
+    max_files_per_pr: 1
+    allowed_extensions:
+      - .txt
+    contribution_path: "contributions/"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RATE LIMITING & ANTI-ABUSE
+# ══════════════════════════════════════════════════════════════════════════════
+rate_limits:
+  max_prs_per_user_per_day: 5
+  max_prs_per_user_per_hour: 2
+  cooldown_after_rejection_minutes: 30
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LEADERBOARD
+# ══════════════════════════════════════════════════════════════════════════════
+leaderboard:
+  display_count: 50              # Top N players to show
+  update_frequency: "on_merge"   # When to update: on_merge, daily, hourly
+  
+  # Boards to generate
+  boards:
+    - type: contributors
+      title: "🏆 Top Contributors"
+      sort_by: karma
+    - type: recruiters  
+      title: "🔗 Top Recruiters"
+      sort_by: referral_karma
+    - type: active
+      title: "🔥 Most Active"
+      sort_by: recent_contributions

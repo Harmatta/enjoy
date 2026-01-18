@@ -4,6 +4,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONCURRENCY CONTROL - Serialize PR processing to prevent state.json conflicts
+# ═══════════════════════════════════════════════════════════════════════════════
+concurrency:
+  group: enjoy-game-state
+  cancel-in-progress: false  # Don't cancel, queue instead
+
 jobs:
   validate:
     runs-on: ubuntu-latest

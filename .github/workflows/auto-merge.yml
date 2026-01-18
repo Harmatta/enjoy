@@ -4,6 +4,14 @@ on:
   pull_request:
     types: [labeled]
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONCURRENCY CONTROL - Serialize merges to prevent state.json conflicts
+# Only one merge at a time, others wait in queue
+# ═══════════════════════════════════════════════════════════════════════════════
+concurrency:
+  group: enjoy-game-state
+  cancel-in-progress: false  # Queue merges, don't cancel
+
 jobs:
   merge:
     if: contains(github.event.pull_request.labels.*.name, 'auto-merge')
