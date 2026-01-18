@@ -80,6 +80,39 @@ jobs:
               return;
             }
             
+            // Skip pinned issues (official content)
+            if (labels.includes('pinned')) {
+              console.log('📌 Pinned issue detected, auto-approving');
+              core.setOutput('valid', 'true');
+              core.setOutput('reason', 'pinned');
+              core.setOutput('karma', '0');
+              core.setOutput('time_period', timePeriod.name);
+              core.setOutput('time_emoji', timePeriod.emoji);
+              return;
+            }
+            
+            // Skip good first issues (welcoming content)
+            if (labels.includes('good first issue')) {
+              console.log('🌱 Good first issue detected, auto-approving');
+              core.setOutput('valid', 'true');
+              core.setOutput('reason', 'good_first_issue');
+              core.setOutput('karma', '0');
+              core.setOutput('time_period', timePeriod.name);
+              core.setOutput('time_emoji', timePeriod.emoji);
+              return;
+            }
+            
+            // Skip bounty issues
+            if (labels.includes('bounty')) {
+              console.log('🏆 Bounty issue detected, auto-approving');
+              core.setOutput('valid', 'true');
+              core.setOutput('reason', 'bounty');
+              core.setOutput('karma', '0');
+              core.setOutput('time_period', timePeriod.name);
+              core.setOutput('time_emoji', timePeriod.emoji);
+              return;
+            }
+            
             // ═══════════════════════════════════════════════════════════
             // ANTI-BOT: Proof of Humanity
             // ═══════════════════════════════════════════════════════════
