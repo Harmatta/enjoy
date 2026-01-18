@@ -15,6 +15,7 @@
     <style>
         :root {
             --bg: #030305;
+            --bg-gradient: radial-gradient(ellipse at 50% 50%, #0a0a12 0%, #030305 100%);
             --surface: rgba(255,255,255,0.02);
             --border: rgba(255,255,255,0.06);
             --text: rgba(255,255,255,0.87);
@@ -23,6 +24,64 @@
             --accent2: #a855f7;
             --accent3: #ec4899;
             --glow: rgba(99, 102, 241, 0.15);
+            --aura-color1: rgba(99, 102, 241, 0.15);
+            --aura-color2: rgba(168, 85, 247, 0.1);
+            --aura-color3: rgba(236, 72, 153, 0.05);
+        }
+        
+        /* Time-based themes - elegant day cycle */
+        body.time-dawn {
+            --bg: #0d0a14;
+            --bg-gradient: radial-gradient(ellipse at 30% 80%, #1a1025 0%, #0d0a14 50%, #050308 100%);
+            --aura-color1: rgba(255, 140, 100, 0.12);
+            --aura-color2: rgba(180, 100, 180, 0.1);
+            --aura-color3: rgba(100, 120, 200, 0.08);
+            --accent: #f59e0b;
+        }
+        
+        body.time-morning {
+            --bg: #08080f;
+            --bg-gradient: radial-gradient(ellipse at 60% 30%, #12121f 0%, #08080f 60%, #030305 100%);
+            --aura-color1: rgba(100, 180, 255, 0.12);
+            --aura-color2: rgba(150, 200, 255, 0.08);
+            --aura-color3: rgba(200, 220, 255, 0.05);
+            --accent: #3b82f6;
+        }
+        
+        body.time-noon {
+            --bg: #0a0a10;
+            --bg-gradient: radial-gradient(ellipse at 50% 20%, #151520 0%, #0a0a10 50%, #050508 100%);
+            --aura-color1: rgba(255, 220, 100, 0.15);
+            --aura-color2: rgba(255, 180, 50, 0.1);
+            --aura-color3: rgba(255, 150, 50, 0.05);
+            --accent: #eab308;
+        }
+        
+        body.time-afternoon {
+            --bg: #0a0910;
+            --bg-gradient: radial-gradient(ellipse at 70% 40%, #14121f 0%, #0a0910 50%, #050508 100%);
+            --aura-color1: rgba(200, 150, 255, 0.12);
+            --aura-color2: rgba(150, 120, 220, 0.1);
+            --aura-color3: rgba(100, 100, 200, 0.08);
+            --accent: #8b5cf6;
+        }
+        
+        body.time-sunset {
+            --bg: #0f0808;
+            --bg-gradient: radial-gradient(ellipse at 80% 60%, #1f1015 0%, #0f0808 50%, #080505 100%);
+            --aura-color1: rgba(255, 100, 80, 0.15);
+            --aura-color2: rgba(255, 80, 120, 0.12);
+            --aura-color3: rgba(200, 50, 100, 0.08);
+            --accent: #f43f5e;
+        }
+        
+        body.time-night {
+            --bg: #030305;
+            --bg-gradient: radial-gradient(ellipse at 50% 50%, #0a0a12 0%, #030305 100%);
+            --aura-color1: rgba(99, 102, 241, 0.15);
+            --aura-color2: rgba(168, 85, 247, 0.1);
+            --aura-color3: rgba(100, 80, 180, 0.08);
+            --accent: #6366f1;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,9 +91,11 @@
             font-family: 'Space Grotesk', -apple-system, sans-serif;
             font-weight: 300;
             background: var(--bg);
+            background-image: var(--bg-gradient);
             color: var(--text);
             letter-spacing: 0.01em;
             cursor: none;
+            transition: background 8s ease, background-image 8s ease;
         }
         
         /* Custom Cursor */
@@ -148,10 +209,11 @@
             pointer-events: none;
             z-index: -1;
             background: 
-                radial-gradient(ellipse at 30% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.05) 0%, transparent 60%);
+                radial-gradient(ellipse at 30% 20%, var(--aura-color1) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, var(--aura-color2) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, var(--aura-color3) 0%, transparent 60%);
             animation: aura-shift 20s ease-in-out infinite;
+            transition: background 8s ease;
         }
         
         @keyframes aura-shift {
@@ -1145,6 +1207,10 @@
             document.getElementById('timeEmoji').textContent = period.emoji;
             document.getElementById('timePeriod').textContent = period.name;
             document.getElementById('timeMult').textContent = `x${period.multiplier}`;
+            
+            // Apply time-based theme to body (slow transition)
+            document.body.classList.remove('time-dawn', 'time-morning', 'time-noon', 'time-afternoon', 'time-sunset', 'time-night');
+            document.body.classList.add(`time-${period.key}`);
             
             // Check for rare time events
             const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
