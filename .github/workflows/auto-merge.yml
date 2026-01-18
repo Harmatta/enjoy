@@ -30,13 +30,10 @@ jobs:
           git config user.name "enjoy-bot"
           git config user.email "bot@enjoy.game"
       
-      - name: Fetch PR
+      - name: Fetch and merge PR
         run: |
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
-      
-      - name: Merge PR
-        run: |
-          git merge pr-branch --no-ff -m "🎮 Merge PR #${{ github.event.pull_request.number }}"
+          git merge pr-branch --no-ff -m "🎮 Merge PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}"
       
       - name: Install engine dependencies
         run: |
@@ -48,64 +45,169 @@ jobs:
           cd engine
           npm run build
       
-      - name: Apply effect
-        run: |
-          cd engine
-          npm run apply-effect -- --pr-number=${{ github.event.pull_request.number }}
-      
-      - name: Check for level unlock
-        id: level_check
-        run: |
-          cd engine
-          node -e "
-            const { loadState } = require('./dist/loader.js');
-            const { checkLevelUnlock, unlockNextLevel } = require('./dist/builder.js');
-            const { saveState } = require('./dist/loader.js');
-            
-            const state = loadState();
-            if (checkLevelUnlock(state)) {
-              unlockNextLevel(state);
-              saveState(state);
-              console.log('LEVEL_UNLOCKED=true');
-            } else {
-              console.log('LEVEL_UNLOCKED=false');
-            }
-          " | tee level_result.txt
-          
-          if grep -q "LEVEL_UNLOCKED=true" level_result.txt; then
-            echo "unlocked=true" >> $GITHUB_OUTPUT
-          else
-            echo "unlocked=false" >> $GITHUB_OUTPUT
-          fi
-      
-      - name: Build Pages (if level >= 1)
+      - name: Apply karma and update state
+        id: apply
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           cd engine
           node -e "
-            const { loadState } = require('./dist/loader.js');
-            const { buildPages } = require('./dist/builder.js');
+            const fs = require('fs');
+            const { loadState, saveState } = require('./dist/loader.js');
+            const { applyKarma, trackReferral, applyReferralKarma, checkAchievements, analyzeContributionQuality } = require('./dist/karma.js');
+            const { extractReferral } = require('./dist/validator.js');
+            const { generateLeaderboardMarkdown } = require('./dist/leaderboard.js');
+            const { applyDecaySystem, getDecayStatus } = require('./dist/decay.js');
             
             const state = loadState();
-            if (state.levels.current >= 1) {
-              buildPages();
+            
+            // Check decay first
+            const decayResult = applyDecaySystem(state);
+            if (decayResult.karma_decay.decayed || decayResult.level_decay.decayed) {
+              console.log('Decay applied:', decayResult.message);
             }
+            
+            // Get PR info
+            const author = process.env.PR_AUTHOR || 'unknown';
+            const prBody = process.env.PR_BODY || '';
+            
+            // Find added .txt files
+            const txtFiles = fs.readdirSync('.').filter(f => f.endsWith('.txt') && !f.startsWith('.'));
+            let content = '';
+            if (txtFiles.length > 0) {
+              content = fs.readFileSync(txtFiles[0], 'utf8').trim();
+            }
+            
+            // Create PR object
+            const pr = {
+              number: ${{ github.event.pull_request.number }},
+              author: author,
+              commit_message: '${{ github.event.pull_request.title }}',
+              files_added: txtFiles,
+              timestamp: new Date().toISOString()
+            };
+            
+            // Analyze and apply karma
+            const karma = analyzeContributionQuality(pr, content, state);
+            applyKarma(state, pr, karma);
+            
+            // Track referral
+            const referral = extractReferral(prBody);
+            if (referral) {
+              trackReferral(state, referral, author);
+              const achievements = applyReferralKarma(state, author, karma.quality_score, karma.amplification_factor);
+              if (achievements.length > 0) {
+                console.log('New achievements for referrer:', achievements);
+              }
+            }
+            
+            // Update state
+            state.meta.total_prs++;
+            if (!state.players[author]) {
+              state.meta.total_players++;
+            }
+            state.last_updated = new Date().toISOString();
+            state.last_pr = '#${{ github.event.pull_request.number }}';
+            
+            // Update score
+            state.score.total += karma.quality_score;
+            state.score.today += karma.quality_score;
+            
+            // Check level progress
+            if (state.levels.next_unlock) {
+              state.levels.next_unlock.progress.score = state.score.total;
+              state.levels.next_unlock.progress.prs = state.meta.total_prs;
+              
+              // Check unlock
+              const next = state.levels.next_unlock;
+              if (next.progress.score >= next.requires_score && next.progress.prs >= next.requires_prs) {
+                console.log('LEVEL UP! Unlocking level', next.level_id);
+                state.levels.current = next.level_id;
+                state.levels.unlocked.push(next.level_id);
+                
+                // Set next level
+                if (next.level_id < 100) {
+                  state.levels.next_unlock = {
+                    level_id: next.level_id + 1,
+                    requires_score: Math.floor(next.requires_score * 1.5),
+                    requires_prs: next.requires_prs + 5,
+                    progress: { score: state.score.total, prs: state.meta.total_prs }
+                  };
+                } else {
+                  state.levels.next_unlock = null;
+                  console.log('MAX LEVEL 100 REACHED!');
+                }
+                
+                fs.writeFileSync('level-unlocked.txt', 'true');
+              }
+            }
+            
+            // Save state
+            saveState(state);
+            
+            // Output karma info
+            console.log('Karma applied:', karma.quality_score, 'Amplification:', karma.amplification_factor);
+            fs.writeFileSync('karma-applied.json', JSON.stringify({
+              score: karma.quality_score,
+              amplification: karma.amplification_factor,
+              action: karma.action
+            }));
           "
+      
+      - name: Update README leaderboard
+        run: |
+          cd engine
+          node -e "
+            const { loadState } = require('./dist/loader.js');
+            const { generateLeaderboardMarkdown } = require('./dist/leaderboard.js');
+            const fs = require('fs');
+            
+            const state = loadState();
+            const leaderboard = generateLeaderboardMarkdown(state);
+            
+            let readme = fs.readFileSync('../README.md', 'utf8');
+            
+            // Update leaderboard section
+            const startMarker = '## 🏆 Leaderboards';
+            const endMarker = '\\n---\\n';
+            
+            if (readme.includes(startMarker)) {
+              const start = readme.indexOf(startMarker);
+              const afterStart = readme.substring(start);
+              const endMatch = afterStart.match(/\\n---\\n/);
+              if (endMatch) {
+                const end = start + endMatch.index + endMatch[0].length;
+                readme = readme.substring(0, start) + leaderboard + '\\n---\\n' + readme.substring(end);
+              }
+            }
+            
+            fs.writeFileSync('../README.md', readme);
+            console.log('README updated with leaderboard');
+          " || echo "Leaderboard update skipped"
       
       - name: Commit changes
         run: |
-          git add state.json
-          git add docs/ || true
-          git add contributions/ || true
-          git commit -m "📊 Update state from PR #${{ github.event.pull_request.number }}" || echo "No changes to commit"
+          git add state.json README.md
+          git commit -m "📊 Update state from PR #${{ github.event.pull_request.number }}" || echo "No changes"
       
       - name: Push changes
         run: |
           git push origin main
       
-      - name: Close PR
+      - name: Close PR with comment
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('fs');
+            let levelUnlocked = false;
+            let karmaInfo = { score: 0, amplification: 1 };
+            
+            try {
+              levelUnlocked = fs.existsSync('level-unlocked.txt');
+              karmaInfo = JSON.parse(fs.readFileSync('engine/karma-applied.json', 'utf8'));
+            } catch(e) {}
+            
             await github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -113,18 +215,19 @@ jobs:
               state: 'closed'
             });
             
-            const levelUnlocked = '${{ steps.level_check.outputs.unlocked }}' === 'true';
-            
             let comment = `## 🎉 Merged!\n\n`;
-            comment += `Your contribution has been added to the game.\n\n`;
+            comment += `**Karma:** +${karmaInfo.score}\n`;
             
-            if (levelUnlocked) {
-              comment += `## 🚀 **LEVEL UP!**\n\n`;
-              comment += `A new level has been unlocked!\n`;
-              comment += `Check out the board to see what's changed.\n\n`;
+            if (karmaInfo.amplification > 1) {
+              comment += `**Amplification:** x${karmaInfo.amplification} 🌟\n`;
             }
             
-            comment += `---\n_The repo is the game_`;
+            if (levelUnlocked) {
+              comment += `\n## 🚀 **LEVEL UP!**\n`;
+              comment += `A new level has been unlocked!\n`;
+            }
+            
+            comment += `\n---\n_Enjoy and contribute!_`;
             
             await github.rest.issues.createComment({
               owner: context.repo.owner,

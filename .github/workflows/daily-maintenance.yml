@@ -1,0 +1,101 @@
+name: Daily Maintenance
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Every day at midnight UTC
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: |
+          cd engine
+          npm ci
+      
+      - name: Build engine
+        run: |
+          cd engine
+          npm run build
+      
+      - name: Run decay check
+        run: |
+          cd engine
+          node -e "
+            const { loadState, saveState } = require('./dist/loader.js');
+            const { applyDecaySystem, getDecayStatus } = require('./dist/decay.js');
+            
+            const state = loadState();
+            
+            console.log('=== DAILY MAINTENANCE ===');
+            console.log('Current level:', state.levels.current);
+            console.log('Global karma:', state.karma.global);
+            
+            // Check decay status
+            const status = getDecayStatus(state);
+            console.log('Decay status:', status);
+            
+            // Apply decay if needed
+            const result = applyDecaySystem(state);
+            console.log('Decay result:', result.message);
+            
+            // Save state
+            saveState(state);
+            
+            // Output for commit message
+            if (result.karma_decay.decayed || result.level_decay.decayed) {
+              console.log('DECAY_APPLIED=true');
+            }
+          "
+      
+      - name: Update leaderboard
+        run: |
+          cd engine
+          node -e "
+            const fs = require('fs');
+            const { loadState } = require('./dist/loader.js');
+            const { generateLeaderboardMarkdown } = require('./dist/leaderboard.js');
+            
+            const state = loadState();
+            const leaderboard = generateLeaderboardMarkdown(state);
+            
+            let readme = fs.readFileSync('../README.md', 'utf8');
+            
+            const startMarker = '## 🏆 Leaderboards';
+            if (readme.includes(startMarker)) {
+              const start = readme.indexOf(startMarker);
+              const afterStart = readme.substring(start);
+              const endMatch = afterStart.match(/\\n---\\n/);
+              if (endMatch) {
+                const end = start + endMatch.index + endMatch[0].length;
+                readme = readme.substring(0, start) + leaderboard + '\\n---\\n' + readme.substring(end);
+                fs.writeFileSync('../README.md', readme);
+                console.log('Leaderboard updated');
+              }
+            }
+          "
+      
+      - name: Configure git
+        run: |
+          git config user.name "enjoy-bot"
+          git config user.email "bot@enjoy.game"
+      
+      - name: Commit changes
+        run: |
+          git add state.json README.md
+          git commit -m "🔧 Daily maintenance - $(date +%Y-%m-%d)" || echo "No changes"
+          git push || echo "Nothing to push"

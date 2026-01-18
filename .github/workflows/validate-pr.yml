@@ -17,6 +17,37 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Checkout PR branch
+        run: |
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
+          git checkout pr-branch
+      
+      - name: Get changed files
+        id: files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            const added = files.filter(f => f.status === 'added').map(f => f.filename);
+            const modified = files.filter(f => f.status === 'modified').map(f => f.filename);
+            const removed = files.filter(f => f.status === 'removed').map(f => f.filename);
+            
+            core.exportVariable('PR_FILES_ADDED', added.join(','));
+            core.exportVariable('PR_FILES_MODIFIED', modified.join(','));
+            core.exportVariable('PR_FILES_REMOVED', removed.join(','));
+            core.exportVariable('PR_AUTHOR', context.payload.pull_request.user.login);
+            core.exportVariable('PR_TITLE', context.payload.pull_request.title);
+            core.exportVariable('PR_BODY', context.payload.pull_request.body || '');
+            
+            console.log('Added files:', added);
+            console.log('Modified files:', modified);
+            console.log('Removed files:', removed);
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -32,23 +63,65 @@ jobs:
           cd engine
           npm run build
       
-      - name: Check scaling metrics
-        id: scaling
-        run: |
-          cd engine
-          npm run check-scaling
-          echo "SHOULD_PROCESS=$(cat scaling-decision.txt)" >> $GITHUB_OUTPUT
-        continue-on-error: true
-      
       - name: Validate PR
         id: validate
-        if: steps.scaling.outputs.SHOULD_PROCESS != 'skip'
         run: |
           cd engine
-          npm run validate -- --pr-number=${{ github.event.pull_request.number }}
+          node dist/index.js validate --pr-number=${{ github.event.pull_request.number }}
         continue-on-error: true
       
-      - name: Read validation result
+      - name: Analyze Karma
+        id: karma
+        run: |
+          cd engine
+          node -e "
+            const fs = require('fs');
+            const { loadState } = require('./dist/loader.js');
+            const { analyzeContributionQuality } = require('./dist/karma.js');
+            const { extractReferral } = require('./dist/validator.js');
+            
+            const state = loadState();
+            let result = { valid: false };
+            try {
+              result = JSON.parse(fs.readFileSync('validation-result.json', 'utf8'));
+            } catch(e) {}
+            
+            if (!result.valid) {
+              fs.writeFileSync('karma-result.json', JSON.stringify({ skipped: true }));
+              process.exit(0);
+            }
+            
+            const addedFiles = (process.env.PR_FILES_ADDED || '').split(',').filter(f => f);
+            let content = '';
+            if (addedFiles.length > 0 && fs.existsSync(addedFiles[0])) {
+              content = fs.readFileSync(addedFiles[0], 'utf8').trim();
+            }
+            
+            const pr = {
+              number: ${{ github.event.pull_request.number }},
+              author: process.env.PR_AUTHOR || 'unknown',
+              commit_message: process.env.PR_TITLE || '',
+              files_added: addedFiles,
+              timestamp: new Date().toISOString()
+            };
+            
+            const karma = analyzeContributionQuality(pr, content, state);
+            const referral = extractReferral(process.env.PR_BODY || '');
+            
+            const karmaResult = {
+              quality_score: karma.quality_score,
+              action: karma.action,
+              amplification: karma.amplification_factor,
+              referral: referral,
+              reasons: karma.reasons
+            };
+            
+            fs.writeFileSync('karma-result.json', JSON.stringify(karmaResult, null, 2));
+            console.log('Karma:', JSON.stringify(karmaResult, null, 2));
+          "
+        continue-on-error: true
+      
+      - name: Read results
         id: result
         run: |
           if [ -f engine/validation-result.json ]; then
@@ -65,39 +138,72 @@ jobs:
             echo "valid=false" >> $GITHUB_OUTPUT
             echo "reason=Validation failed to run" >> $GITHUB_OUTPUT
           fi
+          
+          if [ -f engine/karma-result.json ]; then
+            KARMA_SCORE=$(jq -r '.quality_score // 0' engine/karma-result.json)
+            KARMA_ACTION=$(jq -r '.action // "accept"' engine/karma-result.json)
+            KARMA_AMP=$(jq -r '.amplification // 1' engine/karma-result.json)
+            REFERRAL=$(jq -r '.referral // ""' engine/karma-result.json)
+            
+            echo "karma_score=$KARMA_SCORE" >> $GITHUB_OUTPUT
+            echo "karma_action=$KARMA_ACTION" >> $GITHUB_OUTPUT
+            echo "karma_amp=$KARMA_AMP" >> $GITHUB_OUTPUT
+            echo "referral=$REFERRAL" >> $GITHUB_OUTPUT
+          fi
       
       - name: Add labels
         uses: actions/github-script@v7
         with:
           script: |
             const valid = '${{ steps.result.outputs.valid }}' === 'true';
-            const rules = '${{ steps.result.outputs.rules }}';
+            const karmaAction = '${{ steps.result.outputs.karma_action }}';
+            const karmaAmp = parseInt('${{ steps.result.outputs.karma_amp }}') || 1;
             
-            // Remove old labels
-            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
+            const labelsToCreate = [
+              { name: 'auto-merge', color: '0e8a16', description: 'Ready for auto-merge' },
+              { name: 'invalid', color: 'd93f0b', description: 'Invalid contribution' },
+              { name: 'karma-x2', color: 'fbca04', description: 'x2 amplification' },
+              { name: 'karma-x3', color: 'b60205', description: 'x3 amplification' },
+              { name: 'refused', color: '000000', description: 'Refused by karma' }
+            ];
             
-            for (const label of labels) {
-              if (label.name.startsWith('rule-') || label.name === 'auto-merge' || label.name === 'invalid') {
-                await github.rest.issues.removeLabel({
+            for (const label of labelsToCreate) {
+              try {
+                await github.rest.issues.createLabel({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  name: label.name
+                  ...label
                 });
-              }
+              } catch (e) {}
             }
             
-            // Add new labels
-            const newLabels = [];
-            if (valid) {
-              newLabels.push('auto-merge');
-              if (rules) {
-                rules.split(', ').forEach(r => newLabels.push(`rule-${r}`));
+            try {
+              const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+              });
+              
+              for (const label of labels) {
+                if (['auto-merge', 'invalid', 'karma-x2', 'karma-x3', 'refused'].includes(label.name)) {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    name: label.name
+                  }).catch(() => {});
+                }
               }
+            } catch (e) {}
+            
+            const newLabels = [];
+            
+            if (karmaAction === 'refuse') {
+              newLabels.push('refused', 'invalid');
+            } else if (valid) {
+              newLabels.push('auto-merge');
+              if (karmaAmp === 2) newLabels.push('karma-x2');
+              if (karmaAmp === 3) newLabels.push('karma-x3');
             } else {
               newLabels.push('invalid');
             }
@@ -116,22 +222,41 @@ jobs:
         with:
           script: |
             const valid = '${{ steps.result.outputs.valid }}' === 'true';
-            const reason = '${{ steps.result.outputs.reason }}';
+            const reason = `${{ steps.result.outputs.reason }}`;
             const rules = '${{ steps.result.outputs.rules }}';
             const points = '${{ steps.result.outputs.points }}';
+            const karmaScore = '${{ steps.result.outputs.karma_score }}';
+            const karmaAction = '${{ steps.result.outputs.karma_action }}';
+            const karmaAmp = '${{ steps.result.outputs.karma_amp }}';
+            const referral = '${{ steps.result.outputs.referral }}';
             
             let body;
-            if (valid) {
+            
+            if (karmaAction === 'refuse') {
+              body = `## ❌ Contribution Refused\n\n`;
+              body += `**Karma Score:** ${karmaScore}/100\n`;
+              body += `**Reason:** Low quality contribution.\n\n`;
+              body += `Tips:\n- Use creative words (5-10 chars)\n- Avoid "test", "hello", "foo"\n- No duplicates\n\n`;
+              body += `---\n_Enjoy and contribute!_`;
+            } else if (valid) {
               body = `## ✅ Valid Contribution!\n\n`;
-              body += `**Matched Rules:** ${rules}\n`;
-              body += `**Points:** +${points}\n\n`;
-              body += `Your PR will be auto-merged shortly! 🎉\n\n`;
-              body += `---\n_The repo is the game_`;
+              body += `**Rules:** ${rules}\n`;
+              body += `**Points:** +${points}\n`;
+              body += `**Karma:** ${karmaScore}/100\n\n`;
+              
+              if (karmaAmp === '3') {
+                body += `### 🌟 LEGENDARY! x3 AMPLIFICATION!\n\n`;
+              } else if (karmaAmp === '2') {
+                body += `### ✨ Excellent! x2 AMPLIFICATION!\n\n`;
+              }
+              
+              if (referral && referral !== 'null') {
+                body += `**Referred by:** @${referral}\n\n`;
+              }
+              
+              body += `Auto-merging shortly! 🎉\n\n---\n_Enjoy and contribute!_`;
             } else {
-              body = `## ❌ Invalid Contribution\n\n`;
-              body += `**Reason:** ${reason}\n\n`;
-              body += `Please check the [rules](https://[USERNAME].github.io/enjoy/rules/) and try again.\n\n`;
-              body += `---\n_The repo is the game_`;
+              body = `## ❌ Invalid Contribution\n\n**Reason:** ${reason}\n\n---\n_Enjoy and contribute!_`;
             }
             
             await github.rest.issues.createComment({

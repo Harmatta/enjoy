@@ -132,6 +132,7 @@ export interface PRMetadata {
   files_removed: string[];
   commit_message: string;
   timestamp: string;
+  body?: string;
 }
 
 export interface ValidationResult {

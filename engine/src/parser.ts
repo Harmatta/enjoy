@@ -2,27 +2,38 @@ import * as fs from 'fs';
 import { PRMetadata } from './types.js';
 
 /**
- * Parse PR metadata from GitHub Actions environment or CLI args
+ * Parse PR metadata from GitHub Actions environment
  */
-export function parsePR(prNumber: number, files?: any[]): PRMetadata {
-  // In real GitHub Actions, we'd get this from the API
-  // For now, we'll scan the repo for changes
-  
-  const author = process.env.GITHUB_ACTOR || 'local';
+export function parsePR(prNumber: number, prFiles?: string[]): PRMetadata {
+  const author = process.env.GITHUB_ACTOR || process.env.PR_AUTHOR || 'local';
   const timestamp = new Date().toISOString();
   
-  // Get list of untracked/new files
-  const filesAdded: string[] = [];
-  const filesModified: string[] = [];
-  const filesRemoved: string[] = [];
+  // Files can be passed from GitHub Actions or detected locally
+  let filesAdded: string[] = [];
+  let filesModified: string[] = [];
+  let filesRemoved: string[] = [];
   
-  // Simple heuristic: any .txt file in root that's not in state is "added"
-  const txtFiles = fs.readdirSync('.').filter(f => f.endsWith('.txt'));
-  
-  for (const file of txtFiles) {
-    if (!file.startsWith('.')) {
-      filesAdded.push(file);
+  // If PR_FILES env var exists (set by workflow), use that
+  if (process.env.PR_FILES_ADDED) {
+    filesAdded = process.env.PR_FILES_ADDED.split(',').filter(f => f.trim());
+  } else if (prFiles) {
+    filesAdded = prFiles;
+  } else {
+    // Fallback: scan for .txt files locally (for testing)
+    try {
+      const txtFiles = fs.readdirSync('.').filter(f => f.endsWith('.txt') && !f.startsWith('.'));
+      filesAdded = txtFiles;
+    } catch (e) {
+      // Ignore
     }
+  }
+  
+  if (process.env.PR_FILES_MODIFIED) {
+    filesModified = process.env.PR_FILES_MODIFIED.split(',').filter(f => f.trim());
+  }
+  
+  if (process.env.PR_FILES_REMOVED) {
+    filesRemoved = process.env.PR_FILES_REMOVED.split(',').filter(f => f.trim());
   }
   
   return {
@@ -31,8 +42,9 @@ export function parsePR(prNumber: number, files?: any[]): PRMetadata {
     files_added: filesAdded,
     files_modified: filesModified,
     files_removed: filesRemoved,
-    commit_message: process.env.COMMIT_MSG || '',
-    timestamp
+    commit_message: process.env.COMMIT_MSG || process.env.PR_TITLE || '',
+    timestamp,
+    body: process.env.PR_BODY || ''
   };
 }
 
