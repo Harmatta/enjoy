@@ -94,14 +94,16 @@
 Click the **Fork** button above ↗️
 
 ### Step 2: Create a file
-Name it `yourword.txt` (example: `PHOENIX.txt`)  
+In the `words/` folder, create `YOURWORD.txt` (example: `words/PHOENIX.txt`)  
 Inside write just ONE creative word
 
 ### Step 3: Open PR
-Fill the template → Answer "Who is the First Guardian?" → **Karmiel**
+Fill the template → Answer "Who is the First Guardian?" → **Karmiel** → **Check 3+ boxes!**
 
 ### Step 4: 🎉
 Bot validates → Auto-merges → You earn karma!
+
+📖 **Full guide:** [PLAY.md](PLAY.md) | ⚡ **Quick start:** [QUICKSTART.md](QUICKSTART.md)
 
 ---
 

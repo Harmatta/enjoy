@@ -33,6 +33,12 @@ Welcome to the most comprehensive GitHub-based game ever created.
 
 ## 📚 Documentation Hub
 
+### Getting Started
+| Document | Description | For Who |
+|----------|-------------|---------|
+| [PLAY.md](PLAY.md) | **Complete game guide** | New players |
+| [QUICKSTART.md](QUICKSTART.md) | 2-minute quick start | Impatient players |
+
 ### Core Gameplay
 | Document | Description | Karma Info |
 |----------|-------------|------------|

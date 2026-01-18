@@ -2,6 +2,8 @@
 
 > **Get playing in under 2 minutes!**
 
+📖 **For complete documentation:** See [PLAY.md](PLAY.md)
+
 ---
 
 ## 🎮 Step 1: Fork & Clone
@@ -17,12 +19,14 @@ cd enjoy
 ## 📝 Step 2: Create Your Word
 
 ```bash
-# Create a file with your creative word
-echo "AURORA" > aurora.txt
+# Create a file in the words/ folder!
+mkdir -p words
+echo "AURORA" > words/AURORA.txt
 ```
 
 **Rules:**
-- ✅ 2-20 characters (5-10 = bonus!)
+- ✅ File must be in `words/` folder
+- ✅ 3-20 characters (5-10 = bonus!)
 - ✅ Letters only (A-Z)
 - ✅ Be creative!
 - ❌ No: test, hello, foo, etc.
@@ -32,10 +36,10 @@ echo "AURORA" > aurora.txt
 ## 🚀 Step 3: Submit PR
 
 ```bash
-git checkout -b my-first-word
-git add aurora.txt
-git commit -m "Add AURORA"
-git push origin my-first-word
+git checkout -b play/aurora
+git add words/AURORA.txt
+git commit -m "🎮 Add word: AURORA"
+git push origin play/aurora
 ```
 
 Then open a PR on GitHub.
@@ -44,18 +48,23 @@ Then open a PR on GitHub.
 
 ## 🔐 Step 4: Fill the PR Template
 
-**The secret answer:** Read [LORE.md](LORE.md) - look for the First Guardian's name at the bottom.
+**CRITICAL - Don't skip this!**
 
-> **Hint:** The Guardian's name is **Karmiel**
+1. The Guardian answer is already there: **Karmiel**
+2. Fill in `**Word:**` with your word
+3. **Check at least 3 boxes** (change `[ ]` to `[x]`)
+
+> ⚠️ If you don't check 3 boxes, validation FAILS!
 
 ---
 
 ## ⏱️ Step 5: Wait ~30 seconds
 
 The bot will:
-1. ✅ Validate your PR
-2. ✅ Auto-merge if valid
-3. ✅ Award you karma!
+1. ✅ Validate your PR format
+2. ✅ Validate your word
+3. ✅ Auto-merge if valid
+4. ✅ Award you karma!
 
 ---
 
@@ -69,11 +78,11 @@ You're now playing! Check your karma on the [leaderboard](https://fabriziosalmi.
 
 | Want to... | Read... |
 |------------|---------|
+| Full game guide | [PLAY.md](PLAY.md) |
 | Understand karma | [GAMEPLAY.md](GAMEPLAY.md) |
 | Complete bounties | [bounties.md](bounties.md) |
 | Learn all features | [HUB.md](HUB.md) |
 | Report bugs | [Issue Templates](.github/ISSUE_TEMPLATE/) |
-| Join discussions | [GitHub Discussions](../../discussions) |
 
 ---
 
