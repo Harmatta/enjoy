@@ -1,33 +1,19 @@
----
-name: "🎮 Contribution"
-about: "Add your contribution to the game"
-title: "Add [WORD]"
-labels: ""
-assignees: ""
----
-
-## 🔐 Proof of Humanity
-
-<!-- ⚠️ REQUIRED: You MUST answer this to prove you've read the Lore -->
-<!-- 📖 Hint: Read LORE.md very carefully... the answer is hidden within -->
+## Proof of Humanity
 
 **What is the name of the First Guardian?** 
-
----
-
-## 🎯 My Contribution
+<!-- 👆 Read LORE.md to find the answer (one word) -->
 
 **Word:** 
-<!-- Replace with your creative word (5-20 characters) -->
+<!-- 👆 Your creative word (3-30 chars) -->
+
+## Checklist
+- [ ] I read the rules in LORE.md
+- [ ] My contribution is original
+- [ ] I am human
 
 ---
-
-## 🔗 Referral (optional)
-
-<!-- If someone invited you, both of you get bonus karma! -->
 **Referred by:** @
-
----
+<!-- 👆 Optional: If someone invited you, both get bonus karma -->
 
 ## ✅ Checklist
 
@@ -42,4 +28,4 @@ assignees: ""
 > *"The journey of a thousand commits begins with a single PR."*  
 > — **Karmiel**, First Guardian
 
-✨ **Enjoy and contribute!** ✨
+

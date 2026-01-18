@@ -1,0 +1,143 @@
+name: Update State on Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+concurrency:
+  group: enjoy-game-state
+  cancel-in-progress: false
+
+jobs:
+  update-state:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Configure git
+        run: |
+          git config user.name "enjoy-bot"
+          git config user.email "bot@enjoy.game"
+      
+      - name: Install engine
+        run: |
+          cd engine
+          npm ci
+          npm run build
+      
+      - name: Update state
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          cd engine
+          node -e "
+            import { loadState, saveState } from './dist/loader.js';
+            import { analyzeContributionQuality, applyKarma, trackReferral, applyReferralKarma } from './dist/karma.js';
+            import { extractReferral } from './dist/validator.js';
+            import { applyDecaySystem } from './dist/decay.js';
+            import fs from 'fs';
+            
+            const state = loadState();
+            
+            // Apply decay first
+            applyDecaySystem(state);
+            
+            const author = process.env.PR_AUTHOR || 'unknown';
+            const prBody = process.env.PR_BODY || '';
+            const prNumber = parseInt(process.env.PR_NUMBER) || 0;
+            const prTitle = process.env.PR_TITLE || '';
+            
+            // Create PR object
+            const pr = {
+              number: prNumber,
+              author: author,
+              commit_message: prTitle,
+              files_added: [],
+              timestamp: new Date().toISOString()
+            };
+            
+            // Analyze and apply karma
+            const karma = analyzeContributionQuality(pr, prTitle, state);
+            applyKarma(state, pr, karma);
+            
+            // Track referral if present
+            const referral = extractReferral(prBody);
+            if (referral) {
+              trackReferral(state, referral, author);
+              applyReferralKarma(state, author, karma.quality_score, karma.amplification_factor);
+            }
+            
+            // Update counters
+            state.meta.total_prs++;
+            if (!state.players[author]) {
+              state.players[author] = {
+                karma: 0,
+                prs: 0,
+                joined: new Date().toISOString()
+              };
+              state.meta.total_players++;
+            }
+            state.players[author].prs++;
+            state.players[author].karma += karma.quality_score;
+            
+            state.last_updated = new Date().toISOString();
+            state.last_pr = '#' + prNumber;
+            
+            // Update score
+            state.score.total += karma.quality_score;
+            state.score.today += karma.quality_score;
+            
+            // Check level progress
+            if (state.levels.next_unlock) {
+              state.levels.next_unlock.progress.score = state.score.total;
+              state.levels.next_unlock.progress.prs = state.meta.total_prs;
+              
+              const next = state.levels.next_unlock;
+              const needsScore = next.progress.score >= next.requires_score;
+              const needsPrs = next.progress.prs >= next.requires_prs;
+              
+              if (needsScore || needsPrs) {
+                console.log('🎉 LEVEL UP! Unlocking level', next.level_id);
+                state.levels.current = next.level_id;
+                state.levels.unlocked.push(next.level_id);
+                
+                // Set next level requirements
+                if (next.level_id < 100) {
+                  state.levels.next_unlock = {
+                    level_id: next.level_id + 1,
+                    requires_score: Math.floor(next.requires_score * 1.5),
+                    requires_prs: next.requires_prs + 3,
+                    progress: { score: state.score.total, prs: state.meta.total_prs }
+                  };
+                } else {
+                  state.levels.next_unlock = null;
+                  console.log('🏆 MAX LEVEL 100 REACHED!');
+                }
+              }
+            }
+            
+            saveState(state);
+            console.log('✅ State updated: Score=' + state.score.total + ', Level=' + state.levels.current + ', PRs=' + state.meta.total_prs);
+          "
+      
+      - name: Commit and push
+        run: |
+          git add state.json
+          git commit -m "📊 State update from PR #${{ github.event.pull_request.number }}" || echo "No changes"
+          git push
