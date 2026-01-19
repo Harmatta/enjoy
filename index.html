@@ -224,9 +224,9 @@
         }
         
         /* ═══════════════════════════════════════════════════════════
-           STARS LAYER - GitHub stars become sky stars
+           STARS LAYER - Anonymous stars in sky
            ═══════════════════════════════════════════════════════════ */
-        
+
         .stars-layer {
             position: fixed;
             left: 0;
@@ -236,14 +236,43 @@
             pointer-events: none;
             z-index: 2;
             opacity: var(--star-opacity);
-            transition: opacity 8s ease, height 8s ease, top 8s ease, bottom 8s ease;
+            transition: opacity 8s ease;
         }
 
-        /* Sea sparkles mode - stars become reflections on water */
-        .stars-layer.sea-sparkles {
+        /* ═══════════════════════════════════════════════════════════
+           STARGAZERS LAYER - Real GitHub stargazers with links
+           ═══════════════════════════════════════════════════════════ */
+
+        .stargazers-layer {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 55%;
+            pointer-events: none;
+            z-index: 6;
+            transition: all 8s ease;
+        }
+
+        /* Day mode: stargazers become small sparkles on the sea */
+        .stargazers-layer.on-sea {
             top: auto;
             bottom: 0;
-            height: 30%;
+            height: 25%;
+        }
+
+        .stargazers-layer .sky-star {
+            pointer-events: auto;
+        }
+
+        /* Smaller sparkles on sea during day */
+        .stargazers-layer.on-sea .sky-star {
+            transform: scale(0.6);
+            filter: blur(0.5px);
+        }
+        .stargazers-layer.on-sea .sky-star:hover {
+            transform: scale(1.5) !important;
+            filter: blur(0);
         }
         
         /* ═══════════════════════════════════════════════════════════
@@ -979,9 +1008,12 @@
     <!-- Aurora (karma intensity) -->
     <div class="aurora-layer" id="auroraLayer"></div>
     
-    <!-- Stars Layer -->
+    <!-- Stars Layer (anonymous stars) -->
     <div class="stars-layer" id="starsLayer"></div>
-    
+
+    <!-- Stargazers Layer (real GitHub stargazers with links) -->
+    <div class="stargazers-layer" id="stargazersLayer"></div>
+
     <!-- Celestial Body -->
     <div class="celestial" id="celestial">
         <div class="celestial-body" id="celestialBody"></div>
@@ -1286,13 +1318,22 @@
             // Update stars/sparkles opacity and position
             const starsInfo = getStarsOpacity();
             const starsLayer = document.querySelector('.stars-layer');
+            const stargazersLayer = document.querySelector('.stargazers-layer');
+
             if (starsLayer) {
                 starsLayer.style.opacity = starsInfo.opacity;
-                // Toggle sea sparkles mode (stars become water reflections during day)
+            }
+
+            // Toggle stargazers position: sky at night, sea during day
+            if (stargazersLayer) {
                 if (starsInfo.isStars) {
-                    starsLayer.classList.remove('sea-sparkles');
+                    // Night: stargazers in sky
+                    stargazersLayer.classList.remove('on-sea');
+                    stargazersLayer.style.opacity = starsInfo.opacity;
                 } else {
-                    starsLayer.classList.add('sea-sparkles');
+                    // Day: stargazers become sparkles on sea
+                    stargazersLayer.classList.add('on-sea');
+                    stargazersLayer.style.opacity = Math.min(0.8, starsInfo.opacity + 0.3);
                 }
             }
 
@@ -1308,15 +1349,17 @@
 
         
         // ═══════════════════════════════════════════════════════════════
-        // STARS (Sky) - GitHub stargazers become real stars at night
+        // STARS - Anonymous stars in sky + Stargazers (with links)
         // ═══════════════════════════════════════════════════════════════
-        
+
         let starTooltip = null;
-        
+
         function createStars(count, stargazers = []) {
-            const container = document.getElementById('starsLayer');
-            container.innerHTML = '';
-            
+            const starsContainer = document.getElementById('starsLayer');
+            const stargazersContainer = document.getElementById('stargazersLayer');
+            starsContainer.innerHTML = '';
+            stargazersContainer.innerHTML = '';
+
             // Create tooltip if needed
             if (!starTooltip) {
                 starTooltip = document.createElement('div');
@@ -1338,93 +1381,113 @@
                 `;
                 document.body.appendChild(starTooltip);
             }
-            
-            for (let i = 0; i < count; i++) {
+
+            // Create anonymous stars (in sky layer)
+            const anonymousCount = Math.max(0, count - stargazers.length);
+            for (let i = 0; i < anonymousCount; i++) {
                 const star = document.createElement('div');
-                const seed = i * 6997;
-                const isReal = i < stargazers.length;
-                const login = isReal ? stargazers[i]?.login : null;
-                
-                // Deterministic but varied positions
+                const seed = (i + 1000) * 6997;
+
                 const x = ((seed * 13 + i * 31) % 95) + 2;
-                const y = ((seed * 17 + i * 23) % 45) + 3;
-                
-                // Real stars are bigger and brighter
-                const baseSize = isReal ? 2 + (seed % 8) / 4 : 1 + (seed % 6) / 6;
+                const y = ((seed * 17 + i * 23) % 50) + 3;
+                const baseSize = 1 + (seed % 6) / 6;
                 const duration = 3 + (i % 7);
                 const delay = (i * 0.4) % 6;
-                
-                // Color: real stars have golden hue, anonymous are white
-                const hue = isReal ? 45 + (seed % 20) : 0;
-                const sat = isReal ? '60%' : '0%';
-                const light = isReal ? '90%' : '85%';
-                
-                star.className = 'sky-star' + (isReal ? ' real-star' : '');
-                star.dataset.login = login || '';
+
+                star.className = 'sky-star';
                 star.style.cssText = `
                     position: absolute;
                     left: ${x}%;
                     top: ${y}%;
                     width: ${baseSize}px;
                     height: ${baseSize}px;
-                    background: hsl(${hue}, ${sat}, ${light});
+                    background: hsl(0, 0%, 85%);
                     border-radius: 50%;
-                    box-shadow: ${isReal ? `0 0 ${baseSize * 3}px rgba(255, 215, 0, 0.5), 0 0 ${baseSize * 6}px rgba(255, 215, 0, 0.2)` : `0 0 ${baseSize * 2}px rgba(255, 255, 255, 0.3)`};
+                    box-shadow: 0 0 ${baseSize * 2}px rgba(255, 255, 255, 0.3);
                     animation: twinkle ${duration}s ease-in-out infinite;
                     animation-delay: ${delay}s;
-                    cursor: ${isReal ? 'pointer' : 'default'};
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
                 `;
-                
-                if (isReal && login) {
-                    // Click -> open GitHub profile
-                    star.addEventListener('click', () => {
-                        window.open(`https://github.com/${login}`, '_blank');
-                        console.log('⭐ Visited stargazer:', login);
-                    });
-                    
-                    // Hover effects
-                    star.addEventListener('mouseenter', (e) => {
-                        star.style.transform = 'scale(2)';
-                        star.style.boxShadow = `0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.4)`;
-                        starTooltip.textContent = `⭐ ${login}`;
-                        starTooltip.style.opacity = '1';
-                        starTooltip.style.left = e.clientX + 15 + 'px';
-                        starTooltip.style.top = e.clientY + 10 + 'px';
-                    });
-                    
-                    star.addEventListener('mouseleave', () => {
-                        star.style.transform = '';
-                        star.style.boxShadow = `0 0 ${baseSize * 3}px rgba(255, 215, 0, 0.5), 0 0 ${baseSize * 6}px rgba(255, 215, 0, 0.2)`;
-                        starTooltip.style.opacity = '0';
-                    });
-                    
-                    star.addEventListener('mousemove', (e) => {
-                        starTooltip.style.left = e.clientX + 15 + 'px';
-                        starTooltip.style.top = e.clientY + 10 + 'px';
-                    });
-                }
-                
-                container.appendChild(star);
+                starsContainer.appendChild(star);
             }
-            
+
+            // Create stargazers (in separate layer - sky at night, sea during day)
+            stargazers.forEach((gazer, i) => {
+                if (!gazer?.login) return;
+
+                const star = document.createElement('div');
+                const seed = i * 7919;
+
+                // Position spread across the area
+                const x = 5 + ((seed * 13 + i * 47) % 90);
+                const y = 10 + ((seed * 19 + i * 31) % 75);
+                const baseSize = 3 + (seed % 4);
+                const duration = 2 + (i % 5);
+                const delay = (i * 0.7) % 4;
+                const hue = 40 + (seed % 25);
+
+                star.className = 'sky-star real-star';
+                star.dataset.login = gazer.login;
+                star.dataset.baseSize = baseSize;
+                star.style.cssText = `
+                    position: absolute;
+                    left: ${x}%;
+                    top: ${y}%;
+                    width: ${baseSize}px;
+                    height: ${baseSize}px;
+                    background: hsl(${hue}, 70%, 88%);
+                    border-radius: 50%;
+                    box-shadow: 0 0 ${baseSize * 3}px rgba(255, 215, 0, 0.6), 0 0 ${baseSize * 6}px rgba(255, 215, 0, 0.25);
+                    animation: twinkle ${duration}s ease-in-out infinite;
+                    animation-delay: ${delay}s;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+                `;
+
+                // Click -> open GitHub profile
+                star.addEventListener('click', () => {
+                    window.open(`https://github.com/${gazer.login}`, '_blank');
+                    console.log('⭐ Visited stargazer:', gazer.login);
+                });
+
+                // Hover effects
+                star.addEventListener('mouseenter', (e) => {
+                    star.style.transform = 'scale(2.5)';
+                    star.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.9), 0 0 40px rgba(255, 215, 0, 0.5)';
+                    star.style.filter = 'none';
+                    starTooltip.textContent = `⭐ ${gazer.login}`;
+                    starTooltip.style.opacity = '1';
+                    starTooltip.style.left = e.clientX + 15 + 'px';
+                    starTooltip.style.top = e.clientY + 10 + 'px';
+                });
+
+                star.addEventListener('mouseleave', () => {
+                    star.style.transform = '';
+                    star.style.boxShadow = `0 0 ${baseSize * 3}px rgba(255, 215, 0, 0.6), 0 0 ${baseSize * 6}px rgba(255, 215, 0, 0.25)`;
+                    starTooltip.style.opacity = '0';
+                });
+
+                star.addEventListener('mousemove', (e) => {
+                    starTooltip.style.left = e.clientX + 15 + 'px';
+                    starTooltip.style.top = e.clientY + 10 + 'px';
+                });
+
+                stargazersContainer.appendChild(star);
+            });
+
             // Add twinkle keyframes if not exists
             if (!document.getElementById('twinkle-style')) {
                 const style = document.createElement('style');
                 style.id = 'twinkle-style';
                 style.textContent = `
                     @keyframes twinkle {
-                        0%, 100% { opacity: 0.3; transform: scale(1); }
-                        50% { opacity: 1; transform: scale(1.2); }
-                    }
-                    .sky-star.real-star {
-                        z-index: 5;
+                        0%, 100% { opacity: 0.4; }
+                        50% { opacity: 1; }
                     }
                 `;
                 document.head.appendChild(style);
             }
-            
-            console.log('⭐ Created', count, 'stars,', stargazers.length, 'are real stargazers');
+
+            console.log('⭐ Created', anonymousCount, 'anonymous stars +', stargazers.length, 'stargazers');
         }
         
         // ═══════════════════════════════════════════════════════════════
