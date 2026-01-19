@@ -978,8 +978,8 @@
             celestial.style.left = period.pos.x + '%';
             celestial.style.top = period.pos.y + '%';
             
-            // Update audio tone
-            if (AudioSystem.isPlaying) {
+            // Update audio tone (check if AudioSystem exists)
+            if (typeof AudioSystem !== 'undefined' && AudioSystem.isPlaying) {
                 AudioSystem.updateTone(period.key);
             }
         }
@@ -1476,7 +1476,8 @@
         }
         
         // Initial load
-        console.log('🚀 enjoy init - loading data...');
+        const VERSION = 'v2.1.0';
+        console.log('🚀 enjoy', VERSION, '- loading data...');
         loadState().then(() => console.log('✅ State loaded')).catch(e => console.error('❌ State error:', e));
         loadRepoStats().then(() => console.log('✅ Repo stats loaded')).catch(e => console.error('❌ Repo error:', e));
         createStars(40);
