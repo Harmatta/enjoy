@@ -329,6 +329,12 @@
         "event": "issue_comment.created",
         "karma": 2,
         "timestamp": "2026-01-19T03:46:20.475Z"
+      },
+      {
+        "actor": "tanu123421",
+        "event": "issue_comment.created",
+        "karma": 2,
+        "timestamp": "2026-01-19T04:05:40.813Z"
       }
     ],
     "by_user": {
@@ -449,6 +455,16 @@
             "event": "issue_comment.created",
             "karma": 2,
             "timestamp": "2026-01-19T02:37:54.722Z"
+          }
+        ]
+      },
+      "tanu123421": {
+        "total": 2,
+        "history": [
+          {
+            "event": "issue_comment.created",
+            "karma": 2,
+            "timestamp": "2026-01-19T04:05:40.812Z"
           }
         ]
       }
