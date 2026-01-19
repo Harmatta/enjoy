@@ -984,8 +984,7 @@
             }
         }
         
-        setInterval(updateTimePeriod, 60000);
-        updateTimePeriod();
+        // Time period update moved after AudioSystem definition (see below)
         
         // ═══════════════════════════════════════════════════════════════
         // STARS (Sky) - GitHub stargazers become real stars at night
@@ -1374,7 +1373,11 @@
             }
             document.removeEventListener('click', enableAudio);
         }, { once: true });
-        
+
+        // Now that AudioSystem is defined, start time updates
+        setInterval(updateTimePeriod, 60000);
+        updateTimePeriod();
+
         // ═══════════════════════════════════════════════════════════════
         // DATA LOADING
         // ═══════════════════════════════════════════════════════════════
@@ -1476,7 +1479,7 @@
         }
         
         // Initial load
-        const VERSION = 'v2.1.0';
+        const VERSION = 'v2.1.1';
         console.log('🚀 enjoy', VERSION, '- loading data...');
         loadState().then(() => console.log('✅ State loaded')).catch(e => console.error('❌ State error:', e));
         loadRepoStats().then(() => console.log('✅ Repo stats loaded')).catch(e => console.error('❌ Repo error:', e));
