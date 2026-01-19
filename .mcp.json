@@ -1,0 +1,6 @@
+{
+  "enjoy": {
+    "command": "node",
+    "args": ["mcp/enjoy/dist/index.js"]
+  }
+}
