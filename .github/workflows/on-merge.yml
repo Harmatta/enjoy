@@ -64,9 +64,25 @@ jobs:
               night: { hours: [21,22,23,0,1,2,3,4], emoji: '🌙', name: 'Night', mult: 1.4 }
             };
             
+            // DST-aware CET/CEST time calculation
+            function isCEST(date) {
+              const year = date.getUTCFullYear();
+              // Last Sunday of March (DST start)
+              const march31 = new Date(Date.UTC(year, 2, 31));
+              const lastSundayMarch = 31 - march31.getUTCDay();
+              const dstStart = new Date(Date.UTC(year, 2, lastSundayMarch, 1, 0, 0));
+              // Last Sunday of October (DST end)
+              const october31 = new Date(Date.UTC(year, 9, 31));
+              const lastSundayOctober = 31 - october31.getUTCDay();
+              const dstEnd = new Date(Date.UTC(year, 9, lastSundayOctober, 1, 0, 0));
+              return date >= dstStart && date < dstEnd;
+            }
+
             function getCETTime() {
               const now = new Date();
-              const cetHour = (now.getUTCHours() + 1) % 24;
+              // CET is UTC+1, CEST (summer) is UTC+2
+              const cetOffset = isCEST(now) ? 2 : 1;
+              const cetHour = (now.getUTCHours() + cetOffset) % 24;
               const cetMinute = now.getUTCMinutes();
               return { hour: cetHour, minute: cetMinute };
             }

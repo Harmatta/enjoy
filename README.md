@@ -43,7 +43,7 @@
   <img src="https://img.shields.io/badge/🤖_Built_with-Claude_&_Gemini-blueviolet?style=for-the-badge" alt="AI Crafted">
   <img src="https://img.shields.io/badge/🎮_100_Levels-To_Beat-orange?style=for-the-badge" alt="100 Levels">
   <img src="https://img.shields.io/badge/⏱️_Time--Aware-Repo-blue?style=for-the-badge" alt="Time Aware">
-  <img src="https://img.shields.io/badge/🔄_25_Workflows-Autonomous-purple?style=for-the-badge" alt="25 Workflows">
+  <img src="https://img.shields.io/badge/🔄_26_Workflows-Autonomous-purple?style=for-the-badge" alt="26 Workflows">
 </p>
 
 <p align="center">
@@ -134,7 +134,7 @@ Bot validates → Auto-merges → You earn karma!
 | ⏰ **Time Capsules** | Messages from past to future |
 | 📖 **Auto-Chronicles** | Weekly story written from game state |
 | 🧬 **Entropy Tracking** | Measures order vs chaos |
-| 🏆 **21 Autonomous Workflows** | The repo lives 24/7 |
+| 🏆 **26 Autonomous Workflows** | The repo lives 24/7 |
 
 ---
 
@@ -214,7 +214,7 @@ The repo changes appearance based on **CET time** and gives different karma mult
 | 18:00-20:59 | 🌆 Sunset | **×1.15** | Golden hour |
 | 21:00-04:59 | 🌙 Night | **×1.4** | Night owl bonus |
 
-**🎯 Rare Events:** Contribute at `00:00`, `11:11`, `12:00`, or `22:22` for MASSIVE bonuses!
+**🎯 Rare Events:** Contribute at `00:00` (+200), `03:33` (+333!), `11:11` (+111), `12:00` (+100), or `22:22` (+111) for MASSIVE bonuses!
 
 ---
 
@@ -281,7 +281,7 @@ Total:  [███████████████░░░░░] 73%
 ```
 enjoy/
 ├── 📜 100 YAML levels (levels/*.yaml)
-├── 🤖 21 GitHub Actions workflows
+├── 🤖 26 GitHub Actions workflows
 ├── 🎨 Dynamic time-based header
 ├── 🌐 Interactive web UI (index.html)
 ├── 🎤 Voice mode (voice.html)

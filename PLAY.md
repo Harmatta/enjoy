@@ -343,7 +343,7 @@ Make sure at least one matches!
 
 ### Q: How do referrals work?
 
-**A**: Add `**Referred by:** @username` in your PR. Both players get +25% karma bonus when merged!
+**A**: Add `**Referred by:** @username` in your PR. Both players get bonus karma when merged! (+2 to +15 based on contribution quality)
 
 ---
 
@@ -389,7 +389,7 @@ This ensures:
 2. **JACKPOT hunting**: Try to merge exactly at 00:00, 12:00, 11:11, 22:22, or 03:33 CET
 3. **Streak building**: Contribute daily to maximize multiplier (up to x3.0 at 30 days)
 4. **Mystery boxes**: Every 5th contribution gives bonus karma
-5. **Referrals**: Invite friends for +25% bonus on both sides
+5. **Referrals**: Invite friends for karma bonus on both sides (+2 to +15)
 
 ---
 

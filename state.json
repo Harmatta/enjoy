@@ -12,10 +12,10 @@
     "daily_challenge": {
       "current_id": null,
       "completions_today": 0,
-      "last_reset": null
+      "last_reset": "2026-01-19T00:00:00Z"
     },
     "mystery_boxes_opened": 0,
-    "total_achievements_unlocked": 0,
+    "total_achievements_unlocked": 5,
     "bounties_completed": 0
   },
   "levels": {
@@ -92,7 +92,7 @@
       "prs": 1,
       "streak": 1,
       "achievements": [
-        "first_word"
+        "first_blood"
       ],
       "high_quality_count": 0,
       "referrals": 0,
@@ -119,10 +119,19 @@
   },
   "achievements": {
     "unlocked_global": [
-      "first_blood"
+      "first_blood",
+      "og",
+      "karma_hunter",
+      "speed_demon"
     ],
     "players": {
       "fabriziosalmi": [
+        "first_blood",
+        "og",
+        "karma_hunter",
+        "speed_demon"
+      ],
+      "JoKneeMo": [
         "first_blood"
       ]
     }

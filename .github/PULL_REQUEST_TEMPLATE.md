@@ -24,7 +24,7 @@ This takes 30 seconds. Don't skip anything.
 ---
 
 **Referred by:** @
-<!-- Optional: who invited you? Format: @username. Both get +25% karma bonus! -->
+<!-- Optional: who invited you? Format: @username. Both get karma bonus! -->
 
 
 

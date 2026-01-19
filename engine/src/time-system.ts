@@ -47,7 +47,7 @@ export const TIME_PERIODS = {
   },
   sunset: {
     hours: [18, 19, 20],
-    emoji: '🌅',
+    emoji: '🌆',
     name: 'Sunset',
     mood: 'reflective',
     message: "Day's harvest. The contributions are gathered.",
@@ -120,6 +120,13 @@ export const TIME_EVENTS = {
     bonus: 111,
     achievement: 'time_aligned',
     condition: (hour: number, minute: number) => (hour === 11 && minute === 11) || (hour === 22 && minute === 22)
+  },
+  devils_hour: {
+    name: "Devil's Hour",
+    description: 'Contribute at exactly 03:33 CET',
+    bonus: 333,
+    achievement: 'midnight_coder',
+    condition: (hour: number, minute: number) => hour === 3 && minute === 33
   }
 } as const;
 
