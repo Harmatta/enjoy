@@ -12,6 +12,7 @@
  */
 
 import { GameState, Player } from './types';
+import { getCETDayDifference } from './time-system';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONTEXT TYPES
@@ -247,10 +248,10 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'centurion',
     name: 'Centurion',
     emoji: '🎖️',
-    description: 'Be the 100th contributor',
+    description: 'Merge 100 PRs - true dedication!',
     karma_reward: 200,
-    secret: true,
-    check: (p, s) => Object.keys(s.players || {}).length === 100
+    secret: false,
+    check: (p) => (p.prs_merged || p.prs || 0) >= 100
   }
 ];
 
@@ -354,18 +355,17 @@ export function getStreakMultiplier(streakDays: number): number {
 }
 
 export function updateStreak(player: Player, lastContribution: string): Player {
-  const now = new Date();
-  const last = new Date(lastContribution);
-  const diffDays = Math.floor((now.getTime() - last.getTime()) / 86400000);
-  
+  // Use CET timezone for consistency with time-based bonuses
+  const diffDays = getCETDayDifference(lastContribution, new Date());
+
   if (diffDays === 0) {
-    // Same day, no change
+    // Same day in CET, no change
     return player;
   } else if (diffDays === 1) {
-    // Consecutive day!
+    // Consecutive day in CET!
     return { ...player, streak: (player.streak || 0) + 1 };
   } else {
-    // Streak broken
+    // Streak broken (missed a day in CET)
     return { ...player, streak: 1 };
   }
 }

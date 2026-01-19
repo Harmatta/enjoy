@@ -188,6 +188,33 @@ export function getCETHour() {
 }
 
 /**
+ * Get CET date string (YYYY-MM-DD) for a given date
+ * Used for consistent day comparison across the app
+ */
+export function getCETDateString(date: Date = new Date()): string {
+  const cetOffset = isCEST(date) ? 2 : 1;
+  const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+  const cetTime = new Date(utcTime + (cetOffset * 3600000));
+  return cetTime.toISOString().split('T')[0];
+}
+
+/**
+ * Get day difference in CET timezone
+ */
+export function getCETDayDifference(date1: Date | string, date2: Date | string): number {
+  const d1 = typeof date1 === 'string' ? new Date(date1) : date1;
+  const d2 = typeof date2 === 'string' ? new Date(date2) : date2;
+
+  const cetDate1 = getCETDateString(d1);
+  const cetDate2 = getCETDateString(d2);
+
+  const time1 = new Date(cetDate1).getTime();
+  const time2 = new Date(cetDate2).getTime();
+
+  return Math.floor((time2 - time1) / 86400000);
+}
+
+/**
  * Get current time period
  */
 export function getCurrentPeriod() {

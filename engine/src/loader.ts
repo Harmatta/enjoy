@@ -3,6 +3,53 @@ import * as yaml from 'js-yaml';
 import { Rule, GameState } from './types.js';
 import { logError } from './utils.js';
 
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE CACHE - Reduces file I/O for repeated reads
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface StateCache {
+  state: GameState | null;
+  timestamp: number;
+  fileModTime: number;
+}
+
+const stateCache: StateCache = {
+  state: null,
+  timestamp: 0,
+  fileModTime: 0
+};
+
+// Cache TTL in milliseconds (5 seconds default)
+const CACHE_TTL_MS = 5000;
+
+/**
+ * Invalidate the state cache (call after writes)
+ */
+export function invalidateStateCache(): void {
+  stateCache.state = null;
+  stateCache.timestamp = 0;
+}
+
+/**
+ * Check if cache is valid
+ */
+function isCacheValid(): boolean {
+  if (!stateCache.state) return false;
+
+  const now = Date.now();
+  if (now - stateCache.timestamp > CACHE_TTL_MS) return false;
+
+  // Also check if file was modified
+  try {
+    const stats = fs.statSync('./state.json');
+    if (stats.mtimeMs > stateCache.fileModTime) return false;
+  } catch {
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * Load all rules from the rules/ directory
  */
@@ -74,10 +121,17 @@ function validateState(state: unknown): state is GameState {
 }
 
 /**
- * Load game state with validation
+ * Load game state with validation and caching
+ * @param bypassCache - Set to true to force a fresh read
  */
-export function loadState(): GameState {
+export function loadState(bypassCache: boolean = false): GameState {
+  // Check cache first (unless bypass requested)
+  if (!bypassCache && isCacheValid() && stateCache.state) {
+    return stateCache.state;
+  }
+
   try {
+    const stats = fs.statSync('./state.json');
     const content = fs.readFileSync('./state.json', 'utf8');
     const parsed = JSON.parse(content);
 
@@ -85,6 +139,11 @@ export function loadState(): GameState {
       logError('loadState', new Error('Invalid state.json schema'));
       throw new Error('Invalid state.json schema');
     }
+
+    // Update cache
+    stateCache.state = parsed;
+    stateCache.timestamp = Date.now();
+    stateCache.fileModTime = stats.mtimeMs;
 
     return parsed;
   } catch (e) {
@@ -121,6 +180,9 @@ export function saveState(state: GameState): void {
 
     // Atomic rename (prevents corruption if crash during write)
     fs.renameSync(tempPath, statePath);
+
+    // Invalidate cache after successful write
+    invalidateStateCache();
   } catch (e) {
     // Clean up temp file if it exists
     if (fs.existsSync(tempPath)) {
