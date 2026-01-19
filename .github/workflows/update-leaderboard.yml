@@ -36,7 +36,7 @@ jobs:
           TOTAL_PRS=$(jq -r '.meta.total_prs // 0' state.json)
           
           # Generate rankings
-          RANKINGS=$(jq -r '.players | to_entries | sort_by(-.value.karma) | to_entries | .[:10][] | if .key == 0 then "| 🥇 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" elif .key == 1 then "| 🥈 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" elif .key == 2 then "| 🥉 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" else "| \(.key + 1) | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" end' state.json)
+          RANKINGS=$(jq -r '.players | to_entries | sort_by(.value.karma) | reverse | to_entries | .[:10][] | if .key == 0 then "| 🥇 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" elif .key == 1 then "| 🥈 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" elif .key == 2 then "| 🥉 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" else "| \(.key + 1) | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" end' state.json)
           
           [ -z "$RANKINGS" ] && RANKINGS="| 🥇 | *Join now!* | - | - | - |"
           
@@ -46,10 +46,10 @@ jobs:
           [ -z "$FOUNDERS" ] && FOUNDERS="| 1 | *Be the first!* | ? |"
           
           # Achievers
-          ACHIEVERS=$(jq -r '.players | to_entries | sort_by(-.value.achievements | length) | .[:5][] | "| \(.key) | \(.value.achievements | length) |"' state.json)
+          ACHIEVERS=$(jq -r '.players | to_entries | sort_by(.value.achievements | length) | reverse | .[:5][] | "| \(.key) | \(.value.achievements | length) |"' state.json)
           
           # Streakers
-          STREAKERS=$(jq -r '.players | to_entries | sort_by(-.value.streak) | .[:5][] | "| \(.key) | \(.value.streak) day(s) |"' state.json)
+          STREAKERS=$(jq -r '.players | to_entries | sort_by(.value.streak) | reverse | .[:5][] | "| \(.key) | \(.value.streak) day(s) |"' state.json)
           
           cat > .github/LEADERBOARD.md << LEADERBOARD_EOF
           # 📊 Live Leaderboard
