@@ -682,10 +682,10 @@
         .mystery-title { font-size: 1.5rem; color: var(--accent2); margin: 1rem 0; }
         .mystery-reward { font-family: 'JetBrains Mono', monospace; color: var(--text); }
         
-        /* Achievements HUD - bottom center */
+        /* Achievements HUD - bottom center, above footer links */
         .achievements-hud {
             position: fixed;
-            bottom: 1.5rem;
+            bottom: 3.5rem;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -1433,7 +1433,7 @@
         }
         
         // Initial load
-        const VERSION = 'v2.3.0';
+        const VERSION = 'v2.3.1';
         console.log('🚀 enjoy', VERSION, '- loading data...');
         loadState().then(() => console.log('✅ State loaded')).catch(e => console.error('❌ State error:', e));
         loadRepoStats().then(() => console.log('✅ Repo stats loaded')).catch(e => console.error('❌ Repo error:', e));
