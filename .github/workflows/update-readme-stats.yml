@@ -75,22 +75,16 @@ jobs:
             // ═══════════════════════════════════════════════════════════
             // BUILD STATS SECTION
             // ═══════════════════════════════════════════════════════════
-            let statsSection = `<!-- STATS-START -->
-## 📊 Live Dashboard
-
-<div align="center">
-
-| 🎮 Level | 💎 Total Karma | 👥 Players | 🔀 PRs Merged | ⏰ Current |
-|:--------:|:--------------:|:----------:|:-------------:|:----------:|
-| **${currentLevel}** | **${totalKarma.toLocaleString()}** | **${totalPlayers}** | **${totalPRs}** | ${timePeriod} ${timeMultiplier} |
-
-</div>
-
-### 🏆 Leaderboard — Top 10
-
-| Rank | Player | Karma | PRs | Streak | Achievements |
-|:----:|:-------|------:|:---:|:------:|:------------:|
-`;
+            let statsSection = '<!-- STATS-START -->\n';
+            statsSection += '## 📊 Live Dashboard\n\n';
+            statsSection += '<div align="center">\n\n';
+            statsSection += '| 🎮 Level | 💎 Total Karma | 👥 Players | 🔀 PRs Merged | ⏰ Current |\n';
+            statsSection += '|:--------:|:--------------:|:----------:|:-------------:|:----------:|\n';
+            statsSection += '| **' + currentLevel + '** | **' + totalKarma.toLocaleString() + '** | **' + totalPlayers + '** | **' + totalPRs + '** | ' + timePeriod + ' ' + timeMultiplier + ' |\n\n';
+            statsSection += '</div>\n\n';
+            statsSection += '### 🏆 Leaderboard — Top 10\n\n';
+            statsSection += '| Rank | Player | Karma | PRs | Streak | Achievements |\n';
+            statsSection += '|:----:|:-------|------:|:---:|:------:|:------------:|\n';
             
             // Add top 10 players
             const medals = ['🥇', '🥈', '🥉'];
@@ -107,11 +101,7 @@ jobs:
               });
             }
             
-            statsSection += `
-### 📈 Progress to Level ${currentLevel + 1}
-
-\`\`\`
-`;
+            statsSection += '\n### 📈 Progress to Level ' + (currentLevel + 1) + '\n\n```\n';
             
             // Progress bar
             const nextLevel = state.levels?.next_unlock || {};
@@ -124,14 +114,10 @@ jobs:
               return '█'.repeat(filled) + '░'.repeat(20 - filled);
             };
             
-            statsSection += `Karma:  [${progressBar(scoreProgress)}] ${nextLevel.progress?.score || 0}/${nextLevel.requires_score || 50}
-PRs:    [${progressBar(prsProgress)}] ${nextLevel.progress?.prs || 0}/${nextLevel.requires_prs || 5}
-Total:  [${progressBar(overallProgress)}] ${overallProgress}%
-\`\`\`
-
-### 🌟 Recent Achievements Unlocked
-
-`;
+            statsSection += 'Karma:  [' + progressBar(scoreProgress) + '] ' + (nextLevel.progress?.score || 0) + '/' + (nextLevel.requires_score || 50) + '\n';
+            statsSection += 'PRs:    [' + progressBar(prsProgress) + '] ' + (nextLevel.progress?.prs || 0) + '/' + (nextLevel.requires_prs || 5) + '\n';
+            statsSection += 'Total:  [' + progressBar(overallProgress) + '] ' + overallProgress + '%\n';
+            statsSection += '```\n\n### 🌟 Recent Achievements Unlocked\n\n';
             
             // Recent achievements
             const globalAchievements = state.achievements?.unlocked_global || [];
@@ -149,18 +135,17 @@ Total:  [${progressBar(overallProgress)}] ${overallProgress}%
             };
             
             if (globalAchievements.length === 0) {
-              statsSection += `*No achievements unlocked yet. Be the first!*\n`;
+              statsSection += '*No achievements unlocked yet. Be the first!*\n';
             } else {
               globalAchievements.slice(-5).forEach(ach => {
-                statsSection += `- ${achievementEmojis[ach] || ach}\n`;
+                statsSection += '- ' + (achievementEmojis[ach] || ach) + '\n';
               });
             }
             
-            statsSection += `
-<p align="center">
-  <sub>📅 Last updated: ${lastUpdated} | 🔄 Updates automatically</sub>
-</p>
-<!-- STATS-END -->`;
+            statsSection += '\n<p align="center">\n';
+            statsSection += '  <sub>📅 Last updated: ' + lastUpdated + ' | 🔄 Updates automatically</sub>\n';
+            statsSection += '</p>\n';
+            statsSection += '<!-- STATS-END -->';
             
             // ═══════════════════════════════════════════════════════════
             // REPLACE STATS IN README

@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import * as path from 'path';
 
 export interface GameConfig {
   game: {
@@ -106,12 +107,18 @@ export function loadConfig(configPath?: string): GameConfig {
     '../../game-config.yaml'
   ].filter(Boolean) as string[];
 
-  for (const path of paths) {
+  for (const configFile of paths) {
     try {
-      if (fs.existsSync(path)) {
-        const content = fs.readFileSync(path, 'utf8');
+      // Normalize and validate path (prevent traversal)
+      const normalized = path.normalize(configFile);
+      if (normalized.includes('..') && path.isAbsolute(normalized)) {
+        continue; // Skip potentially dangerous paths
+      }
+
+      if (fs.existsSync(normalized)) {
+        const content = fs.readFileSync(normalized, 'utf8');
         cachedConfig = yaml.load(content) as GameConfig;
-        console.log(`✅ Loaded config from ${path}`);
+        console.log(`✅ Loaded config from ${normalized}`);
         return cachedConfig;
       }
     } catch {

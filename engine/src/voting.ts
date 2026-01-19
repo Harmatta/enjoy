@@ -171,20 +171,23 @@ export function processVotingResults(state: GameState): void {
   if (!state.rules.proposed) {
     return;
   }
-  
+
   const now = new Date();
-  
+  const proposalsToRemove: string[] = [];
+  const proposalsToArchive: RuleProposalState[] = [];
+
+  // First pass: process all proposals without modifying the array
   for (const proposal of state.rules.proposed) {
     if (proposal.status !== 'voting') {
       continue;
     }
-    
+
     // Check if voting period ended
     if (now > new Date(proposal.voting_ends)) {
       // Calculate result
       const totalVotes = proposal.total_for + proposal.total_against;
       const approval_percentage = totalVotes > 0 ? (proposal.total_for / totalVotes) * 100 : 0;
-      
+
       // Approval threshold: 66% for, minimum 20 total voting power
       if (approval_percentage >= 66 && totalVotes >= 20) {
         proposal.status = 'approved';
@@ -198,26 +201,32 @@ export function processVotingResults(state: GameState): void {
           logError(`processVotingResults: Failed to write rule file ${proposal.rule_file}`, e);
           continue;
         }
-        
+
         // Add to active rules
         state.rules.active.push(proposal.rule_content.id);
-        
-        // Move to implemented
-        state.rules.proposed = state.rules.proposed.filter(p => p.id !== proposal.id);
-        
+
+        // Mark for removal
+        proposalsToRemove.push(proposal.id);
+
         console.log(`✅ Rule ${proposal.rule_content.id} APPROVED and implemented!`);
-        
+
       } else {
         proposal.status = 'rejected';
-        
-        // Move to archived
-        state.rules.archived = state.rules.archived || [];
-        state.rules.archived.push(proposal);
-        state.rules.proposed = state.rules.proposed.filter(p => p.id !== proposal.id);
-        
+
+        // Mark for archiving and removal
+        proposalsToArchive.push(proposal);
+        proposalsToRemove.push(proposal.id);
+
         console.log(`❌ Rule ${proposal.rule_content.id} rejected (${approval_percentage.toFixed(1)}% approval)`);
       }
     }
+  }
+
+  // Second pass: remove processed proposals and archive rejected ones
+  if (proposalsToRemove.length > 0) {
+    state.rules.archived = state.rules.archived || [];
+    state.rules.archived.push(...proposalsToArchive);
+    state.rules.proposed = state.rules.proposed.filter(p => !proposalsToRemove.includes(p.id));
   }
 }
 

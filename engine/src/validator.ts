@@ -64,7 +64,16 @@ function matchesTrigger(rule: Rule, pr: PRMetadata): boolean {
  * Validate file content against rule conditions
  */
 function validateContent(rule: Rule, pr: PRMetadata): { valid: boolean; reason?: string } {
+  // Check if there are files to validate
+  if (!pr.files_added || pr.files_added.length === 0) {
+    return { valid: false, reason: 'No files added in PR' };
+  }
+
   const file = pr.files_added[0];
+  if (!file) {
+    return { valid: false, reason: 'Invalid file reference' };
+  }
+
   const content = getFileContent(file);
   
   // Check trigger conditions on content

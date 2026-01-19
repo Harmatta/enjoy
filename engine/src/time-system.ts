@@ -152,11 +152,32 @@ export const TIME_CHALLENGES = {
 };
 
 /**
- * Get current CET hour
+ * Check if a date is in Central European Summer Time (CEST)
+ * DST in Europe: last Sunday of March to last Sunday of October
+ */
+function isCEST(date: Date): boolean {
+  const year = date.getUTCFullYear();
+
+  // Find last Sunday of March
+  const march31 = new Date(Date.UTC(year, 2, 31));
+  const lastSundayMarch = 31 - march31.getUTCDay();
+  const dstStart = new Date(Date.UTC(year, 2, lastSundayMarch, 1, 0, 0)); // 01:00 UTC
+
+  // Find last Sunday of October
+  const october31 = new Date(Date.UTC(year, 9, 31));
+  const lastSundayOctober = 31 - october31.getUTCDay();
+  const dstEnd = new Date(Date.UTC(year, 9, lastSundayOctober, 1, 0, 0)); // 01:00 UTC
+
+  return date >= dstStart && date < dstEnd;
+}
+
+/**
+ * Get current CET/CEST hour (handles daylight saving time)
  */
 export function getCETHour() {
   const now = new Date();
-  const cetOffset = 1; // CET is UTC+1
+  // CET is UTC+1, CEST (summer) is UTC+2
+  const cetOffset = isCEST(now) ? 2 : 1;
   const utcHour = now.getUTCHours();
   const utcMinute = now.getUTCMinutes();
   return {
