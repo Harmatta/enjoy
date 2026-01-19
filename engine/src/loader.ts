@@ -54,7 +54,8 @@ function isCacheValid(): boolean {
  * Load all rules from the rules/ directory
  */
 export function loadRules(): Rule[] {
-  const rulesDir = './rules';
+  // Use parent directory since engine runs from engine/ subfolder
+  const rulesDir = '../rules';
   const ruleFiles = fs.readdirSync(rulesDir).filter(f => f.endsWith('.yaml') || f.endsWith('.yml'));
   
   const rules: Rule[] = [];
