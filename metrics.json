@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-19T02:53:28Z",
+  "generated_at": "2026-01-19T03:40:37Z",
   "game_age_days": 1,
   
   "totals": {
@@ -7,7 +7,7 @@
     "players": 2,
     "prs": 5,
     "level": 3,
-    "achievements": 1,
+    "achievements": 4,
     "hearts_earned": 218
   },
   
@@ -16,7 +16,7 @@
     "prs_per_day": 5.00,
     "players_per_day": 2.00,
     "karma_per_pr": 43.60,
-    "achievement_rate": 1.00,
+    "achievement_rate": 4.00,
     "growth_emoji": "🚀"
   },
   
