@@ -1352,7 +1352,7 @@
                 const level = data.levels?.current || 1;
                 const players = data.players || {};
                 const playerCount = Object.keys(players).length;
-                const achievements = data.achievements?.unlocked || [];
+                const achievements = data.achievements?.unlocked_global || [];
                 
                 document.getElementById('statKarma').textContent = karma.toLocaleString();
                 document.getElementById('statSouls').textContent = playerCount;
@@ -1363,7 +1363,7 @@
                 
                 // Check for new achievements
                 if (prevState) {
-                    const prevAch = prevState.achievements?.unlocked || [];
+                    const prevAch = prevState.achievements?.unlocked_global || [];
                     const newAch = achievements.filter(a => !prevAch.includes(a));
                     newAch.forEach(achId => {
                         const ach = ACHIEVEMENTS.find(a => a.id === achId);
@@ -1438,7 +1438,7 @@
         }
         
         // Initial load
-        const VERSION = 'v2.4.2';
+        const VERSION = 'v2.4.3';
         console.log('🚀 enjoy', VERSION, '- loading data...');
         loadState().then(() => console.log('✅ State loaded')).catch(e => console.error('❌ State error:', e));
         loadRepoStats().then(() => console.log('✅ Repo stats loaded')).catch(e => console.error('❌ Repo error:', e));
@@ -1454,6 +1454,8 @@
         
         const ACHIEVEMENTS = [
             { id: 'first_blood', emoji: '🩸', name: 'First Blood', desc: 'Your first contribution' },
+            { id: 'og', emoji: '🏛️', name: 'OG', desc: 'Early adopter' },
+            { id: 'speed_demon', emoji: '⚡', name: 'Speed Demon', desc: 'Quick contributor' },
             { id: 'getting_started', emoji: '🌱', name: 'Getting Started', desc: '5 PRs merged' },
             { id: 'dedicated', emoji: '💪', name: 'Dedicated', desc: '25 PRs merged' },
             { id: 'legend', emoji: '👑', name: 'Legend', desc: '100 PRs merged' },
