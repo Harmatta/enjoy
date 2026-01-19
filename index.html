@@ -1913,7 +1913,7 @@
                 const level = data.levels?.current || 1;
                 const players = data.players || {};
                 const playerCount = Object.keys(players).length;
-                const achievements = data.achievements?.unlocked || [];
+                const achievements = data.achievements?.unlocked_global || data.achievements?.unlocked || [];
                 
                 document.getElementById('statKarma').textContent = karma.toLocaleString();
                 document.getElementById('statSouls').textContent = playerCount;
@@ -1924,7 +1924,7 @@
                 
                 // Check for new achievements
                 if (prevState) {
-                    const prevAch = prevState.achievements?.unlocked || [];
+                    const prevAch = prevState.achievements?.unlocked_global || prevState.achievements?.unlocked || [];
                     const newAch = achievements.filter(a => !prevAch.includes(a));
                     newAch.forEach(achId => {
                         const ach = ACHIEVEMENTS.find(a => a.id === achId);
