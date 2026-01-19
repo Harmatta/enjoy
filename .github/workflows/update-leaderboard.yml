@@ -1,16 +1,16 @@
-name: Update Leaderboard Issue
+name: Update Leaderboard
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Every 30 minutes
+    - cron: '*/30 * * * *'
   workflow_dispatch:
   push:
     paths:
-      - 'game/players/**'
-      - 'game/state.json'
+      - 'state.json'
+      - 'words/**'
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 jobs:
@@ -18,67 +18,40 @@ jobs:
     runs-on: [self-hosted, enjoy-trusted]
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+      
+      - name: Configure git
+        run: |
+          git config user.name "enjoy-bot"
+          git config user.email "bot@enjoy.game"
       
       - name: Generate Leaderboard
-        id: leaderboard
         run: |
-          echo "Generating leaderboard..."
+          echo "Generating leaderboard from state.json..."
           
-          # Read game state
-          LEVEL=$(cat game/state.json | jq -r '.level // 1')
-          KARMA=$(cat game/state.json | jq -r '.karma // 0')
+          LEVEL=$(jq -r '.levels.current // 1' state.json)
+          TOTAL_KARMA=$(jq -r '.score.total // 0' state.json)
+          PLAYER_COUNT=$(jq -r '.meta.total_players // 0' state.json)
+          TOTAL_PRS=$(jq -r '.meta.total_prs // 0' state.json)
           
-          # Count players
-          PLAYER_COUNT=$(ls game/players/*.json 2>/dev/null | wc -l | tr -d ' ')
+          # Generate rankings
+          RANKINGS=$(jq -r '.players | to_entries | sort_by(-.value.karma) | to_entries | .[:10][] | if .key == 0 then "| 🥇 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" elif .key == 1 then "| 🥈 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" elif .key == 2 then "| 🥉 | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" else "| \(.key + 1) | \(.value.key) | \(.value.value.karma) | \(.value.value.streak) | \(.value.value.achievements | length) |" end' state.json)
           
-          # Build player rankings
-          RANKINGS=""
-          RANK=1
+          [ -z "$RANKINGS" ] && RANKINGS="| 🥇 | *Join now!* | - | - | - |"
           
-          for player_file in game/players/*.json; do
-            if [ -f "$player_file" ]; then
-              NAME=$(jq -r '.name // "Unknown"' "$player_file")
-              PKARMA=$(jq -r '.karma // 0' "$player_file")
-              STREAK=$(jq -r '.streak_days // 0' "$player_file")
-              ACHIEVEMENTS=$(jq -r '.achievements | length // 0' "$player_file")
-              
-              # Add to rankings with emoji
-              if [ $RANK -eq 1 ]; then
-                RANKINGS="$RANKINGS| 🥇 | $NAME | $PKARMA | $STREAK | $ACHIEVEMENTS |\n"
-              elif [ $RANK -eq 2 ]; then
-                RANKINGS="$RANKINGS| 🥈 | $NAME | $PKARMA | $STREAK | $ACHIEVEMENTS |\n"
-              elif [ $RANK -eq 3 ]; then
-                RANKINGS="$RANKINGS| 🥉 | $NAME | $PKARMA | $STREAK | $ACHIEVEMENTS |\n"
-              else
-                RANKINGS="$RANKINGS| $RANK | $NAME | $PKARMA | $STREAK | $ACHIEVEMENTS |\n"
-              fi
-              
-              RANK=$((RANK + 1))
-              
-              # Max 10 players
-              if [ $RANK -gt 10 ]; then
-                break
-              fi
-            fi
-          done
+          # Generate founders
+          FOUNDERS=$(jq -r '.players | to_entries | sort_by(.value.joined) | to_entries | .[:50][] | if .key == 0 then "| \(.key + 1) | 🏆 \(.value.key) | \(.value.value.joined | split("T")[0]) |" else "| \(.key + 1) | 🎮 \(.value.key) | \(.value.value.joined | split("T")[0]) |" end' state.json)
           
-          # Build founders list
-          FOUNDERS=""
-          FNUM=1
-          for player_file in game/players/*.json; do
-            if [ -f "$player_file" ]; then
-              NAME=$(jq -r '.name // "Unknown"' "$player_file")
-              JOINED=$(jq -r '.joined // "Unknown"' "$player_file")
-              FOUNDERS="$FOUNDERS| $FNUM | $NAME | $JOINED |\n"
-              FNUM=$((FNUM + 1))
-              if [ $FNUM -gt 50 ]; then
-                break
-              fi
-            fi
-          done
+          [ -z "$FOUNDERS" ] && FOUNDERS="| 1 | *Be the first!* | ? |"
           
-          # Create issue body
-          cat << 'BODY' > leaderboard.md
+          # Achievers
+          ACHIEVERS=$(jq -r '.players | to_entries | sort_by(-.value.achievements | length) | .[:5][] | "| \(.key) | \(.value.achievements | length) |"' state.json)
+          
+          # Streakers
+          STREAKERS=$(jq -r '.players | to_entries | sort_by(-.value.streak) | .[:5][] | "| \(.key) | \(.value.streak) day(s) |"' state.json)
+          
+          cat > .github/LEADERBOARD.md << LEADERBOARD_EOF
           # 📊 Live Leaderboard
           
           *Auto-updated by GitHub Actions*
@@ -87,45 +60,53 @@ jobs:
           
           | Rank | Player | Karma | Streak | Achievements |
           |------|--------|-------|--------|--------------|
-          BODY
+          $RANKINGS
           
-          echo -e "$RANKINGS" >> leaderboard.md
-          
-          cat << 'BODY2' >> leaderboard.md
-          
-          ## Founders Hall of Fame
+          ## 🏛️ Founders Hall of Fame
           
           *First 50 players to join receive the eternal FOUNDER badge*
           
           | # | Founder | Joined |
           |---|---------|--------|
-          BODY2
+          $FOUNDERS
           
-          echo -e "$FOUNDERS" >> leaderboard.md
+          ## Achievement Hunters
           
-          cat << BODY3 >> leaderboard.md
+          | Player | Achievement Count |
+          |--------|-------------------|
+          $ACHIEVERS
+          
+          ## Streak Champions
+          
+          | Player | Current Streak |
+          |--------|----------------|
+          $STREAKERS
           
           ---
           
           ## Game Stats
           
           - **Total Players**: $PLAYER_COUNT
-          - **Total Karma**: $KARMA
+          - **Total Karma**: $TOTAL_KARMA
           - **Current Level**: $LEVEL
+          - **Total PRs**: $TOTAL_PRS
           
           ---
           
           *Last updated: $(date -u '+%Y-%m-%d %H:%M UTC')*
+          LEADERBOARD_EOF
           
-          **Want to be on this board?** [Start here](https://github.com/${{ github.repository }}/issues/7)
-          BODY3
-          
-          echo "leaderboard_file=leaderboard.md" >> $GITHUB_OUTPUT
+          sed -i 's/^          //' .github/LEADERBOARD.md
+          cat .github/LEADERBOARD.md
+      
+      - name: Commit and Push
+        run: |
+          git add .github/LEADERBOARD.md
+          git diff --staged --quiet || git commit -m "📊 Update leaderboard [skip ci]"
+          git push || echo "Nothing to push"
       
       - name: Update Issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Update issue #9 (leaderboard)
-          gh issue edit 9 --body-file leaderboard.md --repo ${{ github.repository }}
-          echo "✓ Leaderboard updated!"
+          gh issue edit 9 --body-file .github/LEADERBOARD.md 2>/dev/null || echo "Issue #9 not found"
