@@ -136,15 +136,22 @@ jobs:
             const globalAchievements = state.achievements?.unlocked_global || [];
             const achievementEmojis = {
               'first_blood': '🩸 First Blood',
-              'streak_3': '⚡ 3-Day Streak',
-              'streak_7': '🔥 Week Warrior',
-              'streak_30': '👑 Monthly Master',
-              'karma_100': '💯 Century',
-              'karma_500': '🌟 Half Millennium',
-              'karma_1000': '🏆 Karma King',
+              'og': '🏛️ OG',
+              'speed_demon': '💨 Speed Demon',
+              'karma_hunter': '💎 Karma Hunter',
+              'karma_master': '💠 Karma Master',
+              'karma_god': '🌟 Karma God',
+              'streak_3': '🔥 On Fire',
+              'streak_7': '⚡ Week Warrior',
+              'streak_30': '🌪️ Unstoppable',
               'night_owl': '🦉 Night Owl',
               'early_bird': '🐦 Early Bird',
-              'noon_master': '☀️ Solar Champion'
+              'noon_master': '☀️ Solar Champion',
+              'getting_started': '🌱 Getting Started',
+              'dedicated': '💪 Dedicated',
+              'legend': '👑 Legend',
+              'recruiter': '🔗 Recruiter',
+              'influencer': '📣 Influencer'
             };
             
             if (globalAchievements.length === 0) {
