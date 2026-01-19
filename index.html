@@ -370,74 +370,82 @@
                 0 0 100px rgba(180, 190, 220, 0.15);
         }
 
-        /* Dawn - Sun rising, orange/warm */
+        /* Dawn - Sun rising, orange/peach */
         body.time-dawn .celestial::before {
-            background: radial-gradient(circle, rgba(255, 180, 100, 0.25) 0%, rgba(255, 150, 80, 0.1) 40%, transparent 70%);
-            opacity: 1;
-            width: 350%;
-            height: 350%;
-        }
-        body.time-dawn .celestial-body {
-            background: radial-gradient(circle at 40% 40%, #fff8e0 0%, #ffcc66 40%, #ff9944 100%);
-            box-shadow:
-                0 0 30px rgba(255, 180, 100, 0.7),
-                0 0 60px rgba(255, 150, 80, 0.4),
-                0 0 120px rgba(255, 120, 60, 0.2);
-        }
-
-        /* Morning - Sun climbing, golden/yellow */
-        body.time-morning .celestial::before {
-            background: radial-gradient(circle, rgba(255, 230, 150, 0.2) 0%, rgba(255, 210, 120, 0.08) 40%, transparent 70%);
-            opacity: 1;
-        }
-        body.time-morning .celestial-body {
-            background: radial-gradient(circle at 40% 40%, #fffef5 0%, #ffee88 40%, #ffdd55 100%);
-            box-shadow:
-                0 0 30px rgba(255, 240, 150, 0.6),
-                0 0 60px rgba(255, 220, 100, 0.4),
-                0 0 120px rgba(255, 200, 80, 0.2);
-        }
-
-        /* Noon - Sun at zenith, bright yellow/white */
-        body.time-noon .celestial::before {
-            background: radial-gradient(circle, rgba(255, 255, 220, 0.25) 0%, rgba(255, 250, 200, 0.1) 40%, transparent 70%);
-            opacity: 1;
-        }
-        body.time-noon .celestial-body {
-            background: radial-gradient(circle at 45% 45%, #ffffff 0%, #fffde8 40%, #fff5cc 100%);
-            box-shadow:
-                0 0 40px rgba(255, 255, 230, 0.8),
-                0 0 80px rgba(255, 250, 200, 0.5),
-                0 0 150px rgba(255, 245, 180, 0.3);
-        }
-
-        /* Afternoon - Sun descending, warmer yellow */
-        body.time-afternoon .celestial::before {
-            background: radial-gradient(circle, rgba(255, 220, 150, 0.2) 0%, rgba(255, 200, 120, 0.08) 40%, transparent 70%);
-            opacity: 1;
-        }
-        body.time-afternoon .celestial-body {
-            background: radial-gradient(circle at 40% 40%, #fffef0 0%, #ffe480 40%, #ffc855 100%);
-            box-shadow:
-                0 0 30px rgba(255, 230, 150, 0.6),
-                0 0 60px rgba(255, 210, 120, 0.4),
-                0 0 120px rgba(255, 190, 100, 0.2);
-        }
-
-        /* Sunset - Sun setting, red/orange */
-        body.time-sunset .celestial::before {
-            background: radial-gradient(circle, rgba(255, 100, 50, 0.3) 0%, rgba(255, 60, 30, 0.15) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 140, 60, 0.35) 0%, rgba(255, 100, 40, 0.15) 40%, transparent 70%);
             opacity: 1;
             width: 400%;
             height: 400%;
         }
-        body.time-sunset .celestial-body {
-            background: radial-gradient(circle at 40% 40%, #ffdd88 0%, #ff8844 40%, #ee4422 100%);
+        body.time-dawn .celestial-body {
+            background: radial-gradient(circle at 45% 45%, #ffaa55 0%, #ff8833 45%, #ee6622 80%, #cc4411 100%);
             box-shadow:
-                0 0 40px rgba(255, 100, 50, 0.8),
-                0 0 80px rgba(255, 70, 30, 0.5),
-                0 0 150px rgba(255, 50, 20, 0.3),
-                0 0 250px rgba(200, 30, 10, 0.15);
+                0 0 25px rgba(255, 150, 70, 0.9),
+                0 0 50px rgba(255, 120, 50, 0.6),
+                0 0 100px rgba(255, 90, 40, 0.3),
+                0 0 160px rgba(200, 70, 30, 0.15);
+        }
+
+        /* Morning - Sun climbing, warm yellow/gold */
+        body.time-morning .celestial::before {
+            background: radial-gradient(circle, rgba(255, 220, 120, 0.25) 0%, rgba(255, 200, 100, 0.1) 40%, transparent 65%);
+            opacity: 1;
+            width: 300%;
+            height: 300%;
+        }
+        body.time-morning .celestial-body {
+            background: radial-gradient(circle at 45% 45%, #ffee99 0%, #ffdd66 45%, #ffcc44 80%, #eebb33 100%);
+            box-shadow:
+                0 0 30px rgba(255, 230, 120, 0.8),
+                0 0 60px rgba(255, 210, 90, 0.5),
+                0 0 120px rgba(255, 190, 70, 0.25);
+        }
+
+        /* Noon - Sun at zenith, bright white/cream */
+        body.time-noon .celestial::before {
+            background: radial-gradient(circle, rgba(255, 255, 240, 0.3) 0%, rgba(255, 250, 220, 0.12) 40%, transparent 60%);
+            opacity: 1;
+            width: 280%;
+            height: 280%;
+        }
+        body.time-noon .celestial-body {
+            background: radial-gradient(circle at 48% 48%, #fffffa 0%, #fffde8 40%, #ffee99 85%, #ffdd77 100%);
+            box-shadow:
+                0 0 35px rgba(255, 255, 250, 0.9),
+                0 0 70px rgba(255, 250, 220, 0.6),
+                0 0 130px rgba(255, 240, 180, 0.35);
+        }
+
+        /* Afternoon - Sun descending, golden/amber */
+        body.time-afternoon .celestial::before {
+            background: radial-gradient(circle, rgba(255, 200, 100, 0.25) 0%, rgba(255, 170, 70, 0.1) 40%, transparent 65%);
+            opacity: 1;
+            width: 320%;
+            height: 320%;
+        }
+        body.time-afternoon .celestial-body {
+            background: radial-gradient(circle at 45% 45%, #ffdd77 0%, #ffcc55 45%, #ffbb44 80%, #eeaa33 100%);
+            box-shadow:
+                0 0 30px rgba(255, 210, 100, 0.75),
+                0 0 60px rgba(255, 180, 70, 0.45),
+                0 0 120px rgba(255, 150, 50, 0.25);
+        }
+
+        /* Sunset - Sun setting, deep red/crimson */
+        body.time-sunset .celestial::before {
+            background: radial-gradient(circle, rgba(255, 60, 20, 0.4) 0%, rgba(200, 40, 10, 0.2) 35%, rgba(150, 20, 0, 0.1) 55%, transparent 75%);
+            opacity: 1;
+            width: 500%;
+            height: 500%;
+        }
+        body.time-sunset .celestial-body {
+            background: radial-gradient(circle at 45% 45%, #ff5522 0%, #dd3311 40%, #bb1100 75%, #880000 100%);
+            box-shadow:
+                0 0 25px rgba(255, 70, 20, 1),
+                0 0 50px rgba(230, 50, 10, 0.7),
+                0 0 100px rgba(200, 40, 5, 0.5),
+                0 0 180px rgba(150, 30, 0, 0.3),
+                0 0 280px rgba(100, 20, 0, 0.15);
         }
 
         /* Celestial behind mountains when low */
