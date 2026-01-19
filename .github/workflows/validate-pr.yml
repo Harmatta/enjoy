@@ -238,10 +238,11 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            const prBody = pr.body || '';
+            // Normalize line endings (Windows \r\n -> Unix \n)
+            const prBody = (pr.body || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
             const prAuthor = pr.user.login || '';
             console.log('📋 PR Body length:', prBody.length);
-            console.log('📋 PR Body preview:', prBody.substring(0, 200));
+            console.log('📋 PR Body preview:', prBody.substring(0, 500));
 
             const addedFiles = process.env.PR_FILES_ADDED || '';
             const modifiedFiles = process.env.PR_FILES_MODIFIED || '';
