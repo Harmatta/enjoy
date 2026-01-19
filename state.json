@@ -353,6 +353,12 @@
         "event": "issue_comment.created",
         "karma": 2,
         "timestamp": "2026-01-19T09:19:49.329Z"
+      },
+      {
+        "actor": "tkersey",
+        "event": "watch.started",
+        "karma": 1,
+        "timestamp": "2026-01-19T15:23:51.290Z"
       }
     ],
     "by_user": {
@@ -498,6 +504,16 @@
             "event": "issue_comment.created",
             "karma": 2,
             "timestamp": "2026-01-19T04:50:11.934Z"
+          }
+        ]
+      },
+      "tkersey": {
+        "total": 1,
+        "history": [
+          {
+            "event": "watch.started",
+            "karma": 1,
+            "timestamp": "2026-01-19T15:23:51.290Z"
           }
         ]
       }
