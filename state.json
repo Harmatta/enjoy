@@ -395,11 +395,17 @@
         "event": "discussion.created",
         "karma": 5,
         "timestamp": "2026-01-19T17:35:41.583Z"
+      },
+      {
+        "actor": "fabriziosalmi",
+        "event": "discussion.created",
+        "karma": 5,
+        "timestamp": "2026-01-19T17:36:00.829Z"
       }
     ],
     "by_user": {
       "fabriziosalmi": {
-        "total": 93,
+        "total": 98,
         "history": [
           {
             "event": "issues.opened",
@@ -510,6 +516,11 @@
             "event": "discussion.created",
             "karma": 5,
             "timestamp": "2026-01-19T17:35:41.582Z"
+          },
+          {
+            "event": "discussion.created",
+            "karma": 5,
+            "timestamp": "2026-01-19T17:36:00.829Z"
           }
         ]
       },
