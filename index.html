@@ -1399,6 +1399,8 @@
                 const scale = 1 + Math.log10(Math.max(1, level)) * 0.2;
                 celestialBody.style.transform = `scale(${Math.min(scale, 1.6)})`;
                 
+                console.log('🎮 State loaded: Level', level, '| Karma', karma, '| Players', playerCount);
+                
             } catch (e) {
                 console.log('Loading state...', e.message);
             }
@@ -1406,7 +1408,8 @@
         
         async function loadRepoStats() {
             try {
-                const res = await fetch('repo-stats.json?' + Date.now());
+                // Use raw GitHub URL to ensure it works on GitHub Pages
+                const res = await fetch('https://raw.githubusercontent.com/fabriziosalmi/enjoy/main/repo-stats.json?' + Date.now());
                 if (res.ok) {
                     repoStats = await res.json();
                     document.getElementById('starCount').textContent = repoStats.stars || 0;
@@ -1415,8 +1418,10 @@
                     // Stars in sky scale with repo stars
                     const starCount = Math.min(150, 30 + (repoStats.stars || 0) * 2);
                     createStars(starCount, repoStats.recent_stargazers || []);
+                    console.log('⭐ Loaded repo stats:', repoStats.stars, 'stars,', repoStats.forks, 'forks');
                 }
             } catch (e) {
+                console.log('Repo stats error:', e.message);
                 createStars(40, []);
             }
         }
