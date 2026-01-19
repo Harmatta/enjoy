@@ -54,6 +54,8 @@
             --celestial-color: #c9d1d9;
             --celestial-glow: rgba(200, 210, 220, 0.1);
             --accent: #6366f1;
+            --ui-bg: rgba(0, 0, 0, 0.6);
+            --ui-border: rgba(255, 255, 255, 0.1);
         }
         
         body.time-dawn {
@@ -68,8 +70,11 @@
             --mist-opacity: 0.25;
             --celestial-color: #ffb07c;
             --celestial-glow: rgba(255, 150, 100, 0.15);
-            --text: rgba(255, 220, 200, 0.9);
+            --text: rgba(255, 220, 200, 0.95);
+            --text-muted: rgba(255, 220, 200, 0.7);
             --accent: #f59e0b;
+            --ui-bg: rgba(30, 20, 25, 0.8);
+            --ui-border: rgba(255, 200, 180, 0.2);
         }
         
         body.time-morning {
@@ -84,9 +89,11 @@
             --mist-opacity: 0.08;
             --celestial-color: #fff5cc;
             --celestial-glow: rgba(255, 230, 150, 0.2);
-            --text: rgba(40, 60, 50, 0.9);
-            --text-muted: rgba(40, 60, 50, 0.5);
-            --accent: #3b82f6;
+            --text: rgba(255, 255, 255, 0.95);
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --accent: #2563eb;
+            --ui-bg: rgba(30, 60, 50, 0.85);
+            --ui-border: rgba(255, 255, 255, 0.2);
         }
         
         body.time-noon {
@@ -101,9 +108,11 @@
             --mist-opacity: 0;
             --celestial-color: #fffde8;
             --celestial-glow: rgba(255, 250, 200, 0.3);
-            --text: rgba(30, 50, 40, 0.9);
-            --text-muted: rgba(30, 50, 40, 0.5);
-            --accent: #eab308;
+            --text: rgba(255, 255, 255, 0.95);
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --accent: #ca8a04;
+            --ui-bg: rgba(20, 50, 40, 0.85);
+            --ui-border: rgba(255, 255, 255, 0.2);
         }
         
         body.time-afternoon {
@@ -118,9 +127,11 @@
             --mist-opacity: 0.05;
             --celestial-color: #ffe4b5;
             --celestial-glow: rgba(255, 200, 120, 0.18);
-            --text: rgba(60, 50, 40, 0.9);
-            --text-muted: rgba(60, 50, 40, 0.5);
-            --accent: #8b5cf6;
+            --text: rgba(255, 255, 255, 0.95);
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --accent: #7c3aed;
+            --ui-bg: rgba(40, 35, 30, 0.85);
+            --ui-border: rgba(255, 255, 255, 0.2);
         }
         
         body.time-sunset {
@@ -135,8 +146,11 @@
             --mist-opacity: 0.1;
             --celestial-color: #ff8c5a;
             --celestial-glow: rgba(255, 120, 80, 0.2);
-            --text: rgba(255, 200, 180, 0.9);
+            --text: rgba(255, 220, 200, 0.95);
+            --text-muted: rgba(255, 200, 180, 0.7);
             --accent: #f43f5e;
+            --ui-bg: rgba(40, 25, 35, 0.8);
+            --ui-border: rgba(255, 180, 150, 0.2);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -436,20 +450,22 @@
             align-items: center;
             gap: 0.6rem;
             z-index: 200;
-            background: rgba(0,0,0,0.5);
+            background: var(--ui-bg, rgba(0,0,0,0.7));
             padding: 0.6rem 1.2rem;
             border-radius: 100px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--ui-border, rgba(255,255,255,0.15));
             backdrop-filter: blur(12px);
             font-size: 0.75rem;
+            font-weight: 400;
             letter-spacing: 0.05em;
             transition: all 0.5s ease;
             text-decoration: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .time-indicator:hover { border-color: var(--accent); background: rgba(0,0,0,0.6); }
+        .time-indicator:hover { border-color: var(--accent); background: var(--ui-bg, rgba(0,0,0,0.8)); }
         .time-emoji { font-size: 1.1rem; }
-        .time-period { color: var(--text); text-transform: uppercase; }
-        .time-multiplier { color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        .time-period { color: var(--text); text-transform: uppercase; font-weight: 500; }
+        .time-multiplier { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-weight: 500; }
         
         .brand-mark {
             position: fixed;
@@ -468,15 +484,16 @@
         .stat {
             position: fixed;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--text-muted);
+            font-size: 0.75rem;
+            color: var(--text);
             letter-spacing: 0.05em;
-            opacity: 0.7;
+            opacity: 0.9;
             transition: all 0.5s ease;
             z-index: 100;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
-        .stat:hover { opacity: 1; color: var(--text); }
-        .stat-value { font-size: 1.8rem; color: var(--text); display: block; margin-bottom: 0.2rem; }
+        .stat:hover { opacity: 1; }
+        .stat-value { font-size: 2rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 0.2rem; text-shadow: 0 2px 15px rgba(0,0,0,0.6); }
         .stat-tl { top: 5rem; left: 1.5rem; }
         .stat-tr { top: 5rem; right: 1.5rem; text-align: right; }
         
@@ -492,16 +509,18 @@
             align-items: center;
             gap: 0.6rem;
             padding: 1.2rem 3rem;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
+            background: var(--ui-bg, rgba(0,0,0,0.7));
+            border: 1px solid var(--ui-border, rgba(255,255,255,0.2));
             border-radius: 100px;
             color: var(--text);
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            font-weight: 500;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             backdrop-filter: blur(15px);
             transition: all 0.4s ease;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4);
         }
         .cta a:hover {
             border-color: var(--accent);
@@ -581,20 +600,22 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            padding: 0.4rem 0.8rem;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            background: var(--ui-bg, rgba(0,0,0,0.7));
+            border: 1px solid var(--ui-border, rgba(255,255,255,0.15));
             border-radius: 100px;
             backdrop-filter: blur(12px);
-            font-size: 0.7rem;
-            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text);
             text-decoration: none;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .repo-stat:hover { background: rgba(0,0,0,0.6); border-color: var(--accent); color: var(--text); }
-        .repo-stat svg { width: 12px; height: 12px; fill: currentColor; opacity: 0.7; }
-        .repo-stat.stars { color: rgba(244, 208, 63, 0.85); }
-        .repo-stat.forks { color: rgba(130, 224, 170, 0.85); }
+        .repo-stat:hover { background: var(--ui-bg, rgba(0,0,0,0.85)); border-color: var(--accent); }
+        .repo-stat svg { width: 14px; height: 14px; fill: currentColor; }
+        .repo-stat.stars { color: #fcd34d; }
+        .repo-stat.forks { color: #6ee7b7; }
         .repo-stat-value { font-family: 'JetBrains Mono', monospace; }
         
         .live {
