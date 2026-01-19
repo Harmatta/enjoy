@@ -159,7 +159,7 @@ Bot validates → Auto-merges → You earn karma!
 ║   The first 50 humans to contribute get a           ║
 ║   permanent FOUNDER badge on the leaderboard.       ║
 ║                                                      ║
-║   Current Founders: 1/50                             ║
+║   Current Founders: 2/50                             ║
 ║                                                      ║
 ║   ▶ This badge will NEVER be available again        ║
 ║                                                      ║
@@ -173,6 +173,13 @@ Bot validates → Auto-merges → You earn karma!
 <table>
 <tr>
 <td align="center"><a href="https://github.com/fabriziosalmi"><img src="https://github.com/fabriziosalmi.png" width="60px;" alt=""/><br /><sub><b>fabriziosalmi</b></sub></a><br />🏅 #1</td>
+<td align="center"><a href="https://github.com/JoKneeMo"><img src="https://github.com/JoKneeMo.png" width="60px;" alt=""/><br /><sub><b>JoKneeMo</b></sub></a><br />🏅 #2</td>
+<td align="center"><sub>Your spot<br/>awaits...</sub></td>
+<td align="center"><sub>Your spot<br/>awaits...</sub></td>
+<td align="center"><sub>Your spot<br/>awaits...</sub></td>
+</tr>
+<tr>
+<td align="center"><sub>Your spot<br/>awaits...</sub></td>
 <td align="center"><sub>Your spot<br/>awaits...</sub></td>
 <td align="center"><sub>Your spot<br/>awaits...</sub></td>
 <td align="center"><sub>Your spot<br/>awaits...</sub></td>
@@ -218,7 +225,7 @@ The repo changes appearance based on **CET time** and gives different karma mult
 
 | 🎮 Level | 💎 Total Karma | 👥 Players | 🔀 PRs Merged | ⏰ Current |
 |:--------:|:--------------:|:----------:|:-------------:|:----------:|
-| **2** | **132** | **1** | **3** | 🌙 Night ×1.4 |
+| **2** | **152** | **2** | **4** | 🌙 Night ×1.4 |
 
 </div>
 
@@ -227,22 +234,22 @@ The repo changes appearance based on **CET time** and gives different karma mult
 | Rank | Player | Karma | PRs | Streak | Achievements |
 |:----:|:-------|------:|:---:|:------:|:------------:|
 | 🥇 | [@fabriziosalmi](https://github.com/fabriziosalmi) | 132 | 3 | 1 | 2 |
+| 🥈 | [@JoKneeMo](https://github.com/JoKneeMo) | 20 | 1 | 1 | 1 |
 
 ### 📈 Progress to Level 3
 
 ```
-Karma:  [████████████████████] 132/75 ✅
-PRs:    [███████░░░░░░░░░░░░░] 3/8
-Total:  [█████████████░░░░░░░] 65%
+Karma:  [████████████████████] 132/75
+PRs:    [████████░░░░░░░░░░░░] 3/8
+Total:  [██████████████░░░░░░] 69%
 ```
 
 ### 🌟 Recent Achievements Unlocked
 
 - 🩸 First Blood
-- 🏛️ OG (Original Player)
 
 <p align="center">
-  <sub>📅 Last updated: 2026-01-18 | 🔄 Updates automatically</sub>
+  <sub>📅 Last updated: 2026-01-19 | 🔄 Updates automatically</sub>
 </p>
 <!-- STATS-END -->
 
