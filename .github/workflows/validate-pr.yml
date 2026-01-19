@@ -28,12 +28,24 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Fetch PR files
+      - name: Fetch and merge PR files
         run: |
           # Fetch PR branch
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
-          # Get list of changed files and checkout only those from PR
-          git diff --name-only main...pr-branch | xargs -I {} sh -c 'git checkout pr-branch -- "{}" 2>/dev/null || true'
+
+          # Get list of added/modified files in PR
+          echo "📁 Files changed in PR:"
+          git diff --name-status main pr-branch
+
+          # Checkout each changed file from PR branch
+          for file in $(git diff --name-only main pr-branch); do
+            echo "  Checking out: $file"
+            git checkout pr-branch -- "$file" 2>/dev/null && echo "    ✅ Success" || echo "    ⚠️ Skipped (deleted or new path)"
+          done
+
+          # Verify word files are present
+          echo "📂 words/ directory:"
+          ls -la words/ || echo "No words directory"
       
       - name: Get changed files
         id: files
