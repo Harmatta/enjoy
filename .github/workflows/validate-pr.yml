@@ -22,15 +22,18 @@ jobs:
       pull-requests: write
       
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (main branch for engine)
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
-      
-      - name: Checkout PR branch
+
+      - name: Fetch PR files
         run: |
+          # Fetch PR branch
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
-          git checkout pr-branch
+          # Get list of changed files and checkout only those from PR
+          git diff --name-only main...pr-branch | xargs -I {} sh -c 'git checkout pr-branch -- "{}" 2>/dev/null || true'
       
       - name: Get changed files
         id: files
