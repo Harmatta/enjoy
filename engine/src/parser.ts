@@ -56,7 +56,9 @@ export function getFileContent(filepath: string): string {
   try {
     // Sanitize path to prevent traversal attacks
     const safePath = sanitizePath(filepath);
-    return fs.readFileSync(safePath, 'utf8').trim();
+    // Adjust path since engine runs from engine/ subdirectory
+    const adjustedPath = '../' + safePath;
+    return fs.readFileSync(adjustedPath, 'utf8').trim();
   } catch (e) {
     logError(`getFileContent(${filepath})`, e);
     return '';

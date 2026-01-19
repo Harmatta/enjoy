@@ -41,7 +41,7 @@ function isCacheValid(): boolean {
 
   // Also check if file was modified
   try {
-    const stats = fs.statSync('./state.json');
+    const stats = fs.statSync('../state.json');
     if (stats.mtimeMs > stateCache.fileModTime) return false;
   } catch {
     return false;
@@ -132,8 +132,8 @@ export function loadState(bypassCache: boolean = false): GameState {
   }
 
   try {
-    const stats = fs.statSync('./state.json');
-    const content = fs.readFileSync('./state.json', 'utf8');
+    const stats = fs.statSync('../state.json');
+    const content = fs.readFileSync('../state.json', 'utf8');
     const parsed = JSON.parse(content);
 
     if (!validateState(parsed)) {
@@ -158,7 +158,7 @@ export function loadState(bypassCache: boolean = false): GameState {
  * Uses write-to-temp-then-rename pattern to prevent corruption
  */
 export function saveState(state: GameState): void {
-  const statePath = './state.json';
+  const statePath = '../state.json';
   const tempPath = './state.json.tmp';
 
   try {
