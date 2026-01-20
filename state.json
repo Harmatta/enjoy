@@ -485,6 +485,12 @@
         "event": "issue_comment.created",
         "karma": 2,
         "timestamp": "2026-01-20T04:47:37.291Z"
+      },
+      {
+        "actor": "bbberns",
+        "event": "issue_comment.created",
+        "karma": 2,
+        "timestamp": "2026-01-20T06:27:51.014Z"
       }
     ],
     "by_user": {
@@ -749,12 +755,17 @@
         ]
       },
       "bbberns": {
-        "total": 2,
+        "total": 4,
         "history": [
           {
             "event": "issue_comment.created",
             "karma": 2,
             "timestamp": "2026-01-20T04:47:37.291Z"
+          },
+          {
+            "event": "issue_comment.created",
+            "karma": 2,
+            "timestamp": "2026-01-20T06:27:51.014Z"
           }
         ]
       }
