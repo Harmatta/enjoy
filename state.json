@@ -491,6 +491,12 @@
         "event": "issue_comment.created",
         "karma": 2,
         "timestamp": "2026-01-20T06:27:51.014Z"
+      },
+      {
+        "actor": "aliraza556",
+        "event": "fork",
+        "karma": 3,
+        "timestamp": "2026-01-22T22:14:08.192Z"
       }
     ],
     "by_user": {
@@ -705,12 +711,17 @@
         ]
       },
       "aliraza556": {
-        "total": 2,
+        "total": 5,
         "history": [
           {
             "event": "issue_comment.created",
             "karma": 2,
             "timestamp": "2026-01-19T02:37:54.722Z"
+          },
+          {
+            "event": "fork",
+            "karma": 3,
+            "timestamp": "2026-01-22T22:14:08.192Z"
           }
         ]
       },
