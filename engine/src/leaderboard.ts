@@ -33,15 +33,15 @@ export interface RecruiterEntry {
  */
 export function generateContributorsLeaderboard(state: GameState, limit: number = 10): LeaderboardEntry[] {
   const players = Object.entries(state.players)
-    .map(([hash, data]) => ({
-      hash,
-      username: hash.substring(0, 8), // TODO: map to real usernames
+    .map(([username, data]) => ({
+      hash: username,
+      username: username,
       karma: data.karma || 0,
       prs: data.prs_merged || 0
     }))
     .sort((a, b) => b.karma - a.karma)
     .slice(0, limit);
-  
+
   return players.map((p, idx) => ({
     rank: idx + 1,
     username: p.username,
@@ -57,7 +57,7 @@ export function generateRecruitersLeaderboard(state: GameState, limit: number = 
   if (!state.referrals?.chains) {
     return [];
   }
-  
+
   const recruiters = Object.entries(state.referrals.chains)
     .map(([username, chain]) => ({
       username,
@@ -68,7 +68,7 @@ export function generateRecruitersLeaderboard(state: GameState, limit: number = 
     }))
     .sort((a, b) => b.total_score - a.total_score)
     .slice(0, limit);
-  
+
   return recruiters.map((r, idx) => ({
     rank: idx + 1,
     username: r.username,
@@ -123,14 +123,14 @@ function getRecruiterBadge(invites: number, depth: number): string {
 export function generateLeaderboardMarkdown(state: GameState): string {
   const contributors = generateContributorsLeaderboard(state, 10);
   const recruiters = generateRecruitersLeaderboard(state, 10);
-  
+
   let md = '## 🏆 Leaderboards\n\n';
-  
+
   // Top Contributors
   md += '### Top Contributors\n\n';
   md += '| Rank | Player | Karma | Badge |\n';
   md += '|------|--------|-------|-------|\n';
-  
+
   if (contributors.length === 0) {
     md += '| - | *No players yet* | - | - |\n';
   } else {
@@ -138,14 +138,14 @@ export function generateLeaderboardMarkdown(state: GameState): string {
       md += `| ${p.rank} | [@${p.username}](https://github.com/${p.username}) | ${p.score} | ${p.badge} |\n`;
     });
   }
-  
+
   md += '\n';
-  
+
   // Top Recruiters
   md += '### Top Recruiters\n\n';
   md += '| Rank | Player | Invites | Chain | Karma | Badge |\n';
   md += '|------|--------|---------|-------|-------|-------|\n';
-  
+
   if (recruiters.length === 0) {
     md += '| - | *No recruiters yet* | - | - | - | - |\n';
   } else {
@@ -153,10 +153,10 @@ export function generateLeaderboardMarkdown(state: GameState): string {
       md += `| ${r.rank} | [@${r.username}](https://github.com/${r.username}) | ${r.invites} | ${r.chain_depth} | ${r.referral_karma} | ${r.badge} |\n`;
     });
   }
-  
+
   md += '\n';
   md += `*Updated: ${new Date().toISOString()}*\n`;
-  
+
   return md;
 }
 
@@ -166,7 +166,7 @@ export function generateLeaderboardMarkdown(state: GameState): string {
 export function generateCommunityBoardHTML(state: GameState): string {
   const contributors = generateContributorsLeaderboard(state, 20);
   const recruiters = generateRecruitersLeaderboard(state, 20);
-  
+
   let html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -245,7 +245,7 @@ export function generateCommunityBoardHTML(state: GameState): string {
           <th>Karma</th>
           <th>Badge</th>
         </tr>`;
-  
+
   contributors.forEach(p => {
     html += `
         <tr>
@@ -255,7 +255,7 @@ export function generateCommunityBoardHTML(state: GameState): string {
           <td class="badge">${p.badge}</td>
         </tr>`;
   });
-  
+
   html += `
       </table>
     </div>
@@ -270,7 +270,7 @@ export function generateCommunityBoardHTML(state: GameState): string {
           <th>Chain</th>
           <th>Badge</th>
         </tr>`;
-  
+
   recruiters.forEach(r => {
     html += `
         <tr>
@@ -281,7 +281,7 @@ export function generateCommunityBoardHTML(state: GameState): string {
           <td class="badge">${r.badge}</td>
         </tr>`;
   });
-  
+
   html += `
       </table>
     </div>
@@ -292,7 +292,7 @@ export function generateCommunityBoardHTML(state: GameState): string {
   </p>
 </body>
 </html>`;
-  
+
   return html;
 }
 
