@@ -110,6 +110,56 @@ enjoy/
 > infinite loops. Only `on-merge.yml` commits without it to trigger the
 > `workflow_run` chain for stats synchronization.
 
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    User([Player]) -->|Git Push| GitHub
+    GitHub -->|Trigger| Actions[GitHub Actions Runner]
+    
+    subgraph "CI/CD Pipeline"
+        Actions -->|Checkout| Repo[Repository]
+        Actions -->|Run| Engine[Game Engine]
+    end
+    
+    subgraph "Game Engine"
+        Engine -->|Read| State[(state.json)]
+        Engine -->|Validate| Rules{Rules Check}
+        Engine -->|Analyze| Karma{Karma Logic}
+        Engine -->|Update| State
+    end
+    
+    Engine -->|Commit & Push| GitHub
+    GitHub -->|Deploy| Pages[GitHub Pages]
+    
+    classDef git fill:#f34f29,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef runner fill:#2088ff,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef engine fill:#8a2be2,stroke:#fff,stroke-width:2px,color:#fff;
+    
+    class GitHub,Pages git;
+    class Actions runner;
+    class Engine,State,Rules,Karma engine;
+```
+
+## 🧠 Engine Data Flow
+
+```mermaid
+flowchart LR
+    Input(PR Context) --> Loader
+    Loader -->|State| Parser
+    Parser -->|Metadata| Validator
+    Validator -->|Valid?| Karma[Karma Analysis]
+    
+    subgraph Execution
+        Karma -->|Score| Executor
+        Executor -->|Mutate| Player[Player Stats]
+        Executor -->|Mutate| Board[Game Board]
+    end
+    
+    Executor -->|Save| Persister
+    Persister -->|Write| JSON[(state.json)]
+```
+
 ## ✨ Key Features Implemented
 
 ### 1. 100-Level System

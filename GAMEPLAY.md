@@ -219,31 +219,35 @@ Unlock by using multiple GitHub features:
 
 ## 🔄 KARMA FLOW
 
-```
-                    ┌─────────────┐
-                    │   PLAYER    │
-                    └──────┬──────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-   ┌────▼────┐       ┌─────▼─────┐      ┌─────▼─────┐
-   │   PR    │       │   Issue   │      │Discussion │
-   │ +10-50  │       │  +5-50    │      │  +2-25    │
-   └────┬────┘       └─────┬─────┘      └─────┬─────┘
-        │                  │                  │
-        └──────────────────┼──────────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │    KARMA    │
-                    │   POOL      │
-                    └──────┬──────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-   ┌────▼────┐       ┌─────▼─────┐      ┌─────▼─────┐
-   │  Level  │       │Achievement│      │ Mystery   │
-   │   Up    │       │  Unlock   │      │   Box     │
-   └─────────┘       └───────────┘      └───────────┘
+```mermaid
+graph TD
+    Player([Player]) -->|Contributes| Action{Action Type}
+    
+    subgraph "Sources"
+        Action -->|Pull Request| PR[PR Analysis]
+        Action -->|Issue| Issue[Issue Report]
+        Action -->|Discussion| Disc[Discussion]
+    end
+    
+    subgraph "Engine"
+        PR -->|Quality Check| Score{Score 0-100}
+        Score -->|High| Amplify[Amplify x2-3]
+        Score -->|Low| Refuse[Refuse]
+        
+        Amplify --> Pool(Karma Pool)
+        Issue --> Pool
+        Disc --> Pool
+    end
+    
+    Pool -->|Accumulate| Total{Total Karma}
+    
+    Total -->|Threshold| LevelUp[🚀 Level Up]
+    Total -->|Unlock| Ach[🏆 Achievements]
+    Total -->|Trigger| Mystery[🎁 Mystery Box]
+    
+    style Player fill:#fff,stroke:#333,stroke-width:2px,color:#000
+    style Pool fill:#f9f,stroke:#333,stroke-width:4px
+    style LevelUp fill:#0f0,stroke:#333,stroke-width:2px,color:#000
 ```
 
 ---
