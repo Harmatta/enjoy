@@ -48,30 +48,24 @@ test.describe('Visual Quality', () => {
     });
   }
 
-  test('no central title obstruction - brand mark is subtle', async ({ page }) => {
+  test('no central title obstruction - hud is visible', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    // Verify old title element doesn't exist
+    // Verify old title element doesn't exist/visible
     const oldTitle = page.locator('.title');
     await expect(oldTitle).not.toBeVisible();
 
-    // Verify new brand mark exists and is subtle
-    const brandMark = page.locator('.brand-mark');
-    await expect(brandMark).toBeVisible();
-
-    // Check opacity is low (subtle)
-    const opacity = await brandMark.evaluate(el =>
-      window.getComputedStyle(el).opacity
-    );
-    expect(parseFloat(opacity)).toBeLessThanOrEqual(0.25);
+    // Verify HUD exists
+    const hud = page.locator('.hud-top');
+    await expect(hud).toBeVisible();
   });
 
   test('repo stats use pill design', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    const repoStat = page.locator('.repo-stat').first();
+    const repoStat = page.locator('.hud-item').first();
     await expect(repoStat).toBeVisible();
 
     // Check for pill styling (border-radius)
@@ -87,20 +81,16 @@ test.describe('Visual Quality', () => {
     expect(backdropFilter).toContain('blur');
   });
 
-  test('level display uses elegant arc design', async ({ page }) => {
+  test('level display uses elegant hud design', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    const levelDisplay = page.locator('.level-display');
+    const levelDisplay = page.locator('.hud-item[title="Current Level"]');
     await expect(levelDisplay).toBeVisible();
 
-    // Check that level ring SVG exists
-    const levelRingSvg = page.locator('.level-ring svg');
-    await expect(levelRingSvg).toBeVisible();
-
-    // Check for level number and label
-    await expect(page.locator('.level-number')).toBeVisible();
-    await expect(page.locator('.level-label')).toBeVisible();
+    // Check for level emoji and number
+    await expect(levelDisplay.locator('.hud-emoji')).toHaveText('🏆');
+    await expect(levelDisplay.locator('#levelNumber')).toBeVisible();
   });
 });
 
@@ -250,7 +240,7 @@ test.describe('Mobile', () => {
     expect(cursorDisplay).toBe('none');
 
     // Level display should be visible and positioned correctly
-    const levelDisplay = page.locator('.level-display');
+    const levelDisplay = page.locator('.hud-item[title="Current Level"]');
     await expect(levelDisplay).toBeVisible();
 
     await expect(page).toHaveScreenshot('mobile.png', { threshold: 0.15 });
@@ -275,8 +265,8 @@ test.describe('Accessibility', () => {
   test('time indicator is focusable and has proper title', async ({ page }) => {
     await page.goto('/');
 
-    const timeIndicator = page.locator('.time-indicator');
-    await expect(timeIndicator).toHaveAttribute('title', 'Click for time bonuses');
+    const timeIndicator = page.locator('a[href="time.html"]');
+    await expect(timeIndicator).toHaveAttribute('title', 'Time bonuses');
 
     // Should be a link
     const tagName = await timeIndicator.evaluate(el => el.tagName.toLowerCase());
@@ -286,7 +276,7 @@ test.describe('Accessibility', () => {
   test('audio toggle has aria-label', async ({ page }) => {
     await page.goto('/');
 
-    const audioToggle = page.locator('.audio-toggle');
+    const audioToggle = page.locator('#audioToggle');
     await expect(audioToggle).toHaveAttribute('aria-label', 'Toggle ambient sound');
   });
 });

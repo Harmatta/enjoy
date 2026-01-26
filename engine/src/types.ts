@@ -10,7 +10,7 @@ export interface Player {
   streak: number;
   achievements: string[];
   joined: string;
-  
+
   // Optional tracking
   high_quality_count?: number;
   referrals?: number;
@@ -129,6 +129,16 @@ export interface BoardElement {
   rule_id: string;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// TYPES
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface ContributionContext {
+  karma?: number;
+  timestamp?: string | number;
+  merge_time_seconds?: number;
+}
+
 export interface GameState {
   version: string;
   last_updated: string;
@@ -164,6 +174,18 @@ export interface GameState {
     threshold_good: number;
     multiplier_active: number;
     recent_quality?: number[];
+  };
+  time_system?: {
+    current_period: string;
+    last_update: string;
+    stats: Record<string, { total_prs: number, total_karma: number }>;
+    rare_events_triggered: Array<{
+      id: string;
+      name: string;
+      player: string;
+      timestamp: string;
+    }>;
+    most_active_period: string | null;
   };
   reputation: {
     top_coders: string[];

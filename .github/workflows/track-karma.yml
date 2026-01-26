@@ -123,6 +123,30 @@ jobs:
             if (state.engagement.karma_log.length > 500) {
               state.engagement.karma_log = state.engagement.karma_log.slice(-500);
             }
+
+            // ═══════════════════════════════════════════════════════════
+            // SYNC TO PLAYERS
+            // ═══════════════════════════════════════════════════════════
+            if (!state.players) state.players = {};
+            
+            if (!state.players[actor]) {
+              console.log(`🆕 Promoting ${actor} to Player via engagement!`);
+              state.players[actor] = {
+                name: actor,
+                karma: 0, // Will add karma below
+                prs: 0,
+                streak: 0,
+                achievements: [],
+                contributions: [],
+                joined: new Date().toISOString()
+              };
+              if (!state.meta) state.meta = {};
+              state.meta.total_players = (state.meta.total_players || 0) + 1;
+            }
+            
+            // Update player karma
+            state.players[actor].karma = (state.players[actor].karma || 0) + karma;
+            state.players[actor].last_contribution = new Date().toISOString();
             
             // Write updated state
             fs.writeFileSync('state.json', JSON.stringify(state, null, 2));

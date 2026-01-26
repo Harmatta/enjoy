@@ -47,7 +47,7 @@ describe('Loader', () => {
       const state = loadState(true);
 
       expect(state).toEqual(mockValidState);
-      expect(fs.readFileSync).toHaveBeenCalledWith('./state.json', 'utf8');
+      expect(fs.readFileSync).toHaveBeenCalledWith('../state.json', 'utf8');
     });
 
     it('should use cache for repeated reads within TTL', () => {
@@ -103,14 +103,14 @@ describe('Loader', () => {
 
   describe('saveState', () => {
     it('should save valid state atomically', () => {
-      vi.mocked(fs.writeFileSync).mockImplementation(() => {});
+      vi.mocked(fs.writeFileSync).mockImplementation(() => { });
       vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockValidState));
-      vi.mocked(fs.renameSync).mockImplementation(() => {});
+      vi.mocked(fs.renameSync).mockImplementation(() => { });
       vi.mocked(fs.existsSync).mockReturnValue(false);
 
       expect(() => saveState(mockValidState)).not.toThrow();
       expect(fs.writeFileSync).toHaveBeenCalledWith('./state.json.tmp', expect.any(String));
-      expect(fs.renameSync).toHaveBeenCalledWith('./state.json.tmp', './state.json');
+      expect(fs.renameSync).toHaveBeenCalledWith('./state.json.tmp', '../state.json');
     });
 
     it('should throw on invalid state', () => {
@@ -120,10 +120,10 @@ describe('Loader', () => {
     });
 
     it('should clean up temp file on failure', () => {
-      vi.mocked(fs.writeFileSync).mockImplementation(() => {});
+      vi.mocked(fs.writeFileSync).mockImplementation(() => { });
       vi.mocked(fs.readFileSync).mockReturnValue('invalid json');
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.unlinkSync).mockImplementation(() => {});
+      vi.mocked(fs.unlinkSync).mockImplementation(() => { });
 
       expect(() => saveState(mockValidState)).toThrow();
       expect(fs.unlinkSync).toHaveBeenCalledWith('./state.json.tmp');

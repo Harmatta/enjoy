@@ -11,8 +11,8 @@
  * - Bounties: specific tasks that help the project
  */
 
-import { GameState, Player } from './types';
-import { getCETDayDifference } from './time-system';
+import { GameState, Player } from './types.js';
+import { getCETDayDifference } from './time-system.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONTEXT TYPES
@@ -82,7 +82,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     karma_reward: 500,
     check: (p) => p.prs >= 100
   },
-  
+
   // ── KARMA ───────────────────────────────────────────────────────────────
   {
     id: 'karma_hunter',
@@ -404,14 +404,14 @@ export function openMysteryBox(): MysteryReward {
   const weights = [30, 25, 15, 5, 15, 10]; // Weighted probabilities
   const totalWeight = weights.reduce((a, b) => a + b, 0);
   let random = Math.random() * totalWeight;
-  
+
   for (let i = 0; i < weights.length; i++) {
     random -= weights[i];
     if (random <= 0) {
       return MYSTERY_REWARDS[i];
     }
   }
-  
+
   return MYSTERY_REWARDS[0];
 }
 
@@ -474,11 +474,11 @@ export interface GamificationResult {
   streak_multiplier: number;
   challenge_multiplier: number;
   total_karma: number;
-  
+
   new_achievements: Achievement[];
   mystery_box?: MysteryReward;
   challenge_completed: boolean;
-  
+
   streak_days: number;
   message: string;
 }
@@ -500,26 +500,26 @@ export function processContribution(
     streak_days: player.streak || 1,
     message: ''
   };
-  
+
   // 1. Update streak
   if (player.last_contribution) {
     const updated = updateStreak(player, player.last_contribution);
     result.streak_days = updated.streak || 1;
   }
   result.streak_multiplier = getStreakMultiplier(result.streak_days);
-  
+
   // 2. Check daily challenge
   const challenge = getTodayChallenge();
   if (challenge.check(word, context)) {
     result.challenge_multiplier = challenge.multiplier;
     result.challenge_completed = true;
   }
-  
+
   // 3. Calculate total karma (cap combined multiplier at 4x for balance)
   const combinedMultiplier = result.streak_multiplier * result.challenge_multiplier;
   const cappedMultiplier = Math.min(4.0, combinedMultiplier);
   result.total_karma = Math.round(baseKarma * cappedMultiplier);
-  
+
   // 4. Check mystery box
   const totalContribs = (player.prs || 0) + (player.issues || 0) + 1;
   if (checkMysteryBox(totalContribs)) {
@@ -528,16 +528,16 @@ export function processContribution(
       result.total_karma += result.mystery_box.value as number;
     }
   }
-  
+
   // 5. Check new achievements
   const playerAchievements = player.achievements || [];
-  const tempPlayer = { 
-    ...player, 
+  const tempPlayer = {
+    ...player,
     karma: player.karma + result.total_karma,
     prs: (player.prs || 0) + 1,
     streak: result.streak_days
   };
-  
+
   for (const achievement of ACHIEVEMENTS) {
     if (!playerAchievements.includes(achievement.id)) {
       if (achievement.check(tempPlayer, state, { ...context, karma: baseKarma })) {
@@ -546,7 +546,7 @@ export function processContribution(
       }
     }
   }
-  
+
   // 6. Build message
   const parts = [`+${result.total_karma} karma`];
   if (result.streak_multiplier > 1) {
@@ -562,7 +562,7 @@ export function processContribution(
     parts.push(`🏆 New: ${result.new_achievements.map(a => a.emoji + ' ' + a.name).join(', ')}`);
   }
   result.message = parts.join(' · ');
-  
+
   return result;
 }
 
@@ -587,6 +587,6 @@ export function getLeaderboard(state: GameState, limit: number = 10): Array<{
     .sort((a, b) => b.karma - a.karma)
     .slice(0, limit)
     .map((p, i) => ({ ...p, rank: i + 1 }));
-  
+
   return players;
 }

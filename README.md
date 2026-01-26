@@ -27,7 +27,7 @@
 
 <!-- 🌅 DYNAMIC HEADER - Changes with time of day (CET) -->
 <p align="center">
-  <img src="assets/svg/hero-banner.svg" alt="enjoy - the repository that plays back" width="100%">
+  <img src="assets/header-current.svg" alt="enjoy - the repository that plays back" width="100%">
 </p>
 
 <!--  LIVE STATUS BADGES - Auto-updated by workflows -->

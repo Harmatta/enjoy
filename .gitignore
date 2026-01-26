@@ -7,3 +7,14 @@ validation-result.json
 engine/proposals/prop_*
 engine/karma-result.json
 *.tmp
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+playwright-report/
+
+# Playwright snapshots
+*-snapshots/
+test-results/

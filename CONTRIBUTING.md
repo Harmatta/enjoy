@@ -118,6 +118,8 @@ Want to improve the game engine, add new rules, or contribute to infrastructure?
 
 ### Setup Development Environment
 
+### Setup Development Environment
+
 ```bash
 # Install dependencies
 cd engine
@@ -126,8 +128,8 @@ npm install
 # Build
 npm run build
 
-# Test locally
-npm run validate -- --pr-number=1
+# Run tests
+npm test
 ```
 
 ### Project Structure
@@ -135,75 +137,37 @@ npm run validate -- --pr-number=1
 ```
 enjoy/
 ├── docs/              # VitePress documentation + GitHub Pages
-├── engine/            # TypeScript validation engine
+├── engine/            # TypeScript game engine & validation
 │   ├── src/
-│   │   ├── parser.ts      # Parse PR metadata
-│   │   ├── validator.ts   # Validate against rules
-│   │   ├── executor.ts    # Apply effects
-│   │   └── builder.ts     # Build GitHub Pages
+│   │   ├── index.ts       # CLI Entry point
+│   │   ├── executor.ts    # Game logic & State updates
+│   │   ├── gamification.ts # Karma, streaks, achievements
+│   │   ├── parser.ts      # PR metadata parsing
+│   │   ├── validator.ts   # Rule validation
+│   │   └── time-system.ts # Time-based logic
 │   └── package.json
 ├── levels/            # Level definitions (YAML)
 ├── rules/             # Validation rules (YAML)
-├── contributions/     # Player contributions by type
-└── .github/
+├── .github/
     └── workflows/     # GitHub Actions automation
 ```
-
-### Adding a New Rule
-
-1. Create `rules/XXX-your-rule.yaml`:
-
-```yaml
-id: "XXX"
-name: "Your Rule"
-description: "What this rule does"
-version: 1
-enabled: true
-priority: 100
-
-trigger:
-  type: "file_added"
-  conditions:
-    - extension: ".ext"
-
-validate:
-  - some_check: true
-
-effect:
-  action: "add_to_board"
-  element:
-    type: "text"
-    content: "{{file_content}}"
-
-points:
-  base: 10
-```
-
-2. Update validation logic in `engine/src/validator.ts` if needed
-3. Test thoroughly
-4. Submit PR with documentation
-
-### Code Standards
-
-- **TypeScript** for engine code
-- **ESM** modules (not CommonJS)
-- **Type safety** - no `any` types
-- **Tests** - add tests for new validation logic
-- **Comments** - document complex logic
 
 ### Testing
 
 ```bash
-# Run tests
+# Run unit tests
 cd engine
 npm test
 
-# Test validation locally
-echo "TEST" > test.txt
-npm run validate -- --pr-number=999
+# Validate a PR (Dry Run)
+npm run validate -- --pr-number=1
 
-# Test effect application
-npm run apply-effect -- --pr-number=999
+# Apply a contribution (Simulation)
+# Simulates a full merge event including karma & state updates
+export PR_NUMBER="9999"
+export PR_AUTHOR="test-user"
+export PR_TITLE="Add word: TESTING"
+node dist/index.js apply
 ```
 
 ---
