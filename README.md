@@ -232,7 +232,7 @@ The repo changes appearance based on **CET time** and gives different karma mult
 
 | 🎮 Level | 💎 Total Karma | 👥 Players | 🔀 PRs Merged | ⏰ Current |
 |:--------:|:--------------:|:----------:|:-------------:|:----------:|
-| **3** | **278** | **7** | **6** | 🌆 Sunset ×1.15 |
+| **3** | **278** | **7** | **6** | 🌙 Night ×1.4 |
 
 </div>
 
@@ -264,7 +264,7 @@ Total:  [███████████████░░░░░] 73%
 - 💨 Speed Demon
 
 <p align="center">
-  <sub>📅 Last updated: 2026-01-26 | 🔄 Updates automatically</sub>
+  <sub>📅 Last updated: 2026-01-27 | 🔄 Updates automatically</sub>
 </p>
 <!-- STATS-END -->
 
