@@ -20,12 +20,12 @@
   
   <!-- Message -->
   <text x="100" y="130" text-anchor="middle" font-family="Arial" font-size="10" fill="#fff">
-    testman42, your streak of 0 is waiting! Ready for more karma?
+    tkersey, your streak of 0 is waiting! Ready for more karma?
   </text>
   <text x="100" y="150" text-anchor="middle" font-family="Arial" font-size="8" fill="#8b949e">
     💜 from the enjoy community
   </text>
   <text x="100" y="170" text-anchor="middle" font-family="monospace" font-size="6" fill="#4a5568">
-    karma:1 | days away:8
+    karma:1 | days away:7
   </text>
 </svg>
