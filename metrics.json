@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-29T23:11:34Z",
+  "generated_at": "2026-01-29T23:42:04Z",
   "game_age_days": 11,
   
   "totals": {
@@ -31,10 +31,10 @@
   
   "community": {
     "love_index": 34,
-    "avg_karma_per_player": 36,
+    "avg_karma_per_player": 37,
     "max_streak": 1,
     "top_player": "fabriziosalmi",
-    "top_karma": 200,
+    "top_karma": 202,
     "community_emoji": "🌱"
   },
   
