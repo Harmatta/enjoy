@@ -9,11 +9,12 @@
 | 🥇 | fabriziosalmi | 202 | 1 | 4 |
 | 🥈 | JoKneeMo | 80 | 1 | 1 |
 | 🥉 | tanu123421 | 7 | 0 | 0 |
-| 4 | prashcod | 2 | 0 | 0 |
-| 5 | aliraza556 | 2 | 0 | 0 |
-| 6 | tkersey | 1 | 0 | 0 |
-| 7 | tentoumushii | 1 | 0 | 0 |
-| 8 | testman42 | 1 | 0 | 0 |
+| 4 | divol89 | 2 | 0 | 0 |
+| 5 | prashcod | 2 | 0 | 0 |
+| 6 | aliraza556 | 2 | 0 | 0 |
+| 7 | tkersey | 1 | 0 | 0 |
+| 8 | tentoumushii | 1 | 0 | 0 |
+| 9 | testman42 | 1 | 0 | 0 |
 
 ## 🏛️ Founders Hall of Fame
 
@@ -29,6 +30,7 @@
 | 6 | 🎮 tanu123421 | 2026-01-19 |
 | 7 | 🎮 tkersey | 2026-01-19 |
 | 8 | 🎮 prashcod | 2026-01-27 |
+| 9 | 🎮 divol89 | 2026-02-04 |
 
 ## Achievement Hunters
 
@@ -36,9 +38,9 @@
 |--------|-------------------|
 | fabriziosalmi | 4 |
 | JoKneeMo | 1 |
+| divol89 | 0 |
 | prashcod | 0 |
 | tkersey | 0 |
-| tanu123421 | 0 |
 
 ## Streak Champions
 
@@ -46,19 +48,19 @@
 |--------|----------------|
 | JoKneeMo | 1 day(s) |
 | fabriziosalmi | 1 day(s) |
+| divol89 | 0 day(s) |
 | prashcod | 0 day(s) |
 | tkersey | 0 day(s) |
-| tanu123421 | 0 day(s) |
 
 ---
 
 ## Game Stats
 
-- **Total Players**: 8
+- **Total Players**: 9
 - **Total Karma**: 278
 - **Current Level**: 3
 - **Total PRs**: 6
 
 ---
 
-*Last updated: 2026-02-04 06:48 UTC*
+*Last updated: 2026-02-04 07:21 UTC*
